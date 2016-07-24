@@ -45,13 +45,18 @@ function stopRecording() {
 	recorder && recorder.stop();
 	$('#stop-button').addClass('hidden');
 	
-	createDownloadLink();
+	recorder && recorder.exportWAV(function(blob) {
+		var file = new File([blob], 'temp.wav');
+		var audio = new Audio(URL.createObjectURL(file));
+		audio.play()
+	});
 	//recorder.clear();
 	showPrompt();
 }
 
 function acceptRecording() {
 	hidePrompt();
+	uploadToServer();
 	$('#mic-button').removeClass('hidden');
 }
 
@@ -72,19 +77,23 @@ function hidePrompt() {
 
 function createDownloadLink() { // TODO remove this and post it to db
 	recorder && recorder.exportWAV(function(blob) {
-		var url = URL.createObjectURL(blob);
-		var li = document.createElement('li');
-		var au = document.createElement('audio');
-		var hf = document.createElement('a');
+		var filename = new Date().toISOString() + '.wav';
+		var data = new FormData();
+		data.append('file', new File([blob], filename));
 		
-		au.controls = true;
-		au.src = url;
-		hf.href = url;
-		hf.download = new Date().toISOString() + '.wav';
-		hf.innerHTML = hf.download;
-		li.appendChild(au);
-		li.appendChild(hf);
-		recordingslist.appendChild(li);
+		$.ajax({
+			url : "submit",
+			type: "POST",
+			data: data,
+			contentType: false,
+			processData: false,
+			success: function(data) {
+				alert("success!");
+			},
+			error: function() {
+				alert("failed!");
+			}
+		});	
 	});
 }
 

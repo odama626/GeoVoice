@@ -8,13 +8,21 @@ function initMap() {
   
   getLocation().then(function(loc) {
   	map.setCenter(loc);
-  	//placeMarker(loc);
-  	placeSoundMarker({ 'location':loc, 'sound': 'http://soundbible.com/grab.php?id=2135&type=mp3'});
+  	placeMarker(loc);
+  	//placeSoundMarker({ 'location':loc, 'sound': 'http://soundbible.com/grab.php?id=2135&type=mp3'});
   });
   
   google.maps.event.addListener(map, 'click', function(event) {
   		getLocation().then(placeMarker);
 	});
+	
+	google.maps.event.addListener(map, 'idle', showMarkers);
+}
+
+function showMarkers() {
+	var bounds = map.getBounds();
+	// TODO create ajax request for markers, then delete current markers and show new
+	// https://developers.google.com/maps/articles/toomanymarkers#distancebasedclustering
 }
 
 function placeMarker(place) {
