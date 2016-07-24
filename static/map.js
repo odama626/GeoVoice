@@ -5,20 +5,23 @@ function initMap() {
     center: {lat: -34.397, lng: 150.644},
     zoom: 15
   });
-  getLocation(function(loc) {
+  
+  getLocation().then(function(loc) {
   	map.setCenter(loc);
-	});
+  	//placeMarker(loc);
+  	placeSoundMarker({ 'location':loc, 'sound': 'http://soundbible.com/grab.php?id=2135&type=mp3'});
+  });
   
   google.maps.event.addListener(map, 'click', function(event) {
-  		getLocation(placeMarker);
+  		getLocation().then(placeMarker);
 	});
 }
 
 function placeMarker(place) {
-		var marker = new google.maps.Marker({position: place, map:map, title: "Hello world"});
+		var marker = new google.maps.Marker({position: place, map:map, title: "Add sound here"});
 		
 		var infowindow = new google.maps.InfoWindow({
-		content: createInputWindow()//'<input class="audio" id="mic-button" type="image" src="res/mic.png" alt="Submit" width="48" height="48">'//'<iframe src="record.html"></iframe'
+			content: createInputWindow()
 		});
 		
 		marker.addListener('click', function() {
@@ -26,17 +29,19 @@ function placeMarker(place) {
 		});
 }
 
-function getLocation(func) {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(position) {
-    	func(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
-    }, function() {
-      handleLocationError(true, infoWindow, map.getCenter());
-    });
-  } else {
-    // Browser doesn't support Geolocation
-    handleLocationError(false, infoWindow, map.getCenter());
-  }
+function getLocation() {
+	return new Promise( function(resolve, reject) {
+		if (navigator.geolocation) {
+		  navigator.geolocation.getCurrentPosition(function(position) {
+		  	resolve(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
+		  }, function() {
+		    handleLocationError(true, infoWindow, map.getCenter());
+		  });
+		} else {
+		  // Browser doesn't support Geolocation
+		  handleLocationError(false, infoWindow, map.getCenter());
+		}
+  });
 }
 
 function handleLocationError(browserHasGeolocation, infoWindow, pos) {
