@@ -1,0 +1,8 @@
+Using 
+
+Audio Visualizer by Wayou https://github.com/wayou/audio-visualizer-with-controls
+C MIT
+
+Recorderjs by mattdiamond https://github.com/mattdiamond/Recorderjs
+
+

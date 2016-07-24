@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Geolocation</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="css/visualizer.css"/>
+    <link rel="stylesheet" href="css/audio.css"/>
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBmAuADcJ-0QF2ShETkv-xcbuEXgIbfNnE&callback=initMap">
+    </script>
+    <script src="map.js"></script>
+    <script src="js/soundInput.js"></script>
+    <script src="js/soundOutput.js"></script>
+    <script src="js/recorder.js"></script>
+    <script src="js/visualizer.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    
+    <div id="sound-input-buttons">
+    	<!--<canvas id='record-visualizer' width='100%' height='100%'> -->
+	    	<input id='mic-button' type='image' src='res/mic.png' width='48' height='48' class='audio' onclick='startRecording()'></input>
+	    	<input id='stop-button' type='image' src='res/stop.png' width='48' height='48' class="hidden audio" onclick='stopRecording()'></input>    
+	    	<input id='accept-button' type='image' src='res/check.png' width='48' height='48' class="hidden audio" onclick='acceptRecording()'></input>
+	    	<input id='cancel-button' type='image' src='res/cancel.png' width='48' height='48' class="hidden audio" onclick="cancelRecording()"></input>
+    	<!-- </canvas>-->
+    </div>
+  </body>
+</html>
