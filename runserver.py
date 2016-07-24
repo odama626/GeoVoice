@@ -79,7 +79,7 @@ if __name__ == "__main__":
 				file text not null
 			);
 			""");
-		c.commit()
+		conn.commit()
 			
 	app.run('10.0.0.100')
 	
