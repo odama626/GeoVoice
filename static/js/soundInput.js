@@ -75,25 +75,30 @@ function hidePrompt() {
 	$('#cancel-button').addClass('hidden');
 }
 
-function createDownloadLink() { // TODO remove this and post it to db
+function uploadToServer() { // TODO remove this and post it to db
 	recorder && recorder.exportWAV(function(blob) {
 		var filename = new Date().toISOString() + '.wav';
 		var data = new FormData();
 		data.append('file', new File([blob], filename));
+		getLocation().then(function(loc) {
+			data.append('lat', loc.lat());
+			data.append('lng', loc.lng());
 		
-		$.ajax({
-			url : "submit",
-			type: "POST",
-			data: data,
-			contentType: false,
-			processData: false,
-			success: function(data) {
-				alert("success!");
-			},
-			error: function() {
-				alert("failed!");
-			}
-		});	
+				$.ajax({
+				url : "submit",
+				type: "POST",
+				data: data,
+				contentType: false,
+				processData: false,
+				success: function(data) {
+					alert("success!");
+				},
+				error: function() {
+					alert("failed!");
+				}
+			});
+		});
+	
 	});
 }
 

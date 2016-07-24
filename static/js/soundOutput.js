@@ -3,7 +3,7 @@
 function placeSoundMarker(soundInfo) {
 //var marker = new google.maps.Marker({position: place, map:map, title: "Add sound here"});
 	var marker = new google.maps.Marker({
-		position: soundInfo['location'],
+		position: { lat: parseFloat(soundInfo['lat']), lng: parseFloat(soundInfo['lng'])},
 		map:map,
 		label: 'S'
 		});

@@ -1,4 +1,4 @@
-var map = null;
+
 
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
@@ -8,7 +8,7 @@ function initMap() {
   
   getLocation().then(function(loc) {
   	map.setCenter(loc);
-  	placeMarker(loc);
+  //	placeMarker(loc);
   	//placeSoundMarker({ 'location':loc, 'sound': 'http://soundbible.com/grab.php?id=2135&type=mp3'});
   });
   
@@ -16,13 +16,27 @@ function initMap() {
   		getLocation().then(placeMarker);
 	});
 	
-	google.maps.event.addListener(map, 'idle', showMarkers);
+	google.maps.event.addListener(map, 'idle', getMarkers);
 }
 
-function showMarkers() {
-	var bounds = map.getBounds();
+function getMarkers() {
+	//var bounds = map.getBounds();
 	// TODO create ajax request for markers, then delete current markers and show new
-	// https://developers.google.com/maps/articles/toomanymarkers#distancebasedclustering
+	// https://developers.google.com/maps/articles/toomanymarkers#distancebasedclustering	
+	
+	$.ajax({
+		url : "get_markers",
+		type: "GET",
+		success: function(data) {
+			var markers = jQuery.parseJSON(data);
+			for (i = 0; i<markers.length; i++) {
+				placeSoundMarker(markers[i]);
+			}
+		},
+		error: function() {
+			alert("Error retrieving sound bytes");
+		}
+	});
 }
 
 function placeMarker(place) {
