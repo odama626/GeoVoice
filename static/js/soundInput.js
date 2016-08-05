@@ -6,21 +6,27 @@ function soundInputInit() {
 		return new Promise(function(resolve, reject) {
 			try {
 				window.AudioContext = window.AudioContext || window.webkitAudioContext;
-				navigator.mediaDevices.getUserMedia = navigator.mediaDevices.getUserMedia || navigator.webkitGetUserMedia;
+				if (bowser.chrome) {
+					userMedia = navigator.webkitGetUserMedia;
+				} else if (bowser.firefox) {
+					userMedia = navigator.mediaDevices.getUserMedia
+				}
+				//navigator.mediaDevices.getUserMedia = navigator.mediaDevices.getUserMedia || navigator.webkitGetUserMedia;
 				window.URL = window.URL || window.webkitURL;
 		
 				audioContext = new AudioContext;
 				debugLog('Audio context set up.');
-				debugLog('navigator.mediaDevices.getUserMedia ' + (navigator.mediaDevices.getUserMedia ? 'available.' : 'not present!'));
+				debugLog('navigator.mediaDevices.getUserMedia ' + (userMedia ? 'available.' : 'not present!'));
 			} catch (e) {
 				alert('No web audio support in this browser!');
+				reject(e);
 			}
 	
-			navigator.mediaDevices.getUserMedia({audio: true}).then(function(stream) {
-																												startMediaStream(stream);
-																												resolve(stream);
-																												}).catch(function(e) {
-				debugLog('No live audio input: ' + e);
+			navigator.webkitGetUserMedia({audio: true},function(stream) {
+					startMediaStream(stream);
+					resolve(stream);
+				},function(e) {
+					debugLog('No live audio input: ' + e);
 				reject(e);
 			});
 		});

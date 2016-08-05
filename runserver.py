@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
+import ssl
 import sqlite3
 import json
 import os
@@ -14,6 +15,9 @@ c = conn.cursor();
 
 app = Flask(__name__, static_url_path='');
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+sslContext = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+sslContext.load_cert_chain('ssl.cert', 'ssl.key')
 
 
 def allowed_file(filename):
@@ -81,7 +85,7 @@ if __name__ == "__main__":
 			""");
 		conn.commit()
 			
-	app.run('10.0.0.100')
+	app.run('10.0.0.100', ssl_context=sslContext)
 	
 	
 	
