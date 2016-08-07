@@ -56,14 +56,17 @@ function markRecordPoint() {
 }
 
 function placeMarker(place) {
-		var marker = new google.maps.Marker({position: place, map:map, title: "Add sound here"});
+		if (typeof latLngMarker !== 'undefined') {
+			latLngMarker.setPosition(place);
+		} else {
+			latLngMarker = new google.maps.Marker({position: place, map:map, title: "Add sound here"});
 		
-		marker.click = function() { requestRecording(); }		
-		marker.addListener('click', marker.click);
-		
+			latLngMarker.click = function() { requestRecording(); }		
+			latLngMarker.addListener('click', latLngMarker.click);
+		}
 		map.panTo(place);
 		smoothZoom(map, 100, map.getZoom());
-		return marker;
+		return latLngMarker;
 }
 
 function getLocation() {

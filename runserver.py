@@ -133,5 +133,5 @@ if __name__ == "__main__":
 			""");
 		conn.commit()
 			
-	app.run('10.0.0.100', ssl_context=sslContext)
+	app.run('0.0.0.0', ssl_context=sslContext)
 		
