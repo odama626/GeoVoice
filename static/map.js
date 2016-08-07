@@ -1,5 +1,3 @@
-
-
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: -34.397, lng: 150.644},
@@ -8,12 +6,10 @@ function initMap() {
   
   getLocation().then(function(loc) {
   	map.setCenter(loc);
-  //	placeMarker(loc);
-  	//placeSoundMarker({ 'location':loc, 'sound': 'http://soundbible.com/grab.php?id=2135&type=mp3'});
   });
   
   google.maps.event.addListener(map, 'click', function(event) {
-  		getLocation().then(placeMarker);
+  		markRecordPoint();
 	});
 	
 	google.maps.event.addListener(map, 'idle', getMarkers);
@@ -39,16 +35,35 @@ function getMarkers() {
 	});
 }
 
+// the smooth zoom function
+function smoothZoom (map, maxZoom, cnt) {
+    if (cnt >= maxZoom) {
+        return;
+    }
+    else {
+        z = google.maps.event.addListener(map, 'zoom_changed', function(event){
+            google.maps.event.removeListener(z);
+            smoothZoom(map, maxZoom, cnt + 1);
+        });
+        setTimeout(function(){map.setZoom(cnt)}, 20);
+    }
+}
+
+function markRecordPoint() {
+	getLocation().then(function(place) {
+		placeMarker(place).click();
+	});
+}
+
 function placeMarker(place) {
 		var marker = new google.maps.Marker({position: place, map:map, title: "Add sound here"});
 		
-		var infowindow = new google.maps.InfoWindow({
-			content: createInputWindow()
-		});
+		marker.click = function() { requestRecording(); }		
+		marker.addListener('click', marker.click);
 		
-		marker.addListener('click', function() {
-			infowindow.open(map, marker);
-		});
+		map.panTo(place);
+		smoothZoom(map, 100, map.getZoom());
+		return marker;
 }
 
 function getLocation() {

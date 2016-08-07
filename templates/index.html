@@ -4,9 +4,11 @@
     <title>Geolocation</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
-    <link rel="stylesheet" href="css/visualizer.css"/>
+    <!-- <link rel="stylesheet" href="css/visualizer.css"/> -->
     <link rel="stylesheet" href="css/audio.css"/>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.indigo-pink.min.css">
+    <link rel="stylesheet" href="css/mdl-jquery-modal-dialog.css">
     <style>
       html, body {
         height: 100%;
@@ -19,26 +21,54 @@
     </style>
   </head>
   <body>
-    <div id="map"></div>
-    <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBmAuADcJ-0QF2ShETkv-xcbuEXgIbfNnE&callback=initMap">
-    </script>
-    <script src="map.js"></script>
-    <script src="js/soundInput.js"></script>
-    <script src="js/soundOutput.js"></script>
-    <script src="js/recorder.js"></script>
-    <script src="js/visualizer.js"></script>
-    <script src="js/bowser.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-    
-    <div id="sound-input-buttons">
-    	<!--<canvas id='record-visualizer' width='100%' height='100%'> -->
-	    	<input id='mic-button' type='image' src='res/mic.png' width='48' height='48' class='audio' onclick='startRecording()'></input>
-	    	<input id='stop-button' type='image' src='res/stop.png' width='48' height='48' class="hidden audio" onclick='stopRecording()'></input>    
-	    	<input id='accept-button' type='image' src='res/check.png' width='48' height='48' class="hidden audio" onclick='acceptRecording()'></input>
-	    	<input id='cancel-button' type='image' src='res/cancel.png' width='48' height='48' class="hidden audio" onclick="cancelRecording()"></input>
-	    	<ul id="recordingslist"></ul>
-    	<!-- </canvas>-->
+    <div class="mdl-layout mdl-js-layout">
+    	<header class="mdl-layout__header">
+    		<div class="mdl-layout-icon" ></div>
+    		<div class="mdl-layout__header-row">
+    			<span class="mdl-layout__title">GeoVoice</span>
+    			<div class="mdl-layout-spacer"></div>
+    			<nav class="mdl-navigation">
+    			
+    				<!-- Nav Buttons Toolbar -->
+    				<a class="mdl-navigation__link" onClick="markRecordPoint()">
+    					<i class="material-icons">record_voice_over</i>
+    					Record
+  					</a>
+    			</nav>
+    		</div>
+    	</header>
+    	
+    	<div class="mdl-layout__drawer">
+    		<span class="mdl-layout__title">GeoVoice</span>
+    		<nav class="mdl-navigation">
+    			<!-- Nav Buttons Menu -->
+    			<a class="mdl-navigation__link" href="#">Nav Link 1</a>
+  			</nav>
+    	</div>
+    	
+			<div id="map"></div>
+			
+			<!-- Snackbar -->
+			<div aria-live="assertive" aria-atomic="true" aria-relevant="text" class="mdl-snackbar mdl-js-snackbar">
+				<div class="mdl-snackbar__text">
+				<button type="button" class="mdl-snackbar__action"></button>
+			</div>
+			
+			
     </div>
+    
+		<script src="map.js"></script>
+		<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBmAuADcJ-0QF2ShETkv-xcbuEXgIbfNnE&callback=initMap"></script>
+		<script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+		<script src="js/mdl-jquery-modal-dialog.js"></script>
+		<script src="js/soundInput.js"></script>
+		<script src="js/soundOutput.js"></script>
+		<script src="js/recorder.js"></script>
+		<!-- <script src="js/visualizer.js"></script> -->
+		<script src="js/bowser.min.js"></script>
+		
+		
   </body>
 </html>

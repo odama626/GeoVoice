@@ -40,45 +40,90 @@ function startMediaStream(stream) {
 }
 
 function startRecording() {
+	showLoading();
 	soundInputInit().then(function(stream) {
+		hideLoading();
 		recorder && recorder.record();
-		$('#mic-button').addClass('hidden');
-		$('#stop-button').removeClass('hidden');
+		
+		// Timer logic
+		var time = 0.00
+		var timerInterval = setInterval(function() {
+			time+= 0.01
+			$('#recording-timer').text(time.toFixed(2));
+		}, 1000)
+		
+		showDialog({
+			title: 'Recording',
+			text: '<h4><a id="recording-timer">0.00</a></h4>',
+			positive: {
+				title: 'done',
+				onClick: function(e) {
+					stopRecording();
+					clearInterval(timerInterval);
+				}
+			}
+		});
 	});
 }
 
 function stopRecording() {
 	recorder && recorder.stop();
-	$('#stop-button').addClass('hidden');
 	
+	showLoading();
 	recorder && recorder.exportWAV(function(blob) {
 		var file = new File([blob], 'temp.wav');
-		var audio = new Audio(URL.createObjectURL(file));
-		audio.play()
+		var url = URL.createObjectURL(file);
+		hideLoading();
+		showDialog({
+			title: 'Sound Good?',
+			text: `
+					<div>Do you want to make it public?</div>
+					<span>
+					<audio controls id="recording-player">
+						<source id="audio-source" type="audio/mpeg">
+						Your browser doesn't support playback
+					</audio>
+					</span>
+				`,
+			onLoaded: function(e) {
+				var player = $('#recording-player')
+				$('#audio-source').attr('src', url);
+				player[0].pause();
+				player[0].load();
+			},
+			positive: {
+				title: 'yes',
+				onClick: function(e) {
+					uploadToServer();
+				}
+			},
+			negative: {
+				title: 'no'
+			}
+		
+		});
 	});
 	//recorder.clear();
-	showPrompt();
 }
 
-function acceptRecording() {
-	hidePrompt();
-	uploadToServer();
-	$('#mic-button').removeClass('hidden');
-}
-
-function cancelRecording() {
-	hidePrompt();
-	$('#mic-button').removeClass('hidden');
-}
-
-function showPrompt() {
-	$('#accept-button').removeClass('hidden');
-	$('#cancel-button').removeClass('hidden');
-}
-
-function hidePrompt() {
-	$('#accept-button').addClass('hidden');
-	$('#cancel-button').addClass('hidden');
+function requestRecording() {
+	showLoading();
+	soundInputInit().then(function(stream) {
+		hideLoading();
+		showDialog({
+			title: 'Record some audio',
+			text: 'Start recording?',
+			positive: {
+				title: 'yes',
+				onClick: function (e) {
+						startRecording()
+					}
+				},
+			negative: {
+				title: 'cancel',
+				}
+			});
+	});
 }
 
 function uploadToServer() { // TODO remove this and post it to db
@@ -97,19 +142,21 @@ function uploadToServer() { // TODO remove this and post it to db
 				contentType: false,
 				processData: false,
 				success: function(data) {
-					alert("success!");
+					var notification = document.querySelector('.mdl-js-snackbar');
+					notification.MaterialSnackbar.showSnackbar({
+						message: 'Upload Completed'
+					});
 				},
-				error: function() {
-					alert("failed!");
+				error: function(e) {
+					var notification = document.querySelector('.mdl-js-snackbar');
+					notification.MaterialSnackbar.showSnackbar({
+						message: 'Error: '+e
+					});
 				}
 			});
 		});
 	
 	});
-}
-
-function createInputWindow() {
-	return document.getElementById("sound-input-buttons").innerHTML;
 }
 
 function debugLog(text) {
