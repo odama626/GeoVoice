@@ -39,7 +39,7 @@ function startMediaStream(stream) {
 	debugLog('Recorder initialized');
 }
 
-function startRecording() {
+function startRecording(domain = null) {
 	showLoading();
 	soundInputInit().then(function(stream) {
 		hideLoading();
@@ -58,7 +58,7 @@ function startRecording() {
 			positive: {
 				title: 'done',
 				onClick: function(e) {
-					stopRecording();
+					stopRecording(domain);
 					clearInterval(timerInterval);
 				}
 			}
@@ -66,7 +66,7 @@ function startRecording() {
 	});
 }
 
-function stopRecording() {
+function stopRecording(domain = null) {
 	recorder && recorder.stop();
 	
 	showLoading();
@@ -94,7 +94,7 @@ function stopRecording() {
 			positive: {
 				title: 'yes',
 				onClick: function(e) {
-					uploadToServer();
+					uploadToServer(domain);
 				}
 			},
 			negative: {
@@ -106,7 +106,7 @@ function stopRecording() {
 	//recorder.clear();
 }
 
-function requestRecording() {
+function requestRecording(domain = null) {
 	showLoading();
 	soundInputInit().then(function(stream) {
 		hideLoading();
@@ -116,7 +116,7 @@ function requestRecording() {
 			positive: {
 				title: 'yes',
 				onClick: function (e) {
-						startRecording()
+						startRecording(domain)
 					}
 				},
 			negative: {
@@ -126,7 +126,7 @@ function requestRecording() {
 	});
 }
 
-function uploadToServer() { // TODO remove this and post it to db
+function uploadToServer(domain = null) {
 	recorder && recorder.exportWAV(function(blob) {
 		var filename = new Date().toISOString() + '.wav';
 		var data = new FormData();
@@ -134,6 +134,8 @@ function uploadToServer() { // TODO remove this and post it to db
 		getLocation().then(function(loc) {
 			data.append('lat', loc.lat());
 			data.append('lng', loc.lng());
+			data.append('date', new Date().toDateString());
+			data.append('domain', domain);
 		
 				$.ajax({
 				url : "submit",
@@ -150,7 +152,7 @@ function uploadToServer() { // TODO remove this and post it to db
 				error: function(e) {
 					var notification = document.querySelector('.mdl-js-snackbar');
 					notification.MaterialSnackbar.showSnackbar({
-						message: 'Error: '+e
+						message: 'Error: '+e.toString()
 					});
 				}
 			});

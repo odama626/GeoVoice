@@ -1,0 +1,35 @@
+.mdl-card__center {
+	margin: auto;
+}
+
+.login-background {
+	background-image: url('http://netdna.webdesignerdepot.com/uploads/2013/11/featured3.jpg');
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+
+}
+
+.pac-container {
+    z-index: 1051 !important;
+}
+
+.radio-map-icon {
+	font-size: 30px;
+}
+
+.right-panel {
+	position: absolute;
+	right: 0;
+	top: 0;
+	z-index: 1050;
+	height: 100%;
+	background: #fafafa;
+	border-left: 1px solid #e0e0e0;
+	padding-bottom:0;
+}
+
+.right-panel__title {
+	margin: auto;
+}

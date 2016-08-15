@@ -1,0 +1,29 @@
+{
+  "name": "geo-voice",
+  "version": "1.0.0",
+  "description": "record and listening to geo based voice",
+  "main": "app.js",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "fs": "0.0.2",
+    "https": "^1.0.0",
+    "mongodb": "^2.2.5",
+    "multer": "^1.2.0",
+    "nunjucks": "^2.4.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/omarzion/GeoVoice.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/omarzion/GeoVoice/issues"
+  },
+  "homepage": "https://github.com/omarzion/GeoVoice#readme"
+}
