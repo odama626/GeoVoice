@@ -36,3 +36,6 @@
  - [ ] Require User to be logged in to add recording/domain
  - [ ] Show username on posted markers
 
+## Known Bugs
+ - [ ] Sometimes adding a sound to a domain adds duplicates
+
