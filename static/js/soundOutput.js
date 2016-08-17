@@ -29,7 +29,6 @@ function placeSoundMarker(soundInfo) {
 }
 
 function placeDomainMarker(domain) {
-	console.log("Placing Domain Marker "+domain.domainName);
 	
 	var marker = new Marker({
 		map: map,
@@ -43,10 +42,17 @@ function placeDomainMarker(domain) {
 		},
 		map_icon_label: '<span class="'+domain.iconCss+'"></span>'
 	});
+	
 	marker.addListener('click', function() {
 		showDomainSheet(domain);
 	});
-	
+}
+
+function closeDomainPanel() {
+	$('.right-panel').removeClass('slide-in');
+	setTimeout( function() {
+		$('#bottom-sheet-insertion-point').html('');
+	}, 1000);
 }
 
 function showDomainSheet(domain) {
@@ -55,16 +61,21 @@ function showDomainSheet(domain) {
 	for (i=0;i < domain.markers.length; i++) {
 		itemsHtml += createDomainListItem(domain.markers[i]);
 	}
-
+	
+	if (itemsHtml == '') {
+		itemsHtml = `
+			<div id='no-recordings'>
+				<p>There aren't any recordings yet, why don't you add one?</p>
+			</div>
+		`
+	}
+	
+	itemsHtml += "<button id='add-domain-sound' class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect' onClick='requestRecording("+domain.domainName+");'>Add a Sound</button><button class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect' onClick='closeDomainPanel()'>Close</button>";
 
 	var sheetHtml = `
 		<div class='right-panel'>
-
 				<span class='right-panel__title'>`+domain.domainName+`</span>
-				<button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" onClick='requestRecording("`+domain.domainName+`");'>
-					Add a Sound
-				</button>
-				<ul class='demo-list-two mdl-list'>
+				<ul class='mdl-list'>
 					`+itemsHtml+`
 				</ul>
 
@@ -72,12 +83,31 @@ function showDomainSheet(domain) {
 	`
 	
 	$('#bottom-sheet-insertion-point').html(sheetHtml);
+	setTimeout(function() {
+		$('.right-panel').addClass('slide-in');
+	}, 100);
+}
+
+function createBottomSheet(domain) {
+	var itemsHtml = '';
+
+	for (i=0;i < domain.markers.length; i++) {
+		itemsHtml += createDomainListItem(domain.markers[i]);
+	}
+	
+	var sheetHtml = `
+		<div id='bottom-sheet' class='modal bottom-sheet'>
+			<div class='modal-content'>
+				<h4>`+domain.domainName+`</h4>
+				`+itemsHtml+`
+			</div>
+		</div>
+	`
 }
 
 function createDomainListItem(item) {
 	return `<li class="mdl-list__item mdl-list__item--two-line">
 						<span class="mdl-list__item-primary-content">
-							<i class="material-icons mdl-list__item-avatar">pin</i>
 							<span>`+item['date']+`</span>
 							<span class="mdl-list__item-sub-title">
 								<audio controls>

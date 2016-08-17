@@ -13,9 +13,12 @@ function initMap() {
   });
 	
 	google.maps.event.addListener(map, 'idle', getMarkers);
-	
+	map.addListener('click', closeDomainPanel);
 	// Close navigation drawer on link click
-	$('#layout-drawer .mdl-navigation__link').click(function(){$('.mdl-layout__drawer').toggleClass('is-visible');});
+	//$('#layout-drawer .mdl-navigation__link').click(function(){$('.mdl-layout__drawer').toggleClass('is-visible');});
+	$('a').click( function() {
+		$( '.mdl-layout__drawer, .mdl-layout__obfuscator' ).removeClass( 'is-visible' );
+	});
 }
 
 function getMarkers() {
@@ -28,7 +31,7 @@ function getMarkers() {
 		type: "GET",
 		success: function(data) {
 			var domains = jQuery.parseJSON(data);
-			console.log(domains);
+//			console.log(domains);
 			for (d = 0; d<domains.length; d++)
 			{
 				if (domains[d].domainName == "null") {

@@ -21,15 +21,36 @@
 
 .right-panel {
 	position: absolute;
-	right: 0;
+	right: -450px;
 	top: 0;
 	z-index: 1050;
 	height: 100%;
 	background: #fafafa;
 	border-left: 1px solid #e0e0e0;
 	padding-bottom:0;
+	min-width: 200px;
+	
+	
+	transition-property: right;
+	transition-duration: 0.5s;
+	transition-timing-function: ease-in-out;
 }
 
 .right-panel__title {
-	margin: auto;
+	font-size: 24px;
+	line-height: 62px;
+	padding-left: 15px;
+}
+
+#add-domain-sound {
+	margin: 8px;
+}
+
+#no-recordings {
+	min-width: 300px;
+	padding: 10%;
+}
+
+.slide-in {
+	right: 0;
 }

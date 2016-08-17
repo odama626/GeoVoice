@@ -40,7 +40,7 @@ function startMediaStream(stream) {
 }
 
 function startRecording(domain = null) {
-	showLoading();
+	showLoadingWithTimeout()
 	soundInputInit().then(function(stream) {
 		hideLoading();
 		recorder && recorder.record();
@@ -69,7 +69,7 @@ function startRecording(domain = null) {
 function stopRecording(domain = null) {
 	recorder && recorder.stop();
 	
-	showLoading();
+	showLoadingWithTimeout()
 	recorder && recorder.exportWAV(function(blob) {
 		var file = new File([blob], 'temp.wav');
 		var url = URL.createObjectURL(file);
@@ -107,7 +107,7 @@ function stopRecording(domain = null) {
 }
 
 function requestRecording(domain = null) {
-	showLoading();
+	showLoadingWithTimeout()
 	soundInputInit().then(function(stream) {
 		hideLoading();
 		showDialog({
@@ -159,6 +159,13 @@ function uploadToServer(domain = null) {
 		});
 	
 	});
+}
+
+function showLoadingWithTimeout() {
+	showLoading();
+	setTimeout(function () {
+        hideLoading();
+    }, 3000);
 }
 
 function debugLog(text) {

@@ -16,7 +16,7 @@ var db;
 var httpsOptions = {
 	key: fs.readFileSync('ssl.key'),
 	cert: fs.readFileSync('ssl.cert'),
-	passphrase: 'SSL_PASSPHRASE_GOES_HERE'
+	passphrase: 'SSL_KEY_GOES_HERE'
 };
 
 // setup parsing of requests
