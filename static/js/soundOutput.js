@@ -70,7 +70,7 @@ function showDomainSheet(domain) {
 		`
 	}
 	
-	itemsHtml += "<button id='add-domain-sound' class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect' onClick='requestRecording("+domain.domainName+");'>Add a Sound</button><button class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect' onClick='closeDomainPanel()'>Close</button>";
+	itemsHtml += "<button id='add-domain-sound' class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect' onClick='requestRecording(\""+domain.domainName+"\");'>Add a Sound</button><button class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect' onClick='closeDomainPanel()'>Close</button>";
 
 	var sheetHtml = `
 		<div class='right-panel'>
