@@ -19,6 +19,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 loginManager = LoginManager()
 loginManager.init_app(app)
+loginManager.login_view = "login"
 
 sslContext = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
 sslContext.load_cert_chain('ssl.cert', 'ssl.key')
@@ -41,6 +42,22 @@ class User(UserMixin):
 def load_user(user_id):
 	return User.get(user_id)
 	
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']        
+        if password == username + "_secret":
+            id = username.split('user')[1]
+            user = User(id)
+            login_user(user)
+            return redirect(request.args.get("next"))
+        else:
+            return abort(401)
+    else:
+        return render_template('login.html')
+
+old_code = """
 @app.route('/login', methods=['GET','POST'])
 def login():
 	form = LoginForm()
@@ -54,8 +71,10 @@ def login():
 		
 		return flask.redirect(next or flask.url_for('index'))
 	return flask.render_template('login.html', form=form)
+"""
 	
 @app.route('/logout')
+@login_required
 def logout():
 	logout_user()
 	return redirect(somewhere)
@@ -114,6 +133,7 @@ def uploaded_file(filename):
 #################################
 
 @app.route('/')
+#@login_required
 def route_index():
 	return render_template('index.html')
 	
@@ -132,6 +152,6 @@ if __name__ == "__main__":
 			);
 			""");
 		conn.commit()
-			
+	app.config["SECRET_KEY"] = "ILikeBeef"
 	app.run('0.0.0.0', ssl_context=sslContext)
 		

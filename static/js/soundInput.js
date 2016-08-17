@@ -27,7 +27,7 @@ function soundInputInit() {
 					resolve(stream);
 				},function(e) {
 					debugLog('No live audio input: ' + e);
-				reject(e);
+					reject(e);
 			});
 		});
 }
@@ -50,7 +50,7 @@ function startRecording(domain = null) {
 		var timerInterval = setInterval(function() {
 			time+= 0.01
 			$('#recording-timer').text(time.toFixed(2));
-		}, 1000)
+		}, 1000);
 		
 		showDialog({
 			title: 'Recording',
@@ -63,6 +63,15 @@ function startRecording(domain = null) {
 				}
 			}
 		});
+	}, function(err) {
+			hideLoading();
+			showDialog({
+				title: 'Error',
+				text: 'You need to allow microphone access to use this feature',
+				positive: {
+					title: 'ok'
+				}
+			});
 	});
 }
 
@@ -136,6 +145,7 @@ function uploadToServer(domain = null) {
 			data.append('lng', loc.lng());
 			data.append('date', new Date().toDateString());
 			data.append('domain', domain);
+			map.panTo(loc);
 		
 				$.ajax({
 				url : "submit",
@@ -152,7 +162,7 @@ function uploadToServer(domain = null) {
 				error: function(e) {
 					var notification = document.querySelector('.mdl-js-snackbar');
 					notification.MaterialSnackbar.showSnackbar({
-						message: 'Error: '+e.toString()
+						message: 'Error sending sound: '+e.toString()
 					});
 				}
 			});

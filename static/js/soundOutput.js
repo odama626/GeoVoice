@@ -10,15 +10,16 @@ function placeSoundMarker(soundInfo) {
 	soundInfo['playing'] = false;
 	
 	var infoWindow = new google.maps.InfoWindow({
-		content: `
-			<h5>Created `+soundInfo['date']+ `</h5>
-			<audio controls>
-				<source type="audio/mpeg" src="`+soundInfo['sound']+`">
-			</audio>
-		`
 	});
 	
+	globalMarkerList.push(marker);
 	marker.addListener('click', function() {
+		$('audio').remove();
+		infoWindow.setContent(`
+				<h5>Created `+soundInfo['date']+ `</h5>
+				<audio controls>
+					<source type="audio/mpeg" src="`+soundInfo['sound']+`">
+				</audio>`);
 		infoWindow.open(map, marker);
 		
 	});
@@ -27,6 +28,7 @@ function placeSoundMarker(soundInfo) {
 		infoWindow.close();
 	});
 }
+
 
 function placeDomainMarker(domain) {
 	
@@ -42,6 +44,8 @@ function placeDomainMarker(domain) {
 		},
 		map_icon_label: '<span class="'+domain.iconCss+'"></span>'
 	});
+	
+	globalMarkerList.push(marker);
 	
 	marker.addListener('click', function() {
 		showDomainSheet(domain);

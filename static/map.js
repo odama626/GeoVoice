@@ -1,3 +1,6 @@
+var map;
+var globalMarkerList = [];
+
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: -34.397, lng: 150.644},
@@ -20,6 +23,14 @@ function initMap() {
 		$( '.mdl-layout__drawer, .mdl-layout__obfuscator' ).removeClass( 'is-visible' );
 	});
 }
+
+function clearMarkers() {
+	for (var i = 0; i< globalMarkerList.length; i++) {
+		globalMarkerList[i].setMap(null);
+	}
+	globalMarkerList = [];
+}
+
 
 function getMarkers() {
 	//var bounds = map.getBounds();
@@ -45,7 +56,10 @@ function getMarkers() {
 			}
 		},
 		error: function() {
-			alert("Error retrieving sound bytes");
+			var notification = document.querySelector('.mdl-js-snackbar');
+			notification.MaterialSnackbar.showSnackbar({
+				message: 'Error retrieving sound bytes'
+			});
 		}
 	});
 }
@@ -64,12 +78,6 @@ function smoothZoom (map, maxZoom, cnt) {
     }
 }
 
-function markRecordPoint() {
-	getLocation().then(function(place) {
-		placeMarker(place).click();
-	});
-}
-
 function placeMarker(place) {
 		if (typeof latLngMarker !== 'undefined') {
 			latLngMarker.setPosition(place);
@@ -79,7 +87,7 @@ function placeMarker(place) {
 			latLngMarker.click = function() { requestRecording(); }		
 			latLngMarker.addListener('click', latLngMarker.click);
 		}
-		map.panTo(place);
+		
 		smoothZoom(map, 100, map.getZoom());
 		return latLngMarker;
 }

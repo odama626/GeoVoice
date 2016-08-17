@@ -39,6 +39,7 @@ mongoClient.connect("mongodb://localhost:27017/geoVoice", function(err, database
 	
 	db = database;
 	markerCollection = db.collection('markers');
+//	markerCollection.drop();
 });
 
 
