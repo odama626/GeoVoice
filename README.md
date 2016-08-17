@@ -32,4 +32,7 @@
  - [ ] Use [Map Spiderfier](https://github.com/jawj/OverlappingMarkerSpiderfier)
  - [ ] Only send Marker information needed
  - [ ] Make adding markers to domains more intuitive/dynamic
+ - [ ] Implement User login
+ - [ ] Require User to be logged in to add recording/domain
+ - [ ] Show username on posted markers
 
