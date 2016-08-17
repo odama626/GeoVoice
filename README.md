@@ -28,4 +28,8 @@
   - If running locally, use 127.0.0.1
 7. Profit.
 
+## TODO
+ - [ ] Use [Map Spiderfier](https://github.com/jawj/OverlappingMarkerSpiderfier)
+ - [ ] Only send Marker information needed
+ - [ ] Make adding markers to domains more intuitive/dynamic
 
