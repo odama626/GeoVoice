@@ -16,7 +16,7 @@ var db;
 var httpsOptions = {
 	key: fs.readFileSync('ssl.key'),
 	cert: fs.readFileSync('ssl.cert'),
-	passphrase: 'SSL_KEY_GOES_HERE'
+	passphrase: 'PASSPHRASE_GOES_HERE'
 };
 
 // setup parsing of requests
@@ -44,6 +44,10 @@ mongoClient.connect("mongodb://localhost:27017/geoVoice", function(err, database
 
 app.get('/', function( req, res) {
 	res.render('index.html');
+});
+
+app.get('/login', function( req, res) {
+	res.render('login.html');
 });
 
 app.post('/submit', function(req, res) {
