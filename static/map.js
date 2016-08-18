@@ -12,17 +12,23 @@ function initMap() {
 		]
   });
   
-  getLocation().then(function(loc) {
-  	map.setCenter(loc);
-  });
-	
 	google.maps.event.addListener(map, 'idle', getMarkers);
 	map.addListener('click', closeDomainPanel);
+	
+	getLocation().then(function(loc) {
+  	map.setCenter(loc);
+  });
 	
 	// Close navigation drawer on <a> click
 	$('a').click( function() {
 		$( '.mdl-layout__drawer, .mdl-layout__obfuscator' ).removeClass( 'is-visible' );
 	});
+}
+
+function debugLog(text) {
+	if (_debug) {
+		console.log(text);
+	}
 }
 
 function clearMarkers() {
@@ -31,7 +37,6 @@ function clearMarkers() {
 	}
 	globalMarkerList = [];
 }
-
 
 function getMarkers() {
 	//var bounds = map.getBounds();

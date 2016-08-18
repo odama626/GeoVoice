@@ -18,7 +18,7 @@ function soundInputInit() {
 				debugLog('Audio context set up.');
 				debugLog('navigator.mediaDevices.getUserMedia ' + (userMedia ? 'available.' : 'not present!'));
 			} catch (e) {
-				alert('No web audio support in this browser!');
+				ui.alert('Error', 'No web audio support in this browser!');
 				reject(e);
 			}
 	
@@ -40,42 +40,36 @@ function startMediaStream(stream) {
 }
 
 function startRecording(domain = null) {
-	showLoadingWithTimeout()
+	ui.loading.show();
 	soundInputInit().then(function(stream) {
-		hideLoading();
+		ui.loading.hide();
 		recorder && recorder.record();
 		
 		ui.createDialog.recordTimer(domain);
 		
 	}, function(err) {
-			hideLoading();
-			showDialog({
-				title: 'Error',
-				text: 'You need to allow microphone access to use this feature',
-				positive: {
-					title: 'ok'
-				}
-			});
+			ui.loading.hide();
+			ui.alert('Error', 'You need to allow micrphone access to use this feature');
 	});
 }
 
 function stopRecording(domain = null) {
 	recorder && recorder.stop();
 	
-	showLoadingWithTimeout()
+	ui.loading.show();
 	recorder && recorder.exportWAV(function(blob) {
 		var file = new File([blob], 'temp.wav');
 		var url = URL.createObjectURL(file);
-		hideLoading();
+		ui.loading.hide();
 		ui.createDialog.recordPreview(domain, url);
 	});
 	//recorder.clear();
 }
 
 function requestRecording(domain = null) {
-	showLoadingWithTimeout()
+	ui.loading.show();
 	soundInputInit().then(function(stream) {
-		hideLoading();
+		ui.loading.hide();
 		ui.createDialog.requestRecording(domain);
 	});
 }
@@ -108,17 +102,4 @@ function uploadToServer(domain = null) {
 		});
 	
 	});
-}
-
-function showLoadingWithTimeout() {
-	showLoading();
-	setTimeout(function () {
-        hideLoading();
-    }, 3000);
-}
-
-function debugLog(text) {
-	if (_debug) {
-		console.log(text);
-	}
 }

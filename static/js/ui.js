@@ -1,5 +1,15 @@
 var ui = {
 
+	alert: function(title, text) {
+		showDialog({
+			title: title,
+			text: text,
+			positive: {
+				title: 'ok'
+			}
+		});
+	}, // alert
+
 	createDialog: {
 		
 		requestRecording: function(domain) {
@@ -165,7 +175,18 @@ var ui = {
 		notification.MaterialSnackbar.showSnackbar({
 			message: message
 		});
-	} // createSnack
-
-
+	}, // createSnack
+	
+	loading: {
+	
+		show: function(timeout = 3000) {
+			showLoading();
+			setTimeout(function() { ui.loading.hide() }, timeout);
+		}, // show
+		
+		hide: function() {
+			hideLoading();
+		} // hide
+		
+	} // loading
 };
