@@ -45,24 +45,8 @@ function startRecording(domain = null) {
 		hideLoading();
 		recorder && recorder.record();
 		
-		// Timer logic
-		var time = 0.00
-		var timerInterval = setInterval(function() {
-			time+= 0.01
-			$('#recording-timer').text(time.toFixed(2));
-		}, 1000);
+		ui.createDialog.recordTimer(domain);
 		
-		showDialog({
-			title: 'Recording',
-			text: '<h4><a id="recording-timer">0.00</a></h4>',
-			positive: {
-				title: 'done',
-				onClick: function(e) {
-					stopRecording(domain);
-					clearInterval(timerInterval);
-				}
-			}
-		});
 	}, function(err) {
 			hideLoading();
 			showDialog({
@@ -83,34 +67,7 @@ function stopRecording(domain = null) {
 		var file = new File([blob], 'temp.wav');
 		var url = URL.createObjectURL(file);
 		hideLoading();
-		showDialog({
-			title: 'Sound Good?',
-			text: `
-					<div>Do you want to make it public?</div>
-					<span>
-					<audio controls id="recording-player">
-						<source id="audio-source" type="audio/mpeg">
-						Your browser doesn't support playback
-					</audio>
-					</span>
-				`,
-			onLoaded: function(e) {
-				var player = $('#recording-player')
-				$('#audio-source').attr('src', url);
-				player[0].pause();
-				player[0].load();
-			},
-			positive: {
-				title: 'yes',
-				onClick: function(e) {
-					uploadToServer(domain);
-				}
-			},
-			negative: {
-				title: 'no'
-			}
-		
-		});
+		ui.createDialog.recordPreview(domain, url);
 	});
 	//recorder.clear();
 }
@@ -119,19 +76,7 @@ function requestRecording(domain = null) {
 	showLoadingWithTimeout()
 	soundInputInit().then(function(stream) {
 		hideLoading();
-		showDialog({
-			title: 'Record some audio',
-			text: 'Start recording?',
-			positive: {
-				title: 'yes',
-				onClick: function (e) {
-						startRecording(domain)
-					}
-				},
-			negative: {
-				title: 'cancel',
-				}
-			});
+		ui.createDialog.requestRecording(domain);
 	});
 }
 
