@@ -99,16 +99,10 @@ function uploadToServer(domain = null) {
 				contentType: false,
 				processData: false,
 				success: function(data) {
-					var notification = document.querySelector('.mdl-js-snackbar');
-					notification.MaterialSnackbar.showSnackbar({
-						message: 'Upload Completed'
-					});
+					ui.createSnack('Upload completed');
 				},
 				error: function(e) {
-					var notification = document.querySelector('.mdl-js-snackbar');
-					notification.MaterialSnackbar.showSnackbar({
-						message: 'Error sending sound: '+e.toString()
-					});
+					ui.createSnack('Error sending sound: '+e.toString());
 				}
 			});
 		});

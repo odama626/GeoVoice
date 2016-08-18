@@ -16,7 +16,7 @@ var ui = {
 					title: 'cancel',
 				}
 			});
-		},
+		}, // requestRecording
 		
 		recordPreview: function(domain, url) {
 			showDialog({
@@ -46,7 +46,7 @@ var ui = {
 					title: 'no'
 				}	
 			});
-		},
+		}, // recordPreview
 	
 		recordTimer: function(domain) {
 			// Timer logic
@@ -67,7 +67,7 @@ var ui = {
 					}
 				}
 			});
-		},
+		},// recordTimer
 		
 		addDomain: function() {
 			showDialog({
@@ -157,8 +157,15 @@ var ui = {
 				}
 		
 			});
-		},
-	}
+		}, // showDomain
+	}, // createDialog { }
+	
+	createSnack: function(message) {
+		var notification = document.querySelector('.mdl-js-snackbar');
+		notification.MaterialSnackbar.showSnackbar({
+			message: message
+		});
+	} // createSnack
 
 
 };

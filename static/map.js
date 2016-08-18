@@ -18,8 +18,8 @@ function initMap() {
 	
 	google.maps.event.addListener(map, 'idle', getMarkers);
 	map.addListener('click', closeDomainPanel);
-	// Close navigation drawer on link click
-	//$('#layout-drawer .mdl-navigation__link').click(function(){$('.mdl-layout__drawer').toggleClass('is-visible');});
+	
+	// Close navigation drawer on <a> click
 	$('a').click( function() {
 		$( '.mdl-layout__drawer, .mdl-layout__obfuscator' ).removeClass( 'is-visible' );
 	});
@@ -56,41 +56,10 @@ function getMarkers() {
 				}
 			}
 		},
-		error: function() {
-			var notification = document.querySelector('.mdl-js-snackbar');
-			notification.MaterialSnackbar.showSnackbar({
-				message: 'Error retrieving sound bytes'
-			});
+		error: function(e) {
+			ui.createSnack('Error retrieving sound markers: '+e.toString());
 		}
 	});
-}
-
-// the smooth zoom function
-function smoothZoom (map, maxZoom, cnt) {
-    if (cnt >= maxZoom) {
-        return;
-    }
-    else {
-        z = google.maps.event.addListener(map, 'zoom_changed', function(event){
-            google.maps.event.removeListener(z);
-            smoothZoom(map, maxZoom, cnt + 1);
-        });
-        setTimeout(function(){map.setZoom(cnt)}, 20);
-    }
-}
-
-function placeMarker(place) {
-		if (typeof latLngMarker !== 'undefined') {
-			latLngMarker.setPosition(place);
-		} else {
-			latLngMarker = new google.maps.Marker({position: place, map:map, title: "Add sound here"});
-		
-			latLngMarker.click = function() { requestRecording(); }		
-			latLngMarker.addListener('click', latLngMarker.click);
-		}
-		
-		smoothZoom(map, 100, map.getZoom());
-		return latLngMarker;
 }
 
 function getLocation() {
@@ -99,11 +68,11 @@ function getLocation() {
 		  navigator.geolocation.getCurrentPosition(function(position) {
 		  	resolve(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
 		  }, function() {
-		    handleLocationError(true, infoWindow, map.getCenter());
+		    ui.createSnack('The geolocation service failed');
 		  });
 		} else {
 		  // Browser doesn't support Geolocation
-		  handleLocationError(false, infoWindow, map.getCenter());
+		  ui.createSnack('You browser doesn\'t support geolocation.');
 		}
   });
 }
@@ -138,27 +107,14 @@ function createDomain(mapClasses, color, name) {
 		processData: false,
 		data: data,
 		success: function(data) {
-			var notification = document.querySelector('.mdl-js-snackbar');
-			notification.MaterialSnackbar.showSnackbar({
-				message: 'Successfully added'
-			});
+			ui.createSnack('Successfully added');
 		},
-		error: function(data) {
-			var notification = document.querySelector('.mdl-js-snackbar');
-			notification.MaterialSnackbar.showSnackbar({
-				message: 'Unknown error while adding'
-			});
+		error: function(e) {
+			ui.createSnack('Error while adding: '+e.toString());
 		}
 	});
 }
 
 function addDomain() {
 	ui.createDialog.addDomain();
-}
-
-function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-  infoWindow.setPosition(pos);
-  infoWindow.setContent(browserHasGeolocation ?
-                        'Error: The Geolocation service failed.' :
-                        'Error: Your browser doesn\'t support geolocation.');
 }
