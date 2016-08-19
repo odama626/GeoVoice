@@ -19,7 +19,7 @@ var ui = {
 				positive: {
 					title: 'yes',
 					onClick: function (e) {
-							startRecording(region)
+							sound.start(region)
 						}
 				},
 				negative: {
@@ -49,7 +49,7 @@ var ui = {
 				positive: {
 					title: 'yes',
 					onClick: function(e) {
-						uploadToServer(region);
+						sound.upload(region);
 					}
 				},
 				negative: {
@@ -72,7 +72,7 @@ var ui = {
 				positive: {
 					title: 'done',
 					onClick: function(e) {
-						stopRecording(region);
+						sound.stop(region);
 						clearInterval(timerInterval);
 					}
 				}

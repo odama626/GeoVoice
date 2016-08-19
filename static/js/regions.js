@@ -116,10 +116,10 @@ var regions = {
 			return `
 				<li class="mdl-list__item mdl-list__item--two-line">
 					<span class="mdl-list__item-primary-content">
-						<span>`+item['date']+`</span>
+						<span>`+item.date+`</span>
 						<span class="mdl-list__item-sub-title">
 							<audio controls>
-								<source type='audio/mpeg' src='`+item['sound']+`'>
+								<source type='audio/mpeg' src='`+item.sound+`'>
 							</audio>
 						</span>
 					</span>

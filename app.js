@@ -67,6 +67,7 @@ app.post('/submit', function(req, res) {
 	{ upsert: true }	
 	);
 	console.log("Added new sound marker");
+	res.end('SUCCESS');
 });
 
 app.post('/submit_region', function(req, res) {
@@ -79,6 +80,7 @@ app.post('/submit_region', function(req, res) {
 		"markers": []
 	};
 	markerCollection.insert(region);
+	res.end('SUCCESS');
 	console.log("Added new marker region");
 });
 

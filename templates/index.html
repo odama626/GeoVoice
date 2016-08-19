@@ -34,7 +34,7 @@
     			<nav class="mdl-navigation">
     			
     				<!-- Nav Buttons Toolbar -->
-    				<a class="mdl-navigation__link" onClick="requestRecording()">
+    				<a class="mdl-navigation__link" onClick="sound.request()">
     					<i class="material-icons">record_voice_over</i>
     					Record
   					</a>
@@ -52,7 +52,7 @@
     		<span class="mdl-layout__title">GeoVoice</span>
     		<nav class="mdl-navigation">
     			<!-- Nav Buttons Menu -->
-  				<a class="mdl-navigation__link" onClick="requestRecording()">
+  				<a class="mdl-navigation__link" onClick="sound.request()">
   					<i class="material-icons">record_voice_over</i>
   					Record
 					</a>
@@ -84,8 +84,8 @@
 		<script defer src="js/ui.js"></script>
 		<script defer src="js/markers.js"></script>
 		<script defer src="js/regions.js"></script>
-		<script defer src="js/soundInput.js"></script>
-		<script defer src="js/soundOutput.js"></script>
+		<script defer src="js/sound.js"></script>
+		<!-- remove <script defer src="js/soundInput.js"></script> -->
 		<script defer src="map.js"></script>
 		
 		<!-- js Libraries -->
@@ -95,8 +95,10 @@
 
 		<!-- External js includes -->
 		<script defer src="js/ext/mdl-jquery-modal-dialog.js"></script>
-		<script defer src="js/ext/recorder.js"></script>
-		<script defer src="js/ext/bowser.min.js"></script>
+		<script defer src="js/ext/adapter.js"></script>
+		<script defer src="js/ext/web-audio-recorder/WebAudioRecorder.min.js"></script>
+		<!-- remove <script defer src="js/ext/recorder.js"></script> -->
+		<!-- remove <script defer src="js/ext/bowser.min.js"></script> -->
 		<script defer src="js/ext/map-icons.js"></script>
 		<script defer src="js/ext/spectrum.js"></script>
 		
