@@ -52,7 +52,7 @@ var regions = {
 			map_icon_label: '<span class="'+region.iconCss+'"></span>'
 		});
 	
-		globalMarkerList.push(marker);
+		markers.list.push(marker);
 	
 		marker.addListener('click', function() {
 			regions.panel.open(region);
