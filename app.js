@@ -55,12 +55,12 @@ app.post('/submit', function(req, res) {
 	var doc = { 
 		"lat": req.body.lat,
 		"lng": req.body.lng,
-		"domain": req.body.domain,
+		"region": req.body.region,
 		"date": req.body.date,
 		"sound": req.files[0].filename
 	};
 	markerCollection.update(
-	{ domainName: req.body.domain },
+	{ regionName: req.body.region },
 	{
 		$push: { markers: doc }
 	},
@@ -69,28 +69,23 @@ app.post('/submit', function(req, res) {
 	console.log("Added new sound marker");
 });
 
-app.post('/submit_domain', function(req, res) {
-	var domain = {
-		"domainName": req.body.domainName,
+app.post('/submit_region', function(req, res) {
+	var region = {
+		"regionName": req.body.regionName,
 		"lat": req.body.lat,
 		"lng": req.body.lng,
 		"color": req.body.color,
 		"iconCss": req.body.iconCss,
 		"markers": []
 	};
-	markerCollection.insert(domain);
-	console.log("Added new marker domain");
+	markerCollection.insert(region);
+	console.log("Added new marker region");
 });
 
 app.get('/get_markers', function(req, res) {
-	/*markerCollection.findOne({ "domainName" : 'null' }, function(err, items) {
-		res.send(JSON.stringify(items.markers, null, 2));
-	});*/
-	
 	markerCollection.find().toArray( function(err, items) {
 		res.send(JSON.stringify(items, null, 2));
 	});
-	
 	
 	console.log("Sending markers");
 });

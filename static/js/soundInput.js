@@ -39,13 +39,13 @@ function startMediaStream(stream) {
 	debugLog('Recorder initialized');
 }
 
-function startRecording(domain = null) {
+function startRecording(region = null) {
 	ui.loading.show();
 	soundInputInit().then(function(stream) {
 		ui.loading.hide();
 		recorder && recorder.record();
 		
-		ui.createDialog.recordTimer(domain);
+		ui.createDialog.recordTimer(region);
 		
 	}, function(err) {
 			ui.loading.hide();
@@ -53,7 +53,7 @@ function startRecording(domain = null) {
 	});
 }
 
-function stopRecording(domain = null) {
+function stopRecording(region = null) {
 	recorder && recorder.stop();
 	
 	ui.loading.show();
@@ -61,20 +61,20 @@ function stopRecording(domain = null) {
 		var file = new File([blob], 'temp.wav');
 		var url = URL.createObjectURL(file);
 		ui.loading.hide();
-		ui.createDialog.recordPreview(domain, url);
+		ui.createDialog.recordPreview(region, url);
 	});
 	//recorder.clear();
 }
 
-function requestRecording(domain = null) {
+function requestRecording(region = null) {
 	ui.loading.show();
 	soundInputInit().then(function(stream) {
 		ui.loading.hide();
-		ui.createDialog.requestRecording(domain);
+		ui.createDialog.requestRecording(region);
 	});
 }
 
-function uploadToServer(domain = null) {
+function uploadToServer(region = null) {
 	recorder && recorder.exportWAV(function(blob) {
 		var filename = new Date().toISOString() + '.wav';
 		var data = new FormData();
@@ -83,8 +83,10 @@ function uploadToServer(domain = null) {
 			data.append('lat', loc.lat());
 			data.append('lng', loc.lng());
 			data.append('date', new Date().toDateString());
-			data.append('domain', domain);
-			map.panTo(loc);
+			data.append('region', region);
+			if (region == null) {
+				map.panTo(loc);
+			}
 		
 				$.ajax({
 				url : "submit",

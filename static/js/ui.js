@@ -12,14 +12,14 @@ var ui = {
 
 	createDialog: {
 		
-		requestRecording: function(domain) {
+		requestRecording: function(region) {
 			showDialog({
 				title: 'Record some audio',
 				text: 'Start recording?',
 				positive: {
 					title: 'yes',
 					onClick: function (e) {
-							startRecording(domain)
+							startRecording(region)
 						}
 				},
 				negative: {
@@ -28,7 +28,7 @@ var ui = {
 			});
 		}, // requestRecording
 		
-		recordPreview: function(domain, url) {
+		recordPreview: function(region, url) {
 			showDialog({
 				title: 'Sound Good?',
 				text: `
@@ -49,7 +49,7 @@ var ui = {
 				positive: {
 					title: 'yes',
 					onClick: function(e) {
-						uploadToServer(domain);
+						uploadToServer(region);
 					}
 				},
 				negative: {
@@ -58,7 +58,7 @@ var ui = {
 			});
 		}, // recordPreview
 	
-		recordTimer: function(domain) {
+		recordTimer: function(region) {
 			// Timer logic
 			var time = 0.00
 			var timerInterval = setInterval(function() {
@@ -72,32 +72,32 @@ var ui = {
 				positive: {
 					title: 'done',
 					onClick: function(e) {
-						stopRecording(domain);
+						stopRecording(region);
 						clearInterval(timerInterval);
 					}
 				}
 			});
 		},// recordTimer
 		
-		addDomain: function() {
+		addRegion: function() {
 			showDialog({
-				title: "Add Domain",
+				title: "Add Region",
 				text: `
 					<form>
 						<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-							<input class="mdl-textfield__input" type="text" id="domain-name">
+							<input class="mdl-textfield__input" type="text" id="region-name">
 							<label class="mdl-textfield__label" for="location">Name Place</label>
 						</div>
 					</form>
 					<form>
 						<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-							<input class="mdl-textfield__input" type="text" id="domain-location">
-							<label class="mdl-textfield__label" for="domain-location">Enter a location</label>
+							<input class="mdl-textfield__input" type="text" id="region-location">
+							<label class="mdl-textfield__label" for="region-location">Enter a location</label>
 						</div>
 					</form>
-					<div id='domain-color' data-color='#1998F7'>
+					<div id='region-color' data-color='#1998F7'>
 						Pick a color
-						<input type='text' id='domain-palette'></input>
+						<input type='text' id='region-palette'></input>
 					</div>
 					<div>
 						<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="flash1">
@@ -135,11 +135,11 @@ var ui = {
 					</div>
 				`,
 				onLoaded: function(e) {
-					var input = $('#domain-location');
+					var input = $('#region-location');
 					autocomplete = new google.maps.places.Autocomplete(input[0]);
 					autocomplete.bindTo('bounds', map);	
 			
-					$('#domain-palette').spectrum({
+					$('#region-palette').spectrum({
 						showPaletteOnly: true,
 						togglePaletteOnly: true,
 						togglePaletteMoreText: 'more',
@@ -150,24 +150,25 @@ var ui = {
 							['#00CCBB','#1998F7', '#6331AE'],
 						],
 						change: function(color) {
-							$('#domain-color').attr('data-color',color.toHexString());
+							$('#region-color').attr('data-color',color.toHexString());
 						}
 					});
 				},
 				positive: {
 					title: 'okay',
 					onClick: function(e) {
-						var color = $('#domain-color').data('color');
+						var color = $('#region-color').data('color');
 						var radioLabels = $('label.is-checked');
 						var icon = radioLabels.children('span');
-						var name = $('#domain-name').val();
+						var name = $('#region-name').val();
 						icon.removeClass('radio-map-icon');
-						createDomain(icon.attr('class'), color, name);
+						var region = { icon: icon.attr('class'), color: color, regionName: name};
+						regions.create(region);
 					}
 				}
 		
 			});
-		}, // showDomain
+		}, // addRegion
 	}, // createDialog { }
 	
 	createSnack: function(message) {

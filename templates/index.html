@@ -56,15 +56,17 @@
   					<i class="material-icons">record_voice_over</i>
   					Record
 					</a>
-					<a class="mdl-navigation__link" onClick="addDomain()">
-						Add Domain
+					<a class="mdl-navigation__link" onClick="ui.createDialog.addRegion()">
+						Add Region
 					</a>
 					<a class="mdl-navigation__link" href="login">
 						Login
 					</a>
   			</nav>
     	</div>
-    	<div id='bottom-sheet-insertion-point'></div>
+    	
+    	<!-- Region Panel -->
+    	<div id='region-panel-container'></div>
     	
 			<div id="map"></div>
 			 
@@ -80,6 +82,7 @@
 		<script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 		
 		<script defer src="js/ui.js"></script>
+		<script defer src="js/regions.js"></script>
 		<script defer src="js/soundInput.js"></script>
 		<script defer src="js/soundOutput.js"></script>
 		<script defer src="map.js"></script>

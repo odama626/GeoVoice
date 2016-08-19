@@ -13,7 +13,7 @@ function initMap() {
   });
   
 	google.maps.event.addListener(map, 'idle', getMarkers);
-	map.addListener('click', closeDomainPanel);
+	map.addListener('click', regions.panel.close);
 	
 	getLocation().then(function(loc) {
   	map.setCenter(loc);
@@ -47,17 +47,17 @@ function getMarkers() {
 		url : "get_markers",
 		type: "GET",
 		success: function(data) {
-			var domains = jQuery.parseJSON(data);
-//			console.log(domains);
-			for (d = 0; d<domains.length; d++)
+			var regionList = jQuery.parseJSON(data);
+//			console.log(regionList);
+			for (d = 0; d<regionList.length; d++)
 			{
-				if (domains[d].domainName == "null") {
-					var markers = domains[d].markers;
+				if (regionList[d].regionName == "null") {
+					var markers = regionList[d].markers;
 					for (i = 0; i<markers.length; i++) {
 						placeSoundMarker(markers[i]);
 					}
 				} else {
-					placeDomainMarker(domains[d]);
+					regions.place(regionList[d]);
 				}
 			}
 		},
@@ -80,46 +80,4 @@ function getLocation() {
 		  ui.createSnack('You browser doesn\'t support geolocation.');
 		}
   });
-}
-
-function createDomain(mapClasses, color, name) {
-	var location = autocomplete.getPlace().geometry.location
-
-	var marker = new Marker({
-		map:map,
-		position: location,
-		icon: {
-			path: ROUTE,
-			fillColor: color,
-			fillOpacity: 1,
-			strokeColor: '',
-			strokeWeight: 0
-		},
-		map_icon_label: '<span class="'+mapClasses+'"></span>'
-	});
-	
-	var data = new FormData();
-	data.append('domainName', name);
-	data.append('lat', location.lat());
-	data.append('lng', location.lng());
-	data.append('color', color);
-	data.append('iconCss', mapClasses);
-	
-	$.ajax({
-		url: 'submit_domain',
-		type: 'POST',
-		contentType: false,
-		processData: false,
-		data: data,
-		success: function(data) {
-			ui.createSnack('Successfully added');
-		},
-		error: function(e) {
-			ui.createSnack('Error while adding: '+e.toString());
-		}
-	});
-}
-
-function addDomain() {
-	ui.createDialog.addDomain();
 }
