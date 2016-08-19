@@ -91,7 +91,7 @@ var ui = {
 					</form>
 					<form>
 						<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-							<input class="mdl-textfield__input" type="text" id="region-location">
+							<input required class="mdl-textfield__input" type="text" id="region-location">
 							<label class="mdl-textfield__label" for="region-location">Enter a location</label>
 						</div>
 					</form>

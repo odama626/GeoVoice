@@ -1,6 +1,7 @@
 var markers = {
 
 	list: [],
+	oms: undefined, // OverlappingMarkerSpiderfier
 
 	place: function(info) {
 		var marker = new google.maps.Marker({
@@ -8,12 +9,31 @@ var markers = {
 			map:map,
 			label: info.date
 		});
+		
+		marker.info = info;
+		
+		if (this.oms === undefined) { // setup spiderfier if undefined
+			this.oms = new OverlappingMarkerSpiderfier(map);
+			
+			var infoWindow = new google.maps.InfoWindow();
+			
+			this.oms.addListener('click', function(marker, event) {
+				$('audio').remove();
+				infoWindow.setContent(`
+						<h5>Created `+marker.info.date+ `</h5>
+						<audio controls>
+							<source type="audio/mpeg" src="`+marker.info.sound+`">
+						</audio>`);
+				infoWindow.open(map, marker);
+			});
+		}
 	
 		markers.list.push(marker);
+		this.oms.addMarker(marker);
 	
-		var infoWindow = new google.maps.InfoWindow();
-	
-		marker.addListener('click', function() {
+//		var infoWindow = new google.maps.InfoWindow();
+/*	
+		this.oms.addListener('click', function(marker, event) {
 			$('audio').remove();
 			infoWindow.setContent(`
 					<h5>Created `+info.date+ `</h5>
@@ -27,6 +47,7 @@ var markers = {
 				google.maps.event.removeListener(listener);
 			});
 		});
+		*/
 	}, // place
 	
 	fetch: function() {
@@ -39,7 +60,7 @@ var markers = {
 			type: "GET",
 			success: function(data) {
 				var regionList = jQuery.parseJSON(data);
-
+				markers.clear();
 				for (d = 0; d<regionList.length; d++)
 				{
 					if (regionList[d].regionName == "null") {
@@ -61,6 +82,9 @@ var markers = {
 	clear: function() {
 		for (var i = 0; i< markers.list.length; i++) {
 			markers.list[i].setMap(null);
+		}
+		if (this.oms !== undefined) {
+			this.oms.clearMarkers();
 		}
 		markers.list = [];
 	} // clear
