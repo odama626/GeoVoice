@@ -110,7 +110,6 @@ var regions = {
 			setTimeout( function() {
 				$('#region-panel-container').html('');
 			}, 1000);
-			console.log('closing panel');
 		}, // close
 		
 		generateItem: function(item) {
@@ -127,4 +126,4 @@ var regions = {
 				</li>`;
 		} // generateItem
 	} // panel
-};
+}; // regions

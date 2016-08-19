@@ -1,6 +1,5 @@
 var audioContext;
 var recorder;
-var _debug = true;
 
 function soundInputInit() {
 		return new Promise(function(resolve, reject) {

@@ -190,4 +190,4 @@ var ui = {
 		} // hide
 		
 	} // loading
-};
+}; // ui
