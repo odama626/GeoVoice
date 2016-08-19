@@ -30,7 +30,7 @@
 
 ## TODO
  - [ ] Use [Map Spiderfier](https://github.com/jawj/OverlappingMarkerSpiderfier)
- - [x] -convert media to mp3 before upload using [web-audio-recorder](https://github.com/higuma/web-audio-recorder-js/blob/gh-pages/js/RecorderDemo.js)
+ - [x] Convert media to mp3 before upload using [web-audio-recorder](https://github.com/higuma/web-audio-recorder-js/blob/gh-pages/js/RecorderDemo.js)
  - [ ] Only send Marker information needed
  - [ ] Make adding markers to domains more intuitive/dynamic
  - [ ] Implement User login
