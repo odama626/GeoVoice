@@ -15,7 +15,6 @@ var markers = {
 		marker.info = info;
 		
 		if (this.oms === undefined) { // setup spiderfier if undefined
-			console.log('creating oms');
 			this.oms = new OverlappingMarkerSpiderfier(map);
 			
 			this.infoWindow = new google.maps.InfoWindow();

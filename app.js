@@ -4,7 +4,7 @@ var	fs = require('fs');
 var	https = require('https');
 var	multer = require('multer');
 var	mongoClient = require('mongodb').MongoClient;
-var siteData = require('./site-data');
+var siteData = require('./site-data').siteData;
 
 var app = express();
 var port = 5000;

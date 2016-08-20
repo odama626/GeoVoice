@@ -2,17 +2,20 @@ var sound = {
 
 	recorder: null,
 	file: null,
-	mixer: undefined,
+	mediaStream: undefined,
+	audioContext: undefined,
 		
 	request: function(region = null) {
 		ui.loading.show();
 		navigator.getUserMedia({ audio: true },
 			stream => {
-				if (this.mixer === undefined) { // only create audioContext if it doesn't already exist
-					var audioContext = new AudioContext();
-					this.mixer = audioContext.createMediaStreamSource(stream);
+				if (this.audioContext === undefined) { // only create audioContext if it doesn't already exist
+					this.audioContext = new AudioContext();
 				}
-				this.recorder = new WebAudioRecorder(this.mixer, { 
+				this.mediaStream = stream;
+				var mixer = this.audioContext.createMediaStreamSource(this.mediaStream);
+				
+				this.recorder = new WebAudioRecorder(mixer, { 
 					workerDir: 'js/ext/web-audio-recorder/',
 					encoding: "mp3"
 				});
@@ -73,10 +76,12 @@ var sound = {
 	
 	_setRecorderEvents: function(region = null) {
 		this.recorder.onComplete = (recorder, blob) => {
-			var file = new File([blob], new Date().toISOString() + '.mp3');
-			var url = URL.createObjectURL(file);
+			this.file = new File([blob], new Date().toISOString() + '.mp3');
+			var url = URL.createObjectURL(this.file);
 			
-			this.file = file;
+			// close audio input
+			this.mediaStream.getTracks()[0].stop();
+			
 			ui.loading.hide();
 			ui.createDialog.recordPreview(region, url);
 		};
