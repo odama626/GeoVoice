@@ -1,27 +1,21 @@
 var regions = {
 
+	list: [],
+
 	create: function(region) {
 		var location = autocomplete.getPlace().geometry.location
-
-		var marker = new Marker({
-			map:map,
-			position: location,
-			icon: {
-				path: ROUTE,
-				fillColor: region.color,
-				fillOpacity: 1,
-				strokeColor: '',
-				strokeWeight: 0
-			},
-			map_icon_label: '<span class="'+region.icon+'"></span>'
-		});
+		
+		region.lat = location.lat();
+		region.lng = location.lng();
+		
+		this.place(region);
 	
 		var data = new FormData();
 		data.append('regionName', region.regionName);
-		data.append('lat', location.lat());
-		data.append('lng', location.lng());
+		data.append('lat', region.lat);
+		data.append('lng', region.lng);
 		data.append('color', region.color);
-		data.append('iconCss', region.icon);
+		data.append('icon', region.icon);
 	
 		$.ajax({
 			url: 'submit_region',
@@ -49,10 +43,11 @@ var regions = {
 				strokeColor: '',
 				strokeWeight: 0
 			},
-			map_icon_label: '<span class="'+region.iconCss+'"></span>'
+			map_icon_label: '<span class="map-icon '+region.icon+'"></span>'
 		});
 	
 		markers.list.push(marker);
+		this.list[region.regionName] = region;
 	
 		marker.addListener('click', function() {
 			regions.panel.open(region);
@@ -79,7 +74,7 @@ var regions = {
 			itemsHtml += `
 				<button id='add-region-sound'
 					class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect' 
-					onClick='requestRecording("`+region.regionName+`");'>
+					onClick='sound.request("`+region.regionName+`");'>
 					
 					Add a Sound
 				</button>

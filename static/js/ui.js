@@ -80,93 +80,71 @@ var ui = {
 		},// recordTimer
 		
 		addRegion: function() {
-			showDialog({
-				title: "Add Region",
-				text: `
-					<form>
-						<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-							<input class="mdl-textfield__input" type="text" id="region-name">
-							<label class="mdl-textfield__label" for="location">Name Place</label>
-						</div>
-					</form>
-					<form>
-						<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-							<input required class="mdl-textfield__input" type="text" id="region-location">
-							<label class="mdl-textfield__label" for="region-location">Enter a location</label>
-						</div>
-					</form>
-					<div id='region-color' data-color='#1998F7'>
-						Pick a color
-						<input type='text' id='region-palette'></input>
-					</div>
-					<div>
-						<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="flash1">
-							<input checked class="mdl-radio__button" id="flash1" name="flash" type="radio"
-							 value="on">
-							<span class="map-icon map-icon-courthouse radio-map-icon"></span>
-						</label>
-						<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="flash2">
-							<input checked class="mdl-radio__button" id="flash2" name="flash" type="radio"
-							 value="auto">
-							<span class="map-icon map-icon-city-hall radio-map-icon"></span>
-						</label>
-						<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="flash3">
-							<input checked class="mdl-radio__button" id="flash3" name="flash" type="radio"
-							 value="auto">
-							<span class="map-icon map-icon-grocery-or-supermarket radio-map-icon"></span>
-						</label>
-					</div>
-					<div>
-						<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="flash4">
-							<input checked class="mdl-radio__button" id="flash4" name="flash" type="radio"
-							 value="auto">
-							<span class="map-icon map-icon-transit-station radio-map-icon"></span>
-						</label>
-						<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="flash5">
-							<input checked class="mdl-radio__button" id="flash5" name="flash" type="radio"
-							 value="auto">
-							<span class="map-icon map-icon-police radio-map-icon"></span>
-						</label>
-						<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="flash6">
-							<input checked class="mdl-radio__button" id="flash6" name="flash" type="radio"
-							 value="auto">
-							<span class="map-icon map-icon-point-of-interest radio-map-icon"></span>
-						</label>
-					</div>
-				`,
-				onLoaded: function(e) {
-					var input = $('#region-location');
-					autocomplete = new google.maps.places.Autocomplete(input[0]);
-					autocomplete.bindTo('bounds', map);	
+		
+			$.ajax({
+				url: 'dialogs/addRegion.html',
+				type: 'GET',
+				contentType: false,
+				processData: false,
+				success: function(data) {
+					showDialog({
+						title: 'Add Region',
+						text: data,
+						onLoaded: function(e) {
+							var input = $('#region-location');
+							autocomplete = new google.maps.places.Autocomplete(input[0]);
+							autocomplete.bindTo('bounds', map);	
+							
+							// accordian animation
+							$('.accordian-expand').click( () => $('.accordian-content').toggleClass('open'));
+						 	
+						 	// icon selection
+						 	$('.map-marker').click((event) => {
+						 		var icon = $(event.target).attr('id');
+						 		$('#selected-icon').
+						 			attr('class','map-icon radio-map-icon '+ icon).
+						 			attr('data-icon',icon);
+					 			$('.accordian-content').toggleClass('open');
+					 		});
+					 		
+							//set initial icon
+							$('.map-icon-point-of-interest').prop('checked', true);
+							$('#selected-icon').
+								attr('class', 'map-icon radio-map-icon map-icon-point-of-interest').
+								attr('data-icon', 'map-icon-point-of-interest');
+							 
 			
-					$('#region-palette').spectrum({
-						showPaletteOnly: true,
-						togglePaletteOnly: true,
-						togglePaletteMoreText: 'more',
-						togglePaletteLessText: 'less',
-						hideAfterPaletteSelect: true,
-						color: '#1998F7',
-						palette: [
-							['#00CCBB','#1998F7', '#6331AE'],
-						],
-						change: function(color) {
-							$('#region-color').attr('data-color',color.toHexString());
+							$('#region-palette').spectrum({ // Color picker
+								showPaletteOnly: true,
+								togglePaletteOnly: true,
+								togglePaletteMoreText: 'more',
+								togglePaletteLessText: 'less',
+								hideAfterPaletteSelect: true,
+								color: '#1998F7',
+								palette: [
+									['#00CCBB','#1998F7', '#6331AE'],
+								],
+								change: function(color) {
+									$('#region-color').attr('data-color',color.toHexString());
+								}
+							});
+							
+						},
+						positive: {
+							title: 'okay',
+							onClick: function(e) {
+								var color = $('#region-color').data('color');
+								var icon = $('#selected-icon').attr('data-icon');
+								var name = $('#region-name').val();
+								var region = { icon: icon, color: color, regionName: name};
+								regions.create(region);
+							}
 						}
 					});
 				},
-				positive: {
-					title: 'okay',
-					onClick: function(e) {
-						var color = $('#region-color').data('color');
-						var radioLabels = $('label.is-checked');
-						var icon = radioLabels.children('span');
-						var name = $('#region-name').val();
-						icon.removeClass('radio-map-icon');
-						var region = { icon: icon.attr('class'), color: color, regionName: name};
-						regions.create(region);
-					}
+				error: function(e) {
+					ui.createSnack('Couldn\'t fetch dialog');
 				}
-		
 			});
 		}, // addRegion
 	}, // createDialog { }

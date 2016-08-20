@@ -1,15 +1,18 @@
-var express = require('express'),
-	nunjucks = require('nunjucks'),
-	fs = require('fs'),
-	https = require('https'),
-	multer = require('multer'),
-	mongoClient = require('mongodb').MongoClient;
+var express = require('express');
+var nunjucks = require('nunjucks');
+var	fs = require('fs');
+var	https = require('https');
+var	multer = require('multer');
+var	mongoClient = require('mongodb').MongoClient;
+var siteData = require('./site-data');
 
 var app = express();
 var port = 5000;
 var database;
 var markerCollection;
 var db;
+
+// TODO move to json files
 
 // setup HTTPS
 
@@ -47,6 +50,10 @@ app.get('/', function( req, res) {
 	res.render('index.html');
 });
 
+app.get('/dialogs/:filename', function ( req, res) {
+	res.render(req.originalUrl.substr(1), { regionIcons: siteData.dialog.regionIcons });
+});
+
 app.get('/login', function( req, res) {
 	res.render('login.html');
 });
@@ -60,7 +67,7 @@ app.post('/submit', function(req, res) {
 		"sound": req.files[0].filename
 	};
 	markerCollection.update(
-	{ regionName: req.body.region },
+	{ regionName: req.body.region},
 	{
 		$push: { markers: doc }
 	},
@@ -76,7 +83,7 @@ app.post('/submit_region', function(req, res) {
 		"lat": req.body.lat,
 		"lng": req.body.lng,
 		"color": req.body.color,
-		"iconCss": req.body.iconCss,
+		"icon": req.body.icon,
 		"markers": []
 	};
 	markerCollection.insert(region);
@@ -91,7 +98,6 @@ app.get('/get_markers', function(req, res) {
 	
 	console.log("Sending markers");
 });
-
 
 var server = https.createServer(httpsOptions, app).listen(port, function() {
 	console.log("Express server listening on port "+ port);

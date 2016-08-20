@@ -2,6 +2,8 @@ var markers = {
 
 	list: [],
 	oms: undefined, // OverlappingMarkerSpiderfier
+	infoWindow: undefined,
+	
 
 	place: function(info) {
 		var marker = new google.maps.Marker({
@@ -13,48 +15,36 @@ var markers = {
 		marker.info = info;
 		
 		if (this.oms === undefined) { // setup spiderfier if undefined
+			console.log('creating oms');
 			this.oms = new OverlappingMarkerSpiderfier(map);
 			
-			var infoWindow = new google.maps.InfoWindow();
+			this.infoWindow = new google.maps.InfoWindow();
 			
 			this.oms.addListener('click', function(marker, event) {
 				$('audio').remove();
-				infoWindow.setContent(`
+				markers.infoWindow.setContent(`
 						<h5>Created `+marker.info.date+ `</h5>
 						<audio controls>
 							<source type="audio/mpeg" src="`+marker.info.sound+`">
 						</audio>`);
-				infoWindow.open(map, marker);
+				markers.infoWindow.open(map, marker);
 			});
 		}
 	
 		markers.list.push(marker);
 		this.oms.addMarker(marker);
-	
-//		var infoWindow = new google.maps.InfoWindow();
-/*	
-		this.oms.addListener('click', function(marker, event) {
-			$('audio').remove();
-			infoWindow.setContent(`
-					<h5>Created `+info.date+ `</h5>
-					<audio controls>
-						<source type="audio/mpeg" src="`+info.sound+`">
-					</audio>`);
-			infoWindow.open(map, marker);
-		
-			var listener = map.addListener('click', function() {
-				infoWindow.close();
-				google.maps.event.removeListener(listener);
-			});
-		});
-		*/
 	}, // place
 	
 	fetch: function() {
 		//var bounds = map.getBounds();
 		// TODO create ajax request for markers, then delete current markers and show new
 		// https://developers.google.com/maps/articles/toomanymarkers#distancebasedclustering	
-	
+		
+		// Dont refresh markers if InfoWindow is open
+		if (markers.infoWindowIsOpen()) {
+			return;
+		}
+		
 		$.ajax({
 			url : "get_markers",
 			type: "GET",
@@ -87,6 +77,14 @@ var markers = {
 			this.oms.clearMarkers();
 		}
 		markers.list = [];
-	} // clear
+	}, // clear
+	
+	infoWindowIsOpen: function () {
+		if (this.infoWindow !== null && typeof this.infoWindow !== 'undefined') {
+			var map = this.infoWindow.getMap();
+			return (map !== null && typeof map !== "undefined");
+		}
+		return false;
+	}
 	
 }; // markers

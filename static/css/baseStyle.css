@@ -54,3 +54,55 @@
 .slide-in {
 	right: 0;
 }
+
+input.map-marker {
+	visibility: hidden;
+}
+
+input.map-marker:checked + label {
+	border-bottom: 3px solid lightgreen;
+}
+
+.accordian {
+	font-family: Roboto;
+	overflow: hidden;
+	border: 1px solid lightgrey;
+	margin: 8px 0 8px 0;
+}
+
+.accordian-content {
+	border-top: 1px solid lightgrey;
+	height: 0;
+	
+	transition-property: height;
+	transition-duration: 1s;
+	transition-timing-function: ease-in-out;
+}
+
+.accordian-content.open {
+	height: auto;
+}
+
+.accordian-title, .accordian-expand {
+	font-weight: 400;
+	line-height: 36px;
+	font-size: 20px;
+	
+	padding: 0 16px 0 24px;
+}
+
+.accordian-expand {
+	float: right;
+	color: black;
+	padding: 0 24px 0 16px;
+	
+	
+}
+
+
+
+
+
+
+
+

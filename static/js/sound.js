@@ -91,6 +91,4 @@ var sound = {
 		};
 	} // _setRecorderEvents
 	
-	
-	
 }; // soundHandler

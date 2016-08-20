@@ -1,0 +1,70 @@
+<form>
+	<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+		<input class="mdl-textfield__input" type="text" id="region-name">
+		<label class="mdl-textfield__label" for="location">Name Place</label>
+	</div>
+</form>
+<form>
+	<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+		<input class="mdl-textfield__input" type="text" id="region-location">
+		<label class="mdl-textfield__label" for="region-location">Enter a location</label>
+	</div>
+</form>
+<div id='region-color' data-color='#1998F7'>
+	Pick a color
+	<input type='text' id='region-palette'></input>
+</div>
+
+<div class="accordian">
+	<span class="accordian-title">Pick an icon</span>
+	<span id="selected-icon" class="map-icon"></span>
+	<a class="accordian-expand">V</a>
+	<div class="accordian-content">
+		{% for icon in regionIcons %}
+		
+				<input id="{{icon}}" class="map-marker" name="regionIcons" type="radio">
+				<label for="{{icon}}">
+				<span class="map-icon {{icon}} radio-map-icon"></span>
+				</label>
+			
+		{% endfor %}
+	</div>
+</div>
+
+<!--
+
+<div>
+	<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="flash1">
+		<input checked class="mdl-radio__button" id="flash1" name="flash" type="radio"
+		 value="on">
+		<span class="map-icon map-icon-courthouse radio-map-icon"></span>
+	</label>
+	<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="flash2">
+		<input checked class="mdl-radio__button" id="flash2" name="flash" type="radio"
+		 value="auto">
+		<span class="map-icon map-icon-city-hall radio-map-icon"></span>
+	</label>
+	<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="flash3">
+		<input checked class="mdl-radio__button" id="flash3" name="flash" type="radio"
+		 value="auto">
+		<span class="map-icon map-icon-grocery-or-supermarket radio-map-icon"></span>
+	</label>
+</div>
+<div>
+	<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="flash4">
+		<input checked class="mdl-radio__button" id="flash4" name="flash" type="radio"
+		 value="auto">
+		<span class="map-icon map-icon-transit-station radio-map-icon"></span>
+	</label>
+	<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="flash5">
+		<input checked class="mdl-radio__button" id="flash5" name="flash" type="radio"
+		 value="auto">
+		<span class="map-icon map-icon-police radio-map-icon"></span>
+	</label>
+	<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="flash6">
+		<input checked class="mdl-radio__button" id="flash6" name="flash" type="radio"
+		 value="auto">
+		<span class="map-icon map-icon-point-of-interest radio-map-icon"></span>
+	</label>
+	-->
+</div>
