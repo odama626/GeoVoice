@@ -1,7 +1,48 @@
 var regions = {
 
 	list: [],
-	geofencePolygon: null,
+	
+	active: { // methods and members for currently active region
+		geofence: null,
+		oms: null,
+		
+		set: function(region) {
+			this.geofence = new google.maps.Polygon({
+				paths: region.geofence,
+				strokeColor: region.color,
+				strokeOpacity: 0.8,
+				strokeWeight: 2,
+				fillColor: region.color,
+				fillOpacity: 0.35
+			});
+			
+			this.geofence.setMap(map);
+			markers.closeInfoWindow();
+			markers.pauseFetch();
+			
+			if (this.oms === null) {
+				this.oms = new OverlappingMarkerSpiderfier(map);
+				
+				// TODO make sure markers.infowindow is initialized
+				
+				this.oms.addListener('click', markers.omsClickListener);
+			}
+			
+			region.markers.forEach(function(element, i) {
+				regions.active.oms.addMarker(element);
+			}); 
+			
+		}, // set
+		
+		clear: function() {
+			if (this.geofence != null) {
+				this.geofence.setMap(null);
+				this.geofence = null;
+			}
+			markers.resumeFetch();
+		} // clear
+	
+	}, // active region
 	
 	add: function() {
 		ui.drawingManager.init();
@@ -9,8 +50,9 @@ var regions = {
 	}, // add
 
 	create: function(region) {
-		var location = this.getPolyCenter(region.geofence);
-		var jsonGeofence = JSON.stringify(region.geofence = this.getCleanPolyArray(region.geofence));
+		var location = region.geofence.c_getBounds().getCenter();//this.getPolyCenter(region.geofence);
+		var jsonGeofence = JSON.stringify(region.geofence.c_getLatLngLiteralArray());
+		//JSON.stringify(region.geofence = this.getCleanPolyArray(region.geofence));
 		
 		region.lat = location.lat();
 		region.lng = location.lng();
@@ -105,26 +147,12 @@ var regions = {
 	panel: {
 		
 		open: function(region, animate = true) {
-			regions.geofencePolygon = new google.maps.Polygon({
-				paths: region.geofence,
-				strokeColor: region.color,
-				strokeOpacity: 0.8,
-				strokeWeight: 2,
-				fillColor: region.color,
-				fillOpacity: 0.35
-			});
-			
-			regions.geofencePolygon.setMap(map);
-		
+			regions.active.set(region);
 			this.createHtml(region, animate);
 		}, // open
 		
 		close: function() {
-			if (regions.geofencePolygon != null && typeof regions.geofencePolygon != 'undefined') {
-				
-				regions.geofencePolygon.setMap(null);
-				regions.geofencePolygon = null;
-			}
+			regions.active.clear();
 			$('.right-panel').removeClass('slide-in');
 		/*	setTimeout( function() {
 				$('#region-panel-container').html('');
@@ -198,19 +226,6 @@ var regions = {
 					</span>
 				</li>`;
 		} // generateItem
-	}, // panel
+	} // panel
 	
-	getPolyCenter: function(polygon) {
-		var bounds = new google.maps.LatLngBounds();
-		polygon.getPath().forEach(function(element, index) {bounds.extend( element)});
-		return bounds.getCenter();
-	}, // getPolyCenter
-	
-	getCleanPolyArray: function(polygon) {
-		var arr = [];
-		polygon.getPath().forEach(function(element, index) {
-			arr.push({ lat: element.lat(), lng: element.lng() });
-		});
-		return arr;
-	} // getCleanPolyArray
 }; // regions

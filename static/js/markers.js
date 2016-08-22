@@ -3,6 +3,7 @@ var markers = {
 	list: [],
 	oms: undefined, // OverlappingMarkerSpiderfier
 	infoWindow: undefined,
+	fetchActive: true,
 	
 
 	place: function(info) {
@@ -19,30 +20,35 @@ var markers = {
 			
 			this.infoWindow = new google.maps.InfoWindow();
 			
-			this.oms.addListener('click', function(marker, event) {
-				$('audio').remove();
-				markers.infoWindow.setContent(`
-						<h5>Created `+marker.info.date+ `</h5>
-						<audio controls>
-							<source type="audio/mpeg" src="`+marker.info.sound+`">
-						</audio>`);
-				markers.infoWindow.open(map, marker);
-			});
+			google.maps.event.addListener(this.infoWindow, 'closeclick', markers.closeInfoWindow);
+			
+			this.oms.addListener('click', markers.omsClickListener);
 		}
 	
 		markers.list.push(marker);
 		this.oms.addMarker(marker);
 	}, // place
 	
+	pauseFetch: function() {
+		console.log('pause fetch');
+		this.fetchActive = false;
+	}, // pauseFetch
+	
+	resumeFetch: function() {
+		console.log('resume fetch');
+		this.fetchActive = true;
+	}, // resumeFetch
+	
 	fetch: function() {
 		//var bounds = map.getBounds();
 		// TODO create ajax request for markers, then delete current markers and show new
 		// https://developers.google.com/maps/articles/toomanymarkers#distancebasedclustering	
-		
+
 		// Dont refresh markers if InfoWindow is open
-		if (markers.infoWindowIsOpen()) {
+		if (!markers.fetchActive) {
 			return;
 		}
+		console.log('fetch');
 		
 		$.ajax({
 			url : "get_markers",
@@ -78,12 +84,24 @@ var markers = {
 		markers.list = [];
 	}, // clear
 	
-	infoWindowIsOpen: function () {
+	closeInfoWindow: function() {
 		if (this.infoWindow !== null && typeof this.infoWindow !== 'undefined') {
-			var map = this.infoWindow.getMap();
-			return (map !== null && typeof map !== "undefined");
+			this.infoWindow.setMap(null);
+			
 		}
-		return false;
-	}
+		markers.resumeFetch();
+	}, // closeInfoWindow
+	
+	omsClickListener: function(marker, event) {
+		markers.closeInfoWindow();
+		markers.pauseFetch();
+		$('audio').remove();
+		markers.infoWindow.setContent(`
+				<h5>Created `+marker.info.date+ `</h5>
+				<audio controls>
+					<source type="audio/mpeg" src="`+marker.info.sound+`">
+				</audio>`);
+		markers.infoWindow.open(map, marker);
+	} // omsClickListener
 	
 }; // markers

@@ -12,9 +12,11 @@ function initMap() {
 			{stylers: [{ visibility: 'simplified' }]},
 		]
   });
+	
+	setPrototypes();
   
 	google.maps.event.addListener(map, 'idle', markers.fetch);
-	map.addListener('click', regions.panel.close);
+	map.addListener('click', () => { regions.panel.close(); markers.closeInfoWindow() });
 	
 	getLocation().then(function(loc) {
   	map.setCenter(loc);
@@ -22,6 +24,8 @@ function initMap() {
 	
 	// Close navigation drawer on <a> click
 	$('a').click( function() {
+		markers.closeInfoWindow();
+		regions.panel.close();
 		$( '.mdl-layout__drawer, .mdl-layout__obfuscator' ).removeClass( 'is-visible' );
 	});
 }
@@ -45,4 +49,20 @@ function getLocation() {
 		  ui.createSnack('You browser doesn\'t support geolocation.');
 		}
   });
+}
+
+function setPrototypes() {
+	google.maps.Polygon.prototype.c_getBounds = function() {
+		var bounds = new google.maps.LatLngBounds();
+		this.getPath().forEach(function(element, index) {bounds.extend( element)});
+		return bounds;
+	};
+	
+	google.maps.Polygon.prototype.c_getLatLngLiteralArray = function() {
+		var arr = [];
+		this.getPath().forEach(function(element, index) {
+			arr.push({ lat: element.lat(), lng: element.lng() });
+		});
+		return arr;
+	};
 }
