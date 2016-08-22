@@ -31,12 +31,14 @@
 ## TODO
  - [x] Use [Map Spiderfier](https://github.com/jawj/OverlappingMarkerSpiderfier)
  - [x] Convert media to mp3 before upload using [web-audio-recorder](https://github.com/higuma/web-audio-recorder-js/blob/gh-pages/js/RecorderDemo.js)
+ - [x] geofence regions with polygons
+ - [x] full custimization of region markers
+ - [x] add pause/resume on marker fetch to save bandwidth
+ - [ ] test and merge to start major code refactors
+ - [ ] reflow to make public markers use region 'null' and streamline marker subgroup viewing
  - [ ] Only send Marker information needed
  - [ ] Make adding markers to domains more intuitive/dynamic
  - [ ] Implement User login
  - [ ] Require User to be logged in to add recording/domain
  - [ ] Show username on posted markers
-
-## Known Bugs
- - [ ] Sometimes adding a sound to a domain adds duplicates
 
