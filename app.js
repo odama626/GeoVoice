@@ -12,8 +12,6 @@ var database;
 var markerCollection;
 var db;
 
-// TODO move to json files
-
 // setup HTTPS
 
 var httpsOptions = {
@@ -51,7 +49,10 @@ app.get('/', function( req, res) {
 });
 
 app.get('/dialogs/:filename', function ( req, res) {
-	res.render(req.originalUrl.substr(1), { regionIcons: siteData.dialog.regionIcons });
+	res.render(req.originalUrl.substr(1), { 
+		regionIcons: siteData.dialog.regionIcons,
+		regionMarkers: siteData.dialog.regionMarkerShapes
+		 });
 });
 
 app.get('/login', function( req, res) {
@@ -73,7 +74,7 @@ app.post('/submit', function(req, res) {
 	},
 	{ upsert: true }	
 	);
-	console.log("Added new sound marker");
+	console.log("Added new marker");
 	res.end('SUCCESS');
 });
 
@@ -84,11 +85,13 @@ app.post('/submit_region', function(req, res) {
 		"lng": req.body.lng,
 		"color": req.body.color,
 		"icon": req.body.icon,
-		"markers": []
+		"shape": req.body.shape,
+		"markers": [],
+		"geofence": req.body.geofence
 	};
 	markerCollection.insert(region);
 	res.end('SUCCESS');
-	console.log("Added new marker region");
+	console.log("Added new region");
 });
 
 app.get('/get_markers', function(req, res) {

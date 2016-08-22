@@ -59,12 +59,18 @@ var sound = {
 				success: function(data) {
 					ui.createSnack('Upload completed');
 					//Place new marker on map
-					markers.place({
-						sound: sound.file,
+					var marker = {
+						sound: URL.createObjectURL(sound.file),
 						date: new Date().toDateString(),
 						lat: loc.lat(),
 						lng: loc.lng()
-					});
+					};
+					
+					if (region === null) {
+						markers.place(marker);
+					} else {
+						regions.injectMarker(region, marker);
+					}					
 					
 				},
 				error: function(e) {

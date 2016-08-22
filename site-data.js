@@ -43,10 +43,13 @@ var siteData = {
 			'map-icon-sign-language','map-icon-volume-control-telephone','map-icon-low-vision-access','map-icon-braille',
 			'map-icon-audio-description','map-icon-assistive-listening-system','map-icon-search','map-icon-location-arrow',
 			'map-icon-zoom-out','map-icon-zoom-out-alt','map-icon-zoom-in','map-icon-zoom-in-alt',
-			'map-icon-crosshairs','map-icon-compass','map-icon-expand','map-icon-fullscreen',
+			'map-icon-crosshairs','map-icon-compass','map-icon-expand','map-icon-fullscreen','map-icon-circle'
+		], // regionIcons
+		
+		regionMarkerShapes: [
 			'map-icon-map-pin','map-icon-square-pin','map-icon-route-pin','map-icon-shield',
-			'map-icon-circle','map-icon-square-rounded','map-icon-square'
-		] // regionIcons
+			'map-icon-square-rounded','map-icon-square'
+		] // regionMarkerShape
 	} // dialog
 }
 

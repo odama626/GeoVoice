@@ -79,7 +79,7 @@ var ui = {
 			});
 		},// recordTimer
 		
-		addRegion: function() {
+		addRegion: function(geofence) {
 		
 			$.ajax({
 				url: 'dialogs/addRegion.html',
@@ -91,20 +91,20 @@ var ui = {
 						title: 'Add Region',
 						text: data,
 						onLoaded: function(e) {
-							var input = $('#region-location');
-							autocomplete = new google.maps.places.Autocomplete(input[0]);
-							autocomplete.bindTo('bounds', map);	
 							
 							// accordian animation
-							$('.accordian-expand').click( () => $('.accordian-content').toggleClass('open'));
+							$('.accordian-expand').click(
+								() => $(event.target).next('.accordian-content').toggleClass('open'));
 						 	
 						 	// icon selection
 						 	$('.map-marker').click((event) => {
 						 		var icon = $(event.target).attr('id');
-						 		$('#selected-icon').
+						 		var selected = $(event.target).parent().prevAll('span').first();
+						 		var accordianContent = selected.nextAll('div').first();
+						 		selected.
 						 			attr('class','map-icon radio-map-icon '+ icon).
 						 			attr('data-icon',icon);
-					 			$('.accordian-content').toggleClass('open');
+					 			$(accordianContent).toggleClass('open');
 					 		});
 					 		
 							//set initial icon
@@ -112,6 +112,15 @@ var ui = {
 							$('#selected-icon').
 								attr('class', 'map-icon radio-map-icon map-icon-point-of-interest').
 								attr('data-icon', 'map-icon-point-of-interest');
+								
+							var initialColor = '#1998F7';
+							
+							var markerShape = $('#selected-marker-shape');
+							markerShape.css({ 'color': initialColor });
+							markerShape.
+								attr('class', 'map-icon radio-map-icon map-icon-map-pin').
+								attr('data-icon', 'map-icon-map-pin');
+							markerShape.nextAll('div').first().children().css({ 'color': initialColor });
 							 
 			
 							$('#region-palette').spectrum({ // Color picker
@@ -120,13 +129,17 @@ var ui = {
 								togglePaletteMoreText: 'more',
 								togglePaletteLessText: 'less',
 								hideAfterPaletteSelect: true,
-								color: '#1998F7',
+								color: initialColor,
 								palette: [
 									['#00CCBB','#1998F7', '#6331AE'],
 								],
 								change: function(color) {
-									$('#region-color').attr('data-color',color.toHexString());
-								}
+									var hColor = color.toHexString();
+									var markerShape = $('#selected-marker-shape');
+									$('#region-color').attr('data-color',hColor);
+									markerShape.css({ 'color': hColor });
+									markerShape.nextAll('div').first().children().css({ 'color': hColor });
+								},
 							});
 							
 						},
@@ -135,8 +148,16 @@ var ui = {
 							onClick: function(e) {
 								var color = $('#region-color').data('color');
 								var icon = $('#selected-icon').attr('data-icon');
+								var shape = $('#selected-marker-shape').attr('data-icon');
 								var name = $('#region-name').val();
-								var region = { icon: icon, color: color, regionName: name};
+								var region = {
+									icon: icon,
+									shape: shape,
+									color: color,
+									regionName: name,
+									geofence: geofence
+								};
+								region.geofence.setMap(null);
 								regions.create(region);
 							}
 						}
@@ -167,5 +188,94 @@ var ui = {
 			hideLoading();
 		} // hide
 		
-	} // loading
+	}, // loading
+	
+	drawingManager: {
+	
+		manager: null,
+	
+		init: function() {
+			this.drawingManager = new google.maps.drawing.DrawingManager({
+				drawingMode: google.maps.drawing.OverlayType.MARKER,
+				drawingControl: true,
+				drawingControlOptions: {
+					position: google.maps.ControlPosition.TOP_CENTER,
+					drawingModes: ['polygon']
+				},
+				polygonOptions: {
+					fillOpacity: 0.3,
+					fillColor: '#1998F7',
+					editable: true,
+					zIndex: 1
+				}
+			});
+			this.drawingManager.setMap(map);
+			this.drawingManager.setDrawingMode(null);
+			setTimeout(function() {
+				ui.drawingManager.fixIcons();
+				var drawingComplete = function(event) {
+					var doneButton = $('#done-drawing');
+					doneButton.css({ 'background-color': 'lightgreen' });
+					
+					doneButton.off('click').on('click',function() {
+						ui.drawingManager.destroy();
+						ui.createDialog.addRegion(event.overlay);
+					});
+				};
+				
+				google.maps.event.addListener(ui.drawingManager.drawingManager, 'overlaycomplete', drawingComplete);
+			}, 1000);
+		}, // init
+		
+		destroy: function() {
+			this.drawingManager.setMap(null);
+			this.drawingManager.setOptions({ drawingControls: false });
+			this.drawingManager = null;
+		}, // destroy
+		
+		fixIcons: function() {
+			$('.gmnoprint').each(function() {
+			
+				var setIcon = function(obj, icon) {
+					obj.children().children().remove();
+					obj.children().html(`<div class='drawing-manager-button'>
+																	<i class="material-icons">`+icon+`</i>
+																</div>`);
+				};
+			
+				var panButton = $(this).find("[title='Stop drawing']");
+				var polyButton = $(this).find("[title='Draw a shape']");
+				var rectButton = $(this).find("[title='Draw a rectangle']");
+				var container = panButton.parent().parent();
+				
+				// Change DrawingManager button icons
+				setIcon(panButton, 'pan_tool');
+				setIcon(polyButton, 'linear_scale');
+				setIcon(rectButton, 'photo_size_select_small');
+				
+				//Add finished editing button
+				container.append(`
+					<div style="float: left; line-height: 0;">
+						<div id="done-drawing" draggable="false" title="Finished drawing" class="drawing-manager-button-container">
+							<span style="display: inline-block;">
+								<div class="drawing-manager-button">
+									<i class="material-icons">check</i>
+								</div>
+							</span>
+						</div>
+					</div>`);
+				
+			});
+		
+		}, // fixIcons
+		
+		requestDrawing: function() {
+			this.drawingManager.activate(true);
+			
+		
+		} // requestDrawing
+		
+	
+	} // drawingManager
+	
 }; // ui

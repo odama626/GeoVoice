@@ -1,5 +1,6 @@
 //Global Variables
 var map;
+var drawingManager;
 var _debug = true;
 
 function initMap() {
