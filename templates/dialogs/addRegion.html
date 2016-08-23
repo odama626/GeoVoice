@@ -1,0 +1,43 @@
+<form>
+	<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+		<input class="mdl-textfield__input" type="text" id="region-name">
+		<label class="mdl-textfield__label" for="location">Name Place</label>
+	</div>
+</form>
+
+<div id='region-color' data-color='#1998F7'>
+	Pick a color
+	<input type='text' id='region-palette'></input>
+</div>
+
+<div class="accordian">
+	<span class="accordian-title">Pick an icon</span>
+	<span id="selected-icon" class="map-icon"></span>
+	<a class="accordian-expand">V</a>
+	<div class="accordian-content">
+		{% for icon in regionIcons %}
+		
+				<input id="{{icon}}" class="map-marker" name="regionIcons" type="radio">
+				<label for="{{icon}}">
+				<span class="map-icon {{icon}} radio-map-icon"></span>
+				</label>
+			
+		{% endfor %}
+	</div>
+</div>
+
+<div class="accordian">
+	<span class="accordian-title">Pick marker shape</span>
+	<span id="selected-marker-shape" class="map-icon"></span>
+	<a class="accordian-expand">V</a>
+	<div class="accordian-content">
+		{% for icon in regionMarkers %}
+		
+				<input id="{{icon}}" class="map-marker" name="regionIcons" type="radio">
+				<label for="{{icon}}">
+				<span class="map-icon {{icon}} radio-map-icon"></span>
+				</label>
+			
+		{% endfor %}
+	</div>
+</div>

@@ -1,9 +1,10 @@
-var express = require('express'),
-	nunjucks = require('nunjucks'),
-	fs = require('fs'),
-	https = require('https'),
-	multer = require('multer'),
-	mongoClient = require('mongodb').MongoClient;
+var express = require('express');
+var nunjucks = require('nunjucks');
+var	fs = require('fs');
+var	https = require('https');
+var	multer = require('multer');
+var	mongoClient = require('mongodb').MongoClient;
+var siteData = require('./site-data').siteData;
 
 var app = express();
 var port = 5000;
@@ -47,6 +48,13 @@ app.get('/', function( req, res) {
 	res.render('index.html');
 });
 
+app.get('/dialogs/:filename', function ( req, res) {
+	res.render(req.originalUrl.substr(1), { 
+		regionIcons: siteData.dialog.regionIcons,
+		regionMarkers: siteData.dialog.regionMarkerShapes
+		 });
+});
+
 app.get('/login', function( req, res) {
 	res.render('login.html');
 });
@@ -55,46 +63,44 @@ app.post('/submit', function(req, res) {
 	var doc = { 
 		"lat": req.body.lat,
 		"lng": req.body.lng,
-		"domain": req.body.domain,
+		"region": req.body.region,
 		"date": req.body.date,
 		"sound": req.files[0].filename
 	};
 	markerCollection.update(
-	{ domainName: req.body.domain },
+	{ regionName: req.body.region},
 	{
 		$push: { markers: doc }
 	},
 	{ upsert: true }	
 	);
-	console.log("Added new sound marker");
+	console.log("Added new marker");
+	res.end('SUCCESS');
 });
 
-app.post('/submit_domain', function(req, res) {
-	var domain = {
-		"domainName": req.body.domainName,
+app.post('/submit_region', function(req, res) {
+	var region = {
+		"regionName": req.body.regionName,
 		"lat": req.body.lat,
 		"lng": req.body.lng,
 		"color": req.body.color,
-		"iconCss": req.body.iconCss,
-		"markers": []
+		"icon": req.body.icon,
+		"shape": req.body.shape,
+		"markers": [],
+		"geofence": req.body.geofence
 	};
-	markerCollection.insert(domain);
-	console.log("Added new marker domain");
+	markerCollection.insert(region);
+	res.end('SUCCESS');
+	console.log("Added new region");
 });
 
 app.get('/get_markers', function(req, res) {
-	/*markerCollection.findOne({ "domainName" : 'null' }, function(err, items) {
-		res.send(JSON.stringify(items.markers, null, 2));
-	});*/
-	
 	markerCollection.find().toArray( function(err, items) {
 		res.send(JSON.stringify(items, null, 2));
 	});
 	
-	
 	console.log("Sending markers");
 });
-
 
 var server = https.createServer(httpsOptions, app).listen(port, function() {
 	console.log("Express server listening on port "+ port);

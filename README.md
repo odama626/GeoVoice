@@ -28,15 +28,21 @@
   - If running locally, use 127.0.0.1
 7. Profit.
 
-## TODO
- - [ ] Use [Map Spiderfier](https://github.com/jawj/OverlappingMarkerSpiderfier)
- - [ ] Convert audio to mp3 before upload with [libmp3lame](https://github.com/akrennmair/libmp3lame-js)
+## TODO for next master merge
+ - [x] Use [Map Spiderfier](https://github.com/jawj/OverlappingMarkerSpiderfier)
+ - [x] Convert media to mp3 before upload using [web-audio-recorder](https://github.com/higuma/web-audio-recorder-js/blob/gh-pages/js/RecorderDemo.js)
+ - [x] geofence regions with polygons
+ - [x] full custimization of region markers
+ - [x] add pause/resume on marker fetch to save bandwidth
+ - [ ] test and merge to start major code refactors
+ 
+## Moving forward
+ - [ ] reflow to make public markers use region 'null' and streamline marker subgroup viewing
+ - [ ] only show markers in one region at a time (default to region null)
+ - [ ] right panel (region view) should be a bottom-panel on smaller devices
  - [ ] Only send Marker information needed
  - [ ] Make adding markers to domains more intuitive/dynamic
  - [ ] Implement User login
  - [ ] Require User to be logged in to add recording/domain
  - [ ] Show username on posted markers
-
-## Known Bugs
- - [ ] Sometimes adding a sound to a domain adds duplicates
 
