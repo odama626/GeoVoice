@@ -4,45 +4,94 @@ var regions = {
 	
 	active: { // methods and members for currently active region
 		geofence: null,
-		oms: null,
+		region: undefined,
 		
 		set: function(region) {
-			this.geofence = new google.maps.Polygon({
-				paths: region.geofence,
-				strokeColor: region.color,
-				strokeOpacity: 0.8,
-				strokeWeight: 2,
-				fillColor: region.color,
-				fillOpacity: 0.35
-			});
+			if (this.region !== region) {
+				markers.clear();
+			}
+			this.region = region;
 			
-			this.geofence.setMap(map);
-			markers.closeInfoWindow();
-			markers.pauseFetch();
+			if (typeof region.geofence !== "undefined") {
+				this.geofence = new google.maps.Polygon({
+					paths: region.geofence,
+					strokeColor: region.color,
+					strokeOpacity: 0.8,
+					strokeWeight: 2,
+					fillColor: region.color,
+					fillOpacity: 0.35
+				});
 			
-			if (this.oms === null) {
-				this.oms = new OverlappingMarkerSpiderfier(map);
-				
-				// TODO make sure markers.infowindow is initialized
-				
-				this.oms.addListener('click', markers.omsClickListener);
+				this.geofence.setMap(map);
+				markers.closeInfoWindow();
+				markers.pauseFetch();
+			
 			}
 			
-			region.markers.forEach(function(element, i) {
-				regions.active.oms.addMarker(element);
-			}); 
+			if (region.regionName == null) {
+				markers.pauseFetch();
+			}
+			
+			this.refresh();
 			
 		}, // set
+		
+		refresh: function() {
+			this.region.markers.forEach(function(element, i) {
+				markers.place(element);
+			}); 
+		}, // refresh
 		
 		clear: function() {
 			if (this.geofence != null) {
 				this.geofence.setMap(null);
 				this.geofence = null;
 			}
+			this.set(regions.list[null]);
 			markers.resumeFetch();
 		} // clear
 	
 	}, // active region
+	
+	fetch: function() {
+		//var bounds = map.getBounds();
+		// TODO create ajax request for markers, then delete current markers and show new
+		// https://developers.google.com/maps/articles/toomanymarkers#distancebasedclustering	
+
+		// Dont refresh markers if InfoWindow is open
+		if (!markers.fetchActive) {
+			return;
+		}
+		
+		console.log('fetch');
+		
+		$.ajax({
+			url : "get_markers",
+			type: "GET",
+			success: function(data) {
+				var regionList = jQuery.parseJSON(data);
+				regions.clear();
+				for (d = 0; d<regionList.length; d++)
+				{
+					if (regionList[d].regionName == "null") {
+						regionList[d].regionName = null;
+					}
+					regions.place(regionList[d]);
+				
+				}
+				
+				if (typeof regions.active.region === "undefined") {
+					regions.active.set(regions.list[null]);
+				} else {
+					regions.active.refresh();
+				}
+				
+			},
+			error: function(e) {
+				ui.createSnack('Error retrieving sound markers: '+e.toString());
+			}
+		});
+	}, // fetch
 	
 	add: function() {
 		ui.drawingManager.init();
@@ -89,28 +138,30 @@ var regions = {
 	}, // create
 	
 	place: function(region) {
-		var marker = new Marker({
-			map: map,
-			position: {'lat': parseFloat(region.lat), 'lng': parseFloat(region.lng)},
-			icon: {
-				path: this.parseMarkerShape(region.shape),
-				fillColor: region.color,
-				fillOpacity: 1,
-				strokeColor: '',
-				strokeWeight: 0
-			},
-			map_icon_label: '<span class="map-icon '+region.icon+'"></span>'
-		});
+		if (region.regionName != null) {
+			region.marker = new Marker({
+				map: map,
+				position: {'lat': parseFloat(region.lat), 'lng': parseFloat(region.lng)},
+				icon: {
+					path: this.parseMarkerShape(region.shape),
+					fillColor: region.color,
+					fillOpacity: 1,
+					strokeColor: '',
+					strokeWeight: 0
+				},
+				map_icon_label: '<span class="map-icon '+region.icon+'"></span>'
+			});
 
-		region.geofence = JSON.parse(region.geofence);
-		
-		markers.list.push(marker);
+			region.geofence = JSON.parse(region.geofence);
+			
+			region.marker.addListener('click', function() {
+				regions.panel.close();
+				regions.panel.open(region);
+			});
+		}		
+		//markers.list.push(marker);
 		this.list[region.regionName] = region;
-	
-		marker.addListener('click', function() {
-			regions.panel.close();
-			regions.panel.open(region);
-		});
+
 	}, // place
 	
 	parseMarkerShape: function(sShape) {
@@ -143,6 +194,17 @@ var regions = {
 			this.list[region].markers.push(marker);
 			this.panel.open(this.list[region], false);
 	}, // injectMarker
+	
+	clear: function() {
+			for (region in regions.list) {
+				if ( typeof regions.list[region].marker != "undefined") {
+					regions.list[region].marker.setMap(null);
+					regions.list[region].marker = null;
+				}
+			}
+	
+		markers.clear();
+	}, // clear
 	
 	panel: {
 		

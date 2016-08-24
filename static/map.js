@@ -2,6 +2,7 @@
 var map;
 var drawingManager;
 var _debug = true;
+"use strict"
 
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
@@ -15,7 +16,7 @@ function initMap() {
 	
 	setPrototypes();
   
-	google.maps.event.addListener(map, 'idle', markers.fetch);
+	google.maps.event.addListener(map, 'idle', regions.fetch);
 	map.addListener('click', () => { regions.panel.close(); markers.closeInfoWindow() });
 	
 	getLocation().then(function(loc) {
@@ -65,4 +66,10 @@ function setPrototypes() {
 		});
 		return arr;
 	};
+}
+
+function getBounds(arr) {
+	var bounds = new google.maps.LatLngBounds();
+	arr.forEach(function(element, index) { bounds.extend(element) });
+	return bounds;
 }

@@ -32,7 +32,10 @@ var ui = {
 			showDialog({
 				title: 'Sound Good?',
 				text: `
-						<div>Do you want to make it public?</div>
+						<div>Add it to a region</div>
+						<select id="regions" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+							<option value="none">none</option>
+						<select>
 						<span>
 						<audio controls id="recording-player">
 							<source id="audio-source" type="audio/mpeg">
@@ -45,10 +48,21 @@ var ui = {
 					$('#audio-source').attr('src', url);
 					player[0].pause();
 					player[0].load();
+					
+					getLocation().then(function(loc) {
+						for (var place in regions.list) {
+							if (getBounds(regions.list[place].geofence).contains(loc)) {
+								$('#regions').append('<option value="'+place+'">'+place+'</option>');
+							}
+						}
+					});
+					
 				},
 				positive: {
 					title: 'yes',
 					onClick: function(e) {
+						var selected = $('#regions option:selected').text();
+						region = ( selected == 'none' ? null : selected);
 						sound.upload(region);
 					}
 				},

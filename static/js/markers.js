@@ -14,6 +14,7 @@ var markers = {
 		});
 		
 		marker.info = info;
+		info.marker = marker;
 		
 		if (this.oms === undefined) { // setup spiderfier if undefined
 			this.oms = new OverlappingMarkerSpiderfier(map);
@@ -39,41 +40,6 @@ var markers = {
 		this.fetchActive = true;
 	}, // resumeFetch
 	
-	fetch: function() {
-		//var bounds = map.getBounds();
-		// TODO create ajax request for markers, then delete current markers and show new
-		// https://developers.google.com/maps/articles/toomanymarkers#distancebasedclustering	
-
-		// Dont refresh markers if InfoWindow is open
-		if (!markers.fetchActive) {
-			return;
-		}
-		console.log('fetch');
-		
-		$.ajax({
-			url : "get_markers",
-			type: "GET",
-			success: function(data) {
-				var regionList = jQuery.parseJSON(data);
-				markers.clear();
-				for (d = 0; d<regionList.length; d++)
-				{
-					if (regionList[d].regionName == "null") {
-						var markerList = regionList[d].markers;
-						for (i = 0; i<markerList.length; i++) {
-							markers.place(markerList[i]);
-						}
-					} else {
-						regions.place(regionList[d]);
-					}
-				}
-			},
-			error: function(e) {
-				ui.createSnack('Error retrieving sound markers: '+e.toString());
-			}
-		});
-	}, // fetch
-	
 	clear: function() {
 		for (var i = 0; i< markers.list.length; i++) {
 			markers.list[i].setMap(null);
@@ -95,7 +61,7 @@ var markers = {
 	omsClickListener: function(marker, event) {
 		markers.closeInfoWindow();
 		markers.pauseFetch();
-		$('audio').remove();
+		$('dv audio').remove();
 		markers.infoWindow.setContent(`
 				<h5>Created `+marker.info.date+ `</h5>
 				<audio controls>
