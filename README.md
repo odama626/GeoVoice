@@ -27,21 +27,13 @@
   - Replace {server_ip} with the ip address of your server
   - If running locally, use 127.0.0.1
 7. Profit.
-
-## TODO for next master merge
- - [x] Use [Map Spiderfier](https://github.com/jawj/OverlappingMarkerSpiderfier)
- - [x] Convert media to mp3 before upload using [web-audio-recorder](https://github.com/higuma/web-audio-recorder-js/blob/gh-pages/js/RecorderDemo.js)
- - [x] geofence regions with polygons
- - [x] full custimization of region markers
- - [x] add pause/resume on marker fetch to save bandwidth
- - [ ] test and merge to start major code refactors
  
 ## Moving forward
- - [ ] reflow to make public markers use region 'null' and streamline marker subgroup viewing
- - [ ] only show markers in one region at a time (default to region null)
+ - [x] reflow to make public markers use region 'null' and streamline marker subgroup viewing
+ - [x] only show markers in one region at a time (default to region null)
  - [ ] right panel (region view) should be a bottom-panel on smaller devices
  - [ ] Only send Marker information needed
- - [ ] Make adding markers to domains more intuitive/dynamic
+ - [x] Make adding markers to domains more intuitive/dynamic
  - [ ] Implement User login
  - [ ] Require User to be logged in to add recording/domain
  - [ ] Show username on posted markers
