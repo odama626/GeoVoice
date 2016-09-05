@@ -17,7 +17,7 @@ var db;
 var httpsOptions = {
 	key: fs.readFileSync('ssl.key'),
 	cert: fs.readFileSync('ssl.cert'),
-	passphrase: 'Redtop360'
+	passphrase: 'PASSPHRASE_GOES_HERE'
 };
 
 // setup parsing of requests

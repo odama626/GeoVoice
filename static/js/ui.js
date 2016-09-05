@@ -29,11 +29,11 @@ var ui = {
 		}, // requestRecording
 		
 		recordPreview: function(region, url) {
-			showDialog({
+			showDialog({ // class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
 				title: 'Sound Good?',
 				text: `
 						<div>Add it to a region</div>
-						<select id="regions" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+						<select id="regions" class="mdl-button">
 							<option value="none">none</option>
 						<select>
 						<span>
@@ -51,8 +51,10 @@ var ui = {
 					
 					getLocation().then(function(loc) {
 						for (var place in regions.list) {
-							if (getBounds(regions.list[place].geofence).contains(loc)) {
-								$('#regions').append('<option value="'+place+'">'+place+'</option>');
+							if (typeof regions.list[place].geofence !== 'undefined') {
+								if (getBounds(regions.list[place].geofence).contains(loc)) {
+									$('#regions').append('<option value="'+place+'">'+place+'</option>');
+								}
 							}
 						}
 					});

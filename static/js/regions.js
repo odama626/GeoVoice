@@ -28,8 +28,9 @@ var regions = {
 			
 			}
 			
-			if (region.regionName == null) {
+			if (region.regionName !== null) {
 				markers.pauseFetch();
+				map.fitBounds(getBounds(region.geofence));
 			}
 			
 			this.refresh();
@@ -155,7 +156,8 @@ var regions = {
 			region.geofence = JSON.parse(region.geofence);
 			
 			region.marker.addListener('click', function() {
-				regions.panel.close();
+				regions.active.clear();
+				//regions.panel.close();
 				regions.panel.open(region);
 			});
 		}		
@@ -216,9 +218,11 @@ var regions = {
 		close: function() {
 			regions.active.clear();
 			$('.right-panel').removeClass('slide-in');
-		/*	setTimeout( function() {
+			console.log('closing panel');
+			$('body, html').animate({ scrollTop: 0 }, 500); 
+			setTimeout( function() {
 				$('#region-panel-container').html('');
-			}, 1000);*/
+			}, 1000);
 		}, // close
 		
 		createHtml: function(region, animate) {
@@ -238,12 +242,6 @@ var regions = {
 	
 			itemsHtml += `
 				<div style="padding-left:15px">
-					<button id='add-region-sound'
-						class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect right-panel__button' 
-						onClick='sound.request("`+region.regionName+`");'>
-					
-						Add a Sound
-					</button>
 					<button 
 						class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect right-panel__button' 
 						onClick='regions.panel.close()'>
