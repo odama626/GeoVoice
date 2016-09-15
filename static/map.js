@@ -2,6 +2,9 @@
 var map;
 var drawingManager;
 var _debug = true;
+var ENABLE_REGIONS = false;
+
+
 "use strict"
 
 function initMap() {
@@ -29,6 +32,14 @@ function initMap() {
 		regions.panel.close();
 		$( '.mdl-layout__drawer, .mdl-layout__obfuscator' ).removeClass( 'is-visible' );
 	});
+	
+	if (ENABLE_REGIONS == false) {
+		disableRegions();
+	}
+}
+
+function disableRegions() {
+	$('#add-region-button').remove();
 }
 
 function debugLog(text) {
