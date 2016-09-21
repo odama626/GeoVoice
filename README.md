@@ -39,10 +39,10 @@
  - [ ] Show username on posted markers
 
 ## Known Working
-  Linux
+  - Linux
    - [x] Chrome
    - [x] Firefox
-  Android
+  - Android
    - [x] Chrome
    - [x] Firefox (laggy after sound upload)
 
