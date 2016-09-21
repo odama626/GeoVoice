@@ -7,9 +7,9 @@ var regions = {
 		region: undefined,
 		
 		set: function(region) {
-			if (this.region !== region) {
+			//if (this.region !== region) {
 				markers.clear();
-			}
+			//}
 			this.region = region;
 			
 			if (typeof region.geofence !== "undefined") {

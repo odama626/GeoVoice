@@ -2,10 +2,10 @@
 var map;
 var drawingManager;
 var _debug = true;
-var ENABLE_REGIONS = false;
+var ENABLE_REGIONS = true;
 
 
-"use strict"
+//"use strict"
 
 function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
