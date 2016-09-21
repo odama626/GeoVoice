@@ -31,10 +31,18 @@
 ## Moving forward
  - [x] reflow to make public markers use region 'null' and streamline marker subgroup viewing
  - [x] only show markers in one region at a time (default to region null)
- - [ ] right panel (region view) should be a bottom-panel on smaller devices
+ - [x] right panel (region view) should be a bottom-panel on smaller devices
  - [ ] Only send Marker information needed
  - [x] Make adding markers to domains more intuitive/dynamic
  - [ ] Implement User login
  - [ ] Require User to be logged in to add recording/domain
  - [ ] Show username on posted markers
+
+## Known Working
+  Linux
+   - [x] Chrome
+   - [x] Firefox
+  Android
+   - [x] Chrome
+   - [x] Firefox (laggy after sound upload)
 
