@@ -50,4 +50,8 @@
   - Android
    - [x] Chrome
    - [x] Firefox (laggy after sound upload)
+  - Windows
+   - [x] Chrome
+   - [ ] Safari (too old of a version)
+   - [x] Firefox
 
