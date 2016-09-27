@@ -37,6 +37,11 @@
  - [ ] Implement User login
  - [ ] Require User to be logged in to add recording/domain
  - [ ] Show username on posted markers
+ - [ ] Add search bar for searching for markers within time period
+ - [ ] Add tagging system (ex music, college etc) for markers
+ - [ ] Add live irc style message panel for logged in users
+ - [ ] add temporary db self destruct button
+
 
 ## Known Working
   - Linux
