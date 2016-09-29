@@ -7,11 +7,13 @@ var regions = {
 		region: undefined,
 		
 		set: function(region) {
-			//if (this.region !== region) {
-				markers.clear();
-			//}
-			this.region = region;
+			if (typeof region == "undefined") {
+				return;	// if database is empty, do nothing
+			}
+		
+			markers.clear();
 			
+			this.region = region;
 			if (typeof region.geofence !== "undefined") {
 				this.geofence = new google.maps.Polygon({
 					paths: region.geofence,

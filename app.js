@@ -78,6 +78,11 @@ app.post('/submit', function(req, res) {
 	res.end('SUCCESS');
 });
 
+app.post('/self_destruct', function(req, res) {
+	console.log('Self destructing');
+	markerCollection.drop();
+});
+
 app.post('/submit_region', function(req, res) {
 	var region = {
 		"regionName": req.body.regionName,

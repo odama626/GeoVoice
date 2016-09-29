@@ -22,6 +22,8 @@ function initMap() {
 	google.maps.event.addListener(map, 'idle', regions.fetch);
 	map.addListener('click', () => { regions.panel.close(); markers.closeInfoWindow() });
 	
+	google.maps.event.addListener(map, 'rightclick', addPrecisePoint);
+	
 	getLocation().then(function(loc) {
   	map.setCenter(loc);
   });
@@ -83,4 +85,45 @@ function getBounds(arr) {
 	var bounds = new google.maps.LatLngBounds();
 	arr.forEach(function(element, index) { bounds.extend(element) });
 	return bounds;
+}
+
+function addPrecisePoint(event) {
+	var precisePoint = new google.maps.Marker({
+		position: { lat: parseFloat(event.latLng.lat()), lng: parseFloat(event.latLng.lng()) },
+		map: map
+	});
+
+
+	showDialog({
+		title: 'Precise point record',
+		text: 'Add a recording here?',
+		positive: {
+			title: 'yes',
+			onClick: function (e) {
+				precisePoint.setMap(null);
+				sound.request(event.latLng);
+			}
+		},
+		negative: {
+			title: 'cancel',
+			onClick: function(e) {
+				precisePoint.setMap(null);
+			}
+		}
+	});
+}
+
+function selfDestruct() {
+	$.ajax({
+		url: 'self_destruct',
+		type: 'POST',
+		contentType: false,
+		processData: false,
+		success: function(data) {
+			ui.createSnack('Successfully added');
+		},
+		error: function(e) {
+			ui.createSnack('Error while adding: '+e.toString());
+		}
+	});
 }

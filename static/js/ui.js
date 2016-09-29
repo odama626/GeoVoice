@@ -28,7 +28,7 @@ var ui = {
 			});
 		}, // requestRecording
 		
-		recordPreview: function(region, url) {
+		recordPreview: function(location,region, url) {
 			showDialog({ // class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
 				title: 'Sound Good?',
 				text: `
@@ -40,30 +40,28 @@ var ui = {
 						</div>
 						<span>
 						<audio controls id="recording-player">
-							<source id="audio-source" type="audio/mpeg">
 							Your browser doesn't support playback
 						</audio>
 						</span>
 					`,
 				onLoaded: function(e) {
 					var player = $('#recording-player')
-					$('#audio-source').attr('src', url);
-					player[0].pause();
+					player.attr('src', url);
+//					$('#audio-source').attr('src', url);
+					//player[0].pause();
 					player[0].load();
 					
 					if (!ENABLE_REGIONS) {
 						$('#marker-region-selection').remove();
 					}
 					
-					getLocation().then(function(loc) {
-						for (var place in regions.list) {
-							if (typeof regions.list[place].geofence !== 'undefined') {
-								if (getBounds(regions.list[place].geofence).contains(loc)) {
-									$('#regions').append('<option value="'+place+'">'+place+'</option>');
-								}
+					for (var place in regions.list) {
+						if (typeof regions.list[place].geofence !== 'undefined') {
+							if (getBounds(regions.list[place].geofence).contains(location)) {
+								$('#regions').append('<option value="'+place+'">'+place+'</option>');
 							}
 						}
-					});
+					}
 					
 				},
 				positive: {
