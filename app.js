@@ -3,8 +3,16 @@ var nunjucks = require('nunjucks');
 var	fs = require('fs');
 var	https = require('https');
 var	multer = require('multer');
-var	mongoClient = require('mongodb').MongoClient;
-var siteData = require('./site-data').siteData;
+var mongoose = require('mongoose');
+var passport = require('passport');
+var cookieParser = require('cookie-parser');
+var LocalStrategy = require('passport-local').Strategy;
+var GoogleStrategy = require('passport-google').Strategy;
+
+
+
+var routes = require('./routes/index');
+var users = require('./routes/users');
 
 var app = express();
 var port = 5000;
@@ -20,6 +28,26 @@ var httpsOptions = {
 	passphrase: 'PASSPHRASE_GOES_HERE'
 };
 
+// Setup Session
+app.use(cookieParser());
+app.use(require('express-session')({
+	secret: 'keyboard cat',
+	resave: false,
+	saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Setup Passport config
+var Account = require('./models/account');
+passport.use(new LocalStrategy(Account.authenticate()));
+passport.serializeUser(Account.serializeUser());
+passport.deserializeUser(Account.deserializeUser());
+
+// mongoose
+mongoose.connect('mongodb://localhost:27017/geoVoice_passport');
+
+
 // setup parsing of requests
 app.use(multer({
 	dest: './uploads/',
@@ -33,79 +61,7 @@ nunjucks.configure('templates', {
 	express: app
 });
 
-// Setup database connection
-mongoClient.connect("mongodb://localhost:27017/geoVoice", function(err, database) {
-	if (err) { return console.dir(err); }
-	console.log("connected to DB");
-	
-	db = database;
-	markerCollection = db.collection('markers');
-//	markerCollection.drop();
-});
-
-
-app.get('/', function( req, res) {
-	res.render('index.html');
-});
-
-app.get('/dialogs/:filename', function ( req, res) {
-	res.render(req.originalUrl.substr(1), { 
-		regionIcons: siteData.dialog.regionIcons,
-		regionMarkers: siteData.dialog.regionMarkerShapes
-		 });
-});
-
-app.get('/login', function( req, res) {
-	res.render('login.html');
-});
-
-app.post('/submit', function(req, res) {
-	var doc = { 
-		"lat": req.body.lat,
-		"lng": req.body.lng,
-		"region": req.body.region,
-		"date": req.body.date,
-		"sound": req.files[0].filename
-	};
-	markerCollection.update(
-	{ regionName: req.body.region},
-	{
-		$push: { markers: doc }
-	},
-	{ upsert: true }	
-	);
-	console.log("Added new marker");
-	res.end('SUCCESS');
-});
-
-app.post('/self_destruct', function(req, res) {
-	console.log('Self destructing');
-	markerCollection.drop();
-});
-
-app.post('/submit_region', function(req, res) {
-	var region = {
-		"regionName": req.body.regionName,
-		"lat": req.body.lat,
-		"lng": req.body.lng,
-		"color": req.body.color,
-		"icon": req.body.icon,
-		"shape": req.body.shape,
-		"markers": [],
-		"geofence": req.body.geofence
-	};
-	markerCollection.insert(region);
-	res.end('SUCCESS');
-	console.log("Added new region");
-});
-
-app.get('/get_markers', function(req, res) {
-	markerCollection.find().toArray( function(err, items) {
-		res.send(JSON.stringify(items, null, 2));
-	});
-	
-	console.log("Sending markers");
-});
+app.use('/', routes);
 
 var server = https.createServer(httpsOptions, app).listen(port, function() {
 	console.log("Express server listening on port "+ port);
