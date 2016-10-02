@@ -5,6 +5,7 @@ var	https = require('https');
 var	multer = require('multer');
 var mongoose = require('mongoose');
 var passport = require('passport');
+var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var LocalStrategy = require('passport-local').Strategy;
 var GoogleStrategy = require('passport-google').Strategy;
@@ -29,6 +30,8 @@ var httpsOptions = {
 };
 
 // Setup Session
+//app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(require('express-session')({
 	secret: 'keyboard cat',

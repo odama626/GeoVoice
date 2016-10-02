@@ -63,10 +63,20 @@ var markers = {
 		markers.pauseFetch();
 		$('dv audio').remove();
 		markers.infoWindow.setContent(`
-				<h5>Created `+marker.info.date+ `</h5>
+				<h5>Created by `+marker.info.creator+ `</h5>
+				<h8>On `+ marker.info.date + `</h8> <br>
 				<audio controls>
 					<source type="audio/mpeg" src="`+marker.info.sound+`">
-				</audio>`);
+				</audio>
+				
+				<br>
+				<!-- Deletable Contact Chip -->
+				<div class="mdl-chip mdl-chip--deletable">
+					<span class="mdl-chip__text">Deletable Chip</span>
+					<a type="button" class="mdl-chip__action"><i class="material-icons">cancel</i></a>
+				</div>
+				
+				`);
 		markers.infoWindow.open(map, marker);
 	} // omsClickListener
 	

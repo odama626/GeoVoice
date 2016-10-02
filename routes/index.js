@@ -20,7 +20,7 @@ router.get('/', function (req, res) {
 	res.render('index.html', {user : req.user });
 });
 
-// Retrieve dialog TODO needs testing
+// Retrieve dialog
 router.get('/dialogs/:filename', function (req, res) {
 	res.render(req.originalUrl.substr(1), {
 		regionIcons: siteData.dialog.regionIcons,
@@ -35,7 +35,9 @@ router.post('/submit', function(req, res) {
 		"lng": req.body.lng,
 		"region": req.body.region,
 		"date": req.body.date,
-		"sound": req.files[0].filename
+		"sound": req.files[0].filename,
+		"creator": req.user.username,
+		"tags": []
 	};
 	markerCollection.update(
 	{ regionName: req.body.region},

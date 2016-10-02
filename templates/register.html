@@ -39,36 +39,44 @@
     	
     	<main class="mdl-layout__content login-background">
     	
-    	
-		  	<!-- Actual Login Content -->
 					<div class="mdl-card mdl-shadow--2dp mdl-card__center">
 						<div class="mdl-card__title">
-							<h2 class="mdl-card__title-text">Sign in</h2>
+							<h2 class="mdl-card__title-text">Sign up</h2>
 						</div>
 						<div class="mdl-card__supporting-text">
-							<form action="/login" method="post">
+						
+							<form action="register" method="post" role="form">
 								<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-									<input class="mdl-textfield__input" type="text" id="username" name="username">
+									<input class="mdl-textfield__input" type="text" id="username" name="username" pattern="^([\w\.]*)@([\w\.]*)\.([\w]*)">
 									<label class="mdl-textfield__label" for="username">Email address</label>
+									<span class="mdl-textfield__error">Not a valid email address</span>
 								</div>
 								<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-									<input class="mdl-textfield__input" type="password" id="password" name="password">
+									<input class="mdl-textfield__input" type="password" id="password" name="password" pattern="(.){8}.*">
 									<label class="mdl-textfield__label" for="password">Password</label>
+									<span class="mdl-textfield__error">Must be at least 8 characters long</span>
 								</div>
-								<a class="mdl-button mdl-js-button mdl-js-ripple-effect" id="register" href="register">
-									Register
-								</a>
-								<button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary" id="sign-in" type="submit">
-									Sign in
-								</button>
+								<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+									<input class="mdl-textfield__input" type="password" id="retype-password">
+									<label class="mdl-textfield__label" for="retype-password">Retype password</label>
+								
+								</div>
+								<div class="mdl-card__actions">
+									<a class="mdl-button mdl-js-button mdl-js-ripple-effect" id="cancel" href="/">
+										Cancel
+									</a>
+
+									<button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary" id="sign-up" type="submit">
+										Sign up
+									</button>
+								</div>
 							</form>
 						</div>
-						<div class="mdl-card__actions">
-							
 
-							
-						</div>
 					</div>
+		  	
+		  	<div id="card-area">
+		  	</div>
 		  	
     	</main>
 			

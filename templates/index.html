@@ -34,15 +34,16 @@
     			<nav class="mdl-navigation">
     			
     				<!-- Nav Buttons Toolbar -->
-    				<a class="mdl-navigation__link" onClick="sound.request()">
-    					<i class="material-icons">record_voice_over</i>
-    					Record
-  					</a>
-  					<a class="mdl-navigation__link" href="login">
-  						Login
-  					</a>
-						{% if current_user.is_authenticated %}
-							<a> {{ current_user.name }} </a>
+    				
+						{% if user %}
+							<a class="mdl-navigation__link" onClick="sound.request()">
+		  					<i class="material-icons">record_voice_over</i>
+		  					Record
+							</a>
+							<a class="mdl-navigation__link">{{ user.username }} </a>
+						{% else %}
+							<a class="mdl-navigation__link" href="login"> Login </a>
+							<a class="mdl-navigation__link" href="register"> Register </a>
 						{% endif %}
 						
 						<div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable
@@ -61,19 +62,28 @@
     	</header>
     	
     	<div id="layout-drawer" class="mdl-layout__drawer">
-    		<span class="mdl-layout__title">GeoVoice</span>
+    		{% if user %}
+    			<span class="mdl-layout__title">{{ user.username }} </span>
+  			{% else %}
+  				<span class="mdl-layout__title">GeoVoice</span>
+				{% endif %}
     		<nav class="mdl-navigation">
     			<!-- Nav Buttons Menu -->
-  				<a class="mdl-navigation__link" onClick="sound.request()">
-  					<i class="material-icons">record_voice_over</i>
-  					Record
-					</a>
-					<a id="add-region-button" class="mdl-navigation__link" onClick="regions.add()">
-						Add Region
-					</a>
-					<a class="mdl-navigation__link" href="login">
-						Login
-					</a>
+					{% if user %}
+						<a class="mdl-navigation__link" onClick="sound.request()">
+							<i class="material-icons">record_voice_over</i>
+							Record
+						</a>
+						<a id="add-region-button" class="mdl-navigation__link" onClick="regions.add()">
+							Add Region
+						</a>
+						<a class="mdl-navigation__link" href="logout"> Logout</a>
+					{% else %}
+						<a class="mdl-navigation__link" href="login"> Login </a>
+						<a class="mdl-navigation__link" href="register"> Register </a>
+					{% endif %}
+					
+					<!-- temporary -->
 					<a class="mdl-navigation__link" onClick="selfDestruct()">
 						Self Destruct
 					</a>
