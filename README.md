@@ -34,13 +34,15 @@
  - [x] right panel (region view) should be a bottom-panel on smaller devices
  - [ ] Only send Marker information needed
  - [x] Make adding markers to domains more intuitive/dynamic
- - [ ] Implement User login
- - [ ] Require User to be logged in to add recording/domain
- - [ ] Show username on posted markers
+ - [x] Implement User login
+ - [x] Require User to be logged in to add recording/domain
+ - [ ] Add error response "snacks" to block submits of users not logged in (just in case)
+ - [x] Show username on posted markers
  - [ ] Add search bar for searching for markers within time period
+ - [ ] Add autocomplete to search bar using "chips" for tag based searching
  - [ ] Add tagging system (ex music, college etc) for markers
  - [ ] Add live irc style message panel for logged in users
- - [ ] add temporary db self destruct button
+ - [x] add temporary db self destruct button
 
 
 ## Known Working
