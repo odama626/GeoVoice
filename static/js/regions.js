@@ -194,8 +194,14 @@ var regions = {
 	
 	injectMarker: function(region, marker) {
 			console.log('injecting '+marker+' into '+region);
-			this.list[region].markers.push(marker);
-			this.panel.open(this.list[region], false);
+			if (typeof this.list[region] !== 'undefined') {
+				this.list[region].markers.push(marker);
+				if (region !== null) {
+					this.panel.open(this.list[region], false);
+				}
+			} else {
+				this.fetch();
+			}
 	}, // injectMarker
 	
 	clear: function() {

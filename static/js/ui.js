@@ -42,11 +42,13 @@ var ui = {
 						<audio controls id="recording-player">
 							Your browser doesn't support playback
 						</audio>
+						<a id='recording-save' download="recording.mp3">Save</a>
 						</span>
 					`,
 				onLoaded: function(e) {
 					var player = $('#recording-player')
 					player.attr('src', url);
+					$('#recording-save').attr('href', url);
 //					$('#audio-source').attr('src', url);
 					//player[0].pause();
 					player[0].load();
