@@ -58,7 +58,7 @@ app.use(multer({
 );
 app.use(express.static('static'));
 app.use(express.static('uploads'));
-	
+
 nunjucks.configure('templates', {
 	autoescape: true,
 	express: app

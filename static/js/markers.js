@@ -4,7 +4,7 @@ var markers = {
 	oms: undefined, // OverlappingMarkerSpiderfier
 	infoWindow: undefined,
 	fetchActive: true,
-	
+
 
 	place: function(info) {
 		var marker = new google.maps.Marker({
@@ -12,34 +12,34 @@ var markers = {
 			map:map,
 			label: info.date
 		});
-		
+
 		marker.info = info;
 		info.marker = marker;
-		
+
 		if (this.oms === undefined) { // setup spiderfier if undefined
 			this.oms = new OverlappingMarkerSpiderfier(map);
-			
+
 			this.infoWindow = new google.maps.InfoWindow();
-			
+
 			google.maps.event.addListener(this.infoWindow, 'closeclick', markers.closeInfoWindow);
-			
+
 			this.oms.addListener('click', markers.omsClickListener);
 		}
-	
+
 		markers.list.push(marker);
 		this.oms.addMarker(marker);
 	}, // place
-	
+
 	pauseFetch: function() {
 		console.log('pause fetch');
 		this.fetchActive = false;
 	}, // pauseFetch
-	
+
 	resumeFetch: function() {
 		console.log('resume fetch');
 		this.fetchActive = true;
 	}, // resumeFetch
-	
+
 	clear: function() {
 		for (var i = 0; i< markers.list.length; i++) {
 			markers.list[i].setMap(null);
@@ -49,35 +49,69 @@ var markers = {
 		}
 		markers.list = [];
 	}, // clear
-	
+
 	closeInfoWindow: function() {
 		if (this.infoWindow !== null && typeof this.infoWindow !== 'undefined') {
 			this.infoWindow.setMap(null);
-			
+
 		}
 		markers.resumeFetch();
 	}, // closeInfoWindow
-	
+
 	omsClickListener: function(marker, event) {
 		markers.closeInfoWindow();
 		markers.pauseFetch();
 		$('dv audio').remove();
+		var date = new Date(marker.info.date);
 		markers.infoWindow.setContent(`
 				<h5>Created by `+marker.info.creator+ `</h5>
-				<h8>On `+ marker.info.date + `</h8> <br>
+				<h8>At `+ date.toLocaleTimeString() +' on '+date.toLocaleDateString()+ `</h8> <br>
 				<audio controls>
 					<source type="audio/mpeg" src="`+marker.info.sound+`">
 				</audio>
-				
+
 				<br>
-				<!-- Deletable Contact Chip -->
-				<div class="mdl-chip mdl-chip--deletable">
-					<span class="mdl-chip__text">Deletable Chip</span>
-					<a type="button" class="mdl-chip__action"><i class="material-icons">cancel</i></a>
-				</div>
-				
+				<span id="tag-container">
+				</span>
 				`);
 		markers.infoWindow.open(map, marker);
-	} // omsClickListener
-	
+		var tagContainer = $('#tag-container');
+		new TagHandler(marker.info, tagContainer);
+
+
+		/*for (var i=0; i<marker.info.tags.length; i++) {
+			tagContainer.append(TagFactory.createTag(marker.info.tags[i]));
+		}
+		tagContainer.append(TagFactory.createTagEntry());
+		console.log(marker);
+
+		TagFactory.attachAction(marker.info, function(event) {
+			$(this).parent().remove();
+			marker.info.tags.splice(marker.info.tags.indexOf($(this).text()),1);
+		});*/
+
+	}, // omsClickListener
+
+	update: function(marker) {
+		//var filename = new Date().toISOString() + '.mp3';
+		var data = new FormData();
+		data.append('sound', marker.sound);
+		data.append('tags', JSON.stringify(marker.tags));
+		data.append('region', marker.region);
+
+			$.ajax({
+			url : "update_tags",
+			type: "POST",
+			data: data,
+			contentType: false,
+			processData: false,
+			success: function(data) {
+				ui.createSnack('tag modification completed');
+			},
+			error: function(e) {
+				ui.createSnack('Error modifying tag');
+			}
+		});
+	}, // upload
+
 }; // markers

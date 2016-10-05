@@ -10,7 +10,7 @@ var siteData = require('../site-data').siteData;
 mongoClient.connect("mongodb://localhost:27017/geoVoice", function(err, database) {
 	if (err) { return console.dir(err); }
 	console.log("connected to DB");
-	
+
 	db = database;
 	markerCollection = db.collection('markers');
 //	markerCollection.drop();
@@ -30,7 +30,7 @@ router.get('/dialogs/:filename', function (req, res) {
 
 // Add a new sound marker
 router.post('/submit', function(req, res) {
-	var doc = { 
+	var doc = {
 		"lat": req.body.lat,
 		"lng": req.body.lng,
 		"region": req.body.region,
@@ -40,14 +40,28 @@ router.post('/submit', function(req, res) {
 		"tags": []
 	};
 	markerCollection.update(
-	{ regionName: req.body.region},
-	{
-		$push: { markers: doc }
-	},
-	{ upsert: true }	
+		{ regionName: req.body.region},
+		{
+			$push: { markers: doc }
+		},
+		{ upsert: true }
 	);
 	console.log("Added new marker");
 	res.end('SUCCESS');
+});
+
+router.post('/update_tags', function (req, res) {
+	var tags = JSON.parse(req.body.tags);
+	console.log(req.body.tags);
+	markerCollection.update(
+		{ 'regionName': req.body.region,
+			'markers.sound': req.body.sound },
+		{
+			$set: { 'markers.$.tags': tags}
+		}
+	);
+	res.end('SUCCESS');
+	console.log('updated tags on '+req.body.sound);
 });
 
 // Add a new sound region
@@ -72,7 +86,7 @@ router.get('/get_markers', function(req, res) {
 	markerCollection.find().toArray( function(err, items) {
 		res.send(JSON.stringify(items, null, 2));
 	});
-	
+
 	console.log("Sending markers");
 });
 
@@ -92,7 +106,7 @@ router.post('/register', function(req, res) {
 		if (err) {
 			return res.render('register.html', {account: account});
 		}
-		
+
 		passport.authenticate('local')(req, res, function() {
 			res.redirect('/');
 		});
