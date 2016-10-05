@@ -40,7 +40,7 @@
  - [x] Show username on posted markers
  - [ ] Add search bar for searching for markers within time period
  - [ ] Add autocomplete to search bar using "chips" for tag based searching
- - [ ] Add tagging system (ex music, college etc) for markers
+ - [x] Add tagging system (ex music, college etc) for markers
  - [ ] Add live irc style message panel for logged in users
  - [x] add temporary db self destruct button
 
