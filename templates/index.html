@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="css/baseStyle.css">
     <link rel="stylesheet" href="css/map-icons.css">
     <link rel="stylesheet" href="css/spectrum.css">
+    <link rel="stylesheet" href="css/better-autocomplete.css">
     <style>
       html, body {
         height: 100%;
@@ -46,17 +47,25 @@
 							<a class="mdl-navigation__link" href="register"> Register </a>
 						{% endif %}
 
-						<div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable
+            <div id="search-bar-container">
+              <div class="mdl-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="search-bar" name="search-bar" placeholder="Search">
+              </div>
+            </div>
+
+						<!--<div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable
 				              mdl-textfield--floating-label mdl-textfield--align-right">
 						  <label class="mdl-button mdl-js-button mdl-button--icon"
-						         for="fixed-header-drawer-exp">
+						         for="search-bar">
 						    <i class="material-icons">search</i>
 						  </label>
 						  <div class="mdl-textfield__expandable-holder">
-						    <input class="mdl-textfield__input" type="text" name="sample"
-						           id="fixed-header-drawer-exp">
+                <select class="mdl-textfield__input" style="width:100px;" type="text" name="sample"
+						           id="search-bar"></select>
+
 						  </div>
 					  </div>
+            -->
     			</nav>
     		</div>
     	</header>
@@ -108,6 +117,7 @@
 		<script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 
 		<script defer src="js/ui.js"></script>
+    <script defer src="js/searchHandler.js"></script>
 		<script defer src="js/tagHandler.js"></script>
 		<script defer src="js/markers.js"></script>
 		<script defer src="js/regions.js"></script>
@@ -120,11 +130,13 @@
 
 
 		<!-- External js includes -->
+    <script defer src="js/ext/ric-polyfill.js"></script>
 		<script defer src="js/ext/oms.min.js"></script>
 		<script defer src="js/ext/mdl-jquery-modal-dialog.js"></script>
 		<script defer src="js/ext/adapter.js"></script>
 		<script defer src="js/ext/web-audio-recorder/WebAudioRecorder.min.js"></script>
 		<script defer src="js/ext/map-icons.js"></script>
+    <script defer src="js/ext/jquery.better-autocomplete.js"></script>
 		<script defer src="js/ext/spectrum.js"></script>
 
 

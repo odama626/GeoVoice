@@ -1,18 +1,18 @@
 var regions = {
 
 	list: [],
-	
+
 	active: { // methods and members for currently active region
 		geofence: null,
 		region: undefined,
-		
+
 		set: function(region) {
 			if (typeof region == "undefined") {
 				return;	// if database is empty, do nothing
 			}
-		
+
 			markers.clear();
-			
+
 			this.region = region;
 			if (typeof region.geofence !== "undefined") {
 				this.geofence = new google.maps.Polygon({
@@ -23,28 +23,32 @@ var regions = {
 					fillColor: region.color,
 					fillOpacity: 0.35
 				});
-			
+
 				this.geofence.setMap(map);
 				markers.closeInfoWindow();
 				markers.pauseFetch();
-			
+
 			}
-			
+
 			if (region.regionName !== null) {
 				markers.pauseFetch();
 				map.fitBounds(getBounds(region.geofence));
 			}
-			
+
 			this.refresh();
-			
+
 		}, // set
-		
+
 		refresh: function() {
-			this.region.markers.forEach(function(element, i) {
-				markers.place(element);
-			}); 
+			if (searchHandler.active) {
+				searchHandler.updateMarkerVisibility();
+			} else {
+				this.region.markers.forEach(function(element, i) {
+					markers.place(element);
+				});
+			}
 		}, // refresh
-		
+
 		clear: function() {
 			if (this.geofence != null) {
 				this.geofence.setMap(null);
@@ -52,25 +56,24 @@ var regions = {
 			this.set(regions.list[null]);
 			markers.resumeFetch();
 		} // clear
-	
+
 	}, // active region
-	
+
 	fetch: function() {
 		//var bounds = map.getBounds();
 		// TODO create ajax request for markers, then delete current markers and show new
-		// https://developers.google.com/maps/articles/toomanymarkers#distancebasedclustering	
+		// https://developers.google.com/maps/articles/toomanymarkers#distancebasedclustering
 
 		// Dont refresh markers if InfoWindow is open
 		if (!markers.fetchActive) {
 			return;
 		}
-		
-		console.log('fetch');
-		
+		console.time('fetch');
 		$.ajax({
 			url : "get_markers",
 			type: "GET",
 			success: function(data) {
+
 				var regionList = jQuery.parseJSON(data);
 				regions.clear();
 				for (d = 0; d<regionList.length; d++)
@@ -79,42 +82,42 @@ var regions = {
 						regionList[d].regionName = null;
 					}
 					regions.place(regionList[d]);
-				
 				}
-				
+
 				if (typeof regions.active.region === "undefined") {
 					regions.active.set(regions.list[null]);
 				} else {
 					regions.active.refresh();
 				}
-				
+				console.timeEnd('fetch');
+
 			},
 			error: function(e) {
 				ui.createSnack('Error retrieving sound markers: '+e.toString());
 			}
 		});
 	}, // fetch
-	
+
 	add: function() {
 		ui.drawingManager.init();
-	
+
 	}, // add
 
 	create: function(region) {
 		var location = region.geofence.c_getBounds().getCenter();//this.getPolyCenter(region.geofence);
 		var jsonGeofence = JSON.stringify(region.geofence.c_getLatLngLiteralArray());
 		//JSON.stringify(region.geofence = this.getCleanPolyArray(region.geofence));
-		
+
 		region.lat = location.lat();
 		region.lng = location.lng();
 		region.shape = region.shape.substring('map-icon-'.length);
 		region.markers = [];
 		region.geofence = jsonGeofence;
-		
+
 		// Convert geofence into array of { lat:, lng: }
-		
+
 		this.place(region);
-	
+
 		var data = new FormData();
 		data.append('regionName', region.regionName);
 		data.append('lat', region.lat);
@@ -123,7 +126,7 @@ var regions = {
 		data.append('shape', region.shape);
 		data.append('icon', region.icon);
 		data.append('geofence', jsonGeofence);
-	
+
 		$.ajax({
 			url: 'submit_region',
 			type: 'POST',
@@ -138,7 +141,7 @@ var regions = {
 			}
 		});
 	}, // create
-	
+
 	place: function(region) {
 		if (region.regionName != null) {
 			region.marker = new Marker({
@@ -155,20 +158,20 @@ var regions = {
 			});
 
 			region.geofence = JSON.parse(region.geofence);
-			
+
 			region.marker.addListener('click', function() {
 				regions.active.clear();
 				//regions.panel.close();
 				regions.panel.open(region);
 			});
-		}		
+		}
 		//markers.list.push(marker);
 		this.list[region.regionName] = region;
 
 	}, // place
-	
+
 	parseMarkerShape: function(sShape) {
-		var pShape;		
+		var pShape;
 		switch (sShape) {
 			case 'square-pin':
 				pShape = SQUARE_PIN;
@@ -189,9 +192,9 @@ var regions = {
 				pShape = MAP_PIN;
 		}
 		return pShape;
-	
+
 	}, // parseMarkerShape
-	
+
 	injectMarker: function(region, marker) {
 			console.log('injecting '+marker+' into '+region);
 			if (typeof this.list[region] !== 'undefined') {
@@ -203,7 +206,7 @@ var regions = {
 				this.fetch();
 			}
 	}, // injectMarker
-	
+
 	clear: function() {
 			for (region in regions.list) {
 				if ( typeof regions.list[region].marker != "undefined") {
@@ -211,34 +214,34 @@ var regions = {
 					regions.list[region].marker = null;
 				}
 			}
-	
+
 		markers.clear();
 	}, // clear
-	
+
 	panel: {
-		
+
 		open: function(region, animate = true) {
 			regions.active.set(region);
 			this.createHtml(region, animate);
 		}, // open
-		
+
 		close: function() {
 			regions.active.clear();
 			$('.right-panel').removeClass('slide-in');
 			console.log('closing panel');
-			$('body, html').animate({ scrollTop: 0 }, 500); 
+			$('body, html').animate({ scrollTop: 0 }, 500);
 			setTimeout( function() {
 				$('#region-panel-container').html('');
 			}, 1000);
 		}, // close
-		
+
 		createHtml: function(region, animate) {
 			var itemsHtml = '';
 
 			for (i=0;i < region.markers.length; i++) {
 				itemsHtml += regions.panel.generateItem(region.markers[i]);
 			}
-	
+
 			if (itemsHtml == '') {
 				itemsHtml = `
 					<div id='no-recordings'>
@@ -246,22 +249,22 @@ var regions = {
 					</div>
 				`
 			}
-	
+
 			itemsHtml += `
 				<div style="padding-left:15px">
-					<button 
-						class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect right-panel__button' 
+					<button
+						class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect right-panel__button'
 						onClick='regions.panel.close()'>
-					
+
 						Close
 					</button>
 				</div>`;
-				
+
 			var containerClasses = 'right-panel';
 			if (!animate) {
 				containerClasses+= ' slide-in';
 			}
-			
+
 			var sheetHtml = `
 				<div class='`+containerClasses+`'>
 						<span class='right-panel__title'>`+region.regionName+`</span>
@@ -272,14 +275,14 @@ var regions = {
 				</div>`;
 
 			$('#region-panel-container').html(sheetHtml);
-			
+
 			if (animate) {
 				setTimeout(function() {
 					$('.right-panel').addClass('slide-in');
-				}, 100);			
+				}, 100);
 			}
 		}, // createHtml
-		
+
 		generateItem: function(item) {
 			return `
 				<li class="mdl-list__item mdl-list__item--two-line">
@@ -294,5 +297,5 @@ var regions = {
 				</li>`;
 		} // generateItem
 	} // panel
-	
+
 }; // regions

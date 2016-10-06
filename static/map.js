@@ -16,28 +16,41 @@ function initMap() {
 			{stylers: [{ visibility: 'simplified' }]},
 		]
   });
-	
+
 	setPrototypes();
-  
+
 	google.maps.event.addListener(map, 'idle', regions.fetch);
 	map.addListener('click', () => { regions.panel.close(); markers.closeInfoWindow() });
-	
+
 	google.maps.event.addListener(map, 'rightclick', addPrecisePoint);
-	
+
 	getLocation().then(function(loc) {
   	map.setCenter(loc);
   });
-	
+
 	// Close navigation drawer on <a> click
 	$('a').click( function() {
 		markers.closeInfoWindow();
 		regions.panel.close();
 		$( '.mdl-layout__drawer, .mdl-layout__obfuscator' ).removeClass( 'is-visible' );
 	});
-	
+
 	if (ENABLE_REGIONS == false) {
 		disableRegions();
 	}
+
+  $(document).ready(function() {
+    $('#search-bar').betterAutocomplete('init', searchHandler.tagList, {},
+      {
+        select: function(result, $input) {
+        //  $input.val(result.title);
+          searchHandler.addChip(result.title);
+          $input.val('');
+        }
+
+      }
+    );
+  });
 }
 
 function disableRegions() {
@@ -71,7 +84,7 @@ function setPrototypes() {
 		this.getPath().forEach(function(element, index) {bounds.extend( element)});
 		return bounds;
 	};
-	
+
 	google.maps.Polygon.prototype.c_getLatLngLiteralArray = function() {
 		var arr = [];
 		this.getPath().forEach(function(element, index) {

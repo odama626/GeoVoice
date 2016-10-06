@@ -28,6 +28,8 @@ var markers = {
 
 		markers.list.push(marker);
 		this.oms.addMarker(marker);
+
+		searchHandler.mapTags(info);
 	}, // place
 
 	pauseFetch: function() {
@@ -59,6 +61,7 @@ var markers = {
 	}, // closeInfoWindow
 
 	omsClickListener: function(marker, event) {
+		console.time('marker info');
 		markers.closeInfoWindow();
 		markers.pauseFetch();
 		$('dv audio').remove();
@@ -77,18 +80,7 @@ var markers = {
 		markers.infoWindow.open(map, marker);
 		var tagContainer = $('#tag-container');
 		new TagHandler(marker.info, tagContainer);
-
-
-		/*for (var i=0; i<marker.info.tags.length; i++) {
-			tagContainer.append(TagFactory.createTag(marker.info.tags[i]));
-		}
-		tagContainer.append(TagFactory.createTagEntry());
-		console.log(marker);
-
-		TagFactory.attachAction(marker.info, function(event) {
-			$(this).parent().remove();
-			marker.info.tags.splice(marker.info.tags.indexOf($(this).text()),1);
-		});*/
+		console.timeEnd('marker info');
 
 	}, // omsClickListener
 
@@ -113,5 +105,9 @@ var markers = {
 			}
 		});
 	}, // upload
+
+	search: function() {
+
+	}
 
 }; // markers

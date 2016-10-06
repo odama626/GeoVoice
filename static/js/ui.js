@@ -11,7 +11,7 @@ var ui = {
 	}, // alert
 
 	createDialog: {
-		
+
 		requestRecording: function(region) {
 			showDialog({
 				title: 'Record some audio',
@@ -27,7 +27,7 @@ var ui = {
 				}
 			});
 		}, // requestRecording
-		
+
 		recordPreview: function(location,region, url) {
 			showDialog({ // class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
 				title: 'Sound Good?',
@@ -52,19 +52,21 @@ var ui = {
 //					$('#audio-source').attr('src', url);
 					//player[0].pause();
 					player[0].load();
-					
+
 					if (!ENABLE_REGIONS) {
 						$('#marker-region-selection').remove();
 					}
-					
+
+					var regionsContainer = $('#regions');
+
 					for (var place in regions.list) {
 						if (typeof regions.list[place].geofence !== 'undefined') {
 							if (getBounds(regions.list[place].geofence).contains(location)) {
-								$('#regions').append('<option value="'+place+'">'+place+'</option>');
+								regionsContainer.append('<option value="'+place+'">'+place+'</option>');
 							}
 						}
 					}
-					
+
 				},
 				positive: {
 					title: 'yes',
@@ -80,10 +82,10 @@ var ui = {
 				},
 				negative: {
 					title: 'no'
-				}	
+				}
 			});
 		}, // recordPreview
-	
+
 		recordTimer: function(region) {
 			// Timer logic
 			var time = 0.00
@@ -91,7 +93,7 @@ var ui = {
 				time+= 0.01
 				$('#recording-timer').text(time.toFixed(2));
 			}, 1000);
-		
+
 			showDialog({
 				title: 'Recording',
 				text: '<h4><a id="recording-timer">0.00</a></h4>',
@@ -104,9 +106,9 @@ var ui = {
 				}
 			});
 		},// recordTimer
-		
+
 		addRegion: function(geofence) {
-		
+
 			$.ajax({
 				url: 'dialogs/addRegion.html',
 				type: 'GET',
@@ -117,11 +119,11 @@ var ui = {
 						title: 'Add Region',
 						text: data,
 						onLoaded: function(e) {
-							
+
 							// accordian animation
 							$('.accordian-expand').click(
 								() => $(event.target).next('.accordian-content').toggleClass('open'));
-						 	
+
 						 	// icon selection
 						 	$('.map-marker').click((event) => {
 						 		var icon = $(event.target).attr('id');
@@ -132,23 +134,23 @@ var ui = {
 						 			attr('data-icon',icon);
 					 			$(accordianContent).toggleClass('open');
 					 		});
-					 		
+
 							//set initial icon
 							$('.map-icon-point-of-interest').prop('checked', true);
 							$('#selected-icon').
 								attr('class', 'map-icon radio-map-icon map-icon-point-of-interest').
 								attr('data-icon', 'map-icon-point-of-interest');
-								
+
 							var initialColor = '#1998F7';
-							
+
 							var markerShape = $('#selected-marker-shape');
 							markerShape.css({ 'color': initialColor });
 							markerShape.
 								attr('class', 'map-icon radio-map-icon map-icon-map-pin').
 								attr('data-icon', 'map-icon-map-pin');
 							markerShape.nextAll('div').first().children().css({ 'color': initialColor });
-							 
-			
+
+
 							$('#region-palette').spectrum({ // Color picker
 								showPaletteOnly: true,
 								togglePaletteOnly: true,
@@ -167,7 +169,7 @@ var ui = {
 									markerShape.nextAll('div').first().children().css({ 'color': hColor });
 								},
 							});
-							
+
 						},
 						positive: {
 							title: 'okay',
@@ -195,31 +197,31 @@ var ui = {
 			});
 		}, // addRegion
 	}, // createDialog { }
-	
+
 	createSnack: function(message) {
 		var notification = document.querySelector('.mdl-js-snackbar');
 		notification.MaterialSnackbar.showSnackbar({
 			message: message
 		});
 	}, // createSnack
-	
+
 	loading: {
-	
+
 		show: function(timeout = 3000) {
 			showLoading();
 			setTimeout(function() { ui.loading.hide() }, timeout);
 		}, // show
-		
+
 		hide: function() {
 			hideLoading();
 		} // hide
-		
+
 	}, // loading
-	
+
 	drawingManager: {
-	
+
 		manager: null,
-	
+
 		init: function() {
 			this.drawingManager = new google.maps.drawing.DrawingManager({
 				drawingMode: google.maps.drawing.OverlayType.MARKER,
@@ -242,43 +244,43 @@ var ui = {
 				var drawingComplete = function(event) {
 					var doneButton = $('#done-drawing');
 					doneButton.css({ 'background-color': 'lightgreen' });
-					
+
 					doneButton.off('click').on('click',function() {
 						ui.drawingManager.destroy();
 						ui.createDialog.addRegion(event.overlay);
 					});
 				};
-				
+
 				google.maps.event.addListener(ui.drawingManager.drawingManager, 'overlaycomplete', drawingComplete);
 			}, 1000);
 		}, // init
-		
+
 		destroy: function() {
 			this.drawingManager.setMap(null);
 			this.drawingManager.setOptions({ drawingControls: false });
 			this.drawingManager = null;
 		}, // destroy
-		
+
 		fixIcons: function() {
 			$('.gmnoprint').each(function() {
-			
+
 				var setIcon = function(obj, icon) {
 					obj.children().children().remove();
 					obj.children().html(`<div class='drawing-manager-button'>
 																	<i class="material-icons">`+icon+`</i>
 																</div>`);
 				};
-			
+
 				var panButton = $(this).find("[title='Stop drawing']");
 				var polyButton = $(this).find("[title='Draw a shape']");
 				var rectButton = $(this).find("[title='Draw a rectangle']");
 				var container = panButton.parent().parent();
-				
+
 				// Change DrawingManager button icons
 				setIcon(panButton, 'pan_tool');
 				setIcon(polyButton, 'linear_scale');
 				setIcon(rectButton, 'photo_size_select_small');
-				
+
 				//Add finished editing button
 				container.append(`
 					<div style="float: left; line-height: 0;">
@@ -290,18 +292,18 @@ var ui = {
 							</span>
 						</div>
 					</div>`);
-				
+
 			});
-		
+
 		}, // fixIcons
-		
+
 		requestDrawing: function() {
 			this.drawingManager.activate(true);
-			
-		
+
+
 		} // requestDrawing
-		
-	
+
+
 	} // drawingManager
-	
+
 }; // ui

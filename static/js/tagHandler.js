@@ -1,21 +1,23 @@
 class TagHandler {
 
 	constructor(marker, container) {
+		console.time('tag handler');
 		this.marker = marker;
 		this.container = container;
 		this.closeTagAction = function() {
 			$(this).parent().remove();
 			marker.tags.splice(marker.tags.indexOf($(this).text()),1);
-			//TODO update database
+			// update database
 			markers.update(marker);
 		};
 
 		for (var i=0; i<marker.tags.length; i++) {
 			this.container.append(this.createTag(marker.tags[i]));
 		}
-		$('.mdl-chip__action').on('click',this.closeTagAction);
+		$('.marker-tag__action').on('click',this.closeTagAction);
 
 		this.createTagEntry();
+		console.timeEnd('tag handler');
 	}
 
 	createTag(tagName, deletable = true) {
@@ -23,7 +25,7 @@ class TagHandler {
 			<span class="mdl-chip `+ (deletable ? 'mdl-chip--deletable' : '')+`">
 				<span class="mdl-chip__text">`+tagName+`</span>
 				`+(deletable ? `
-						<button type="button" class="mdl-chip__action">
+						<button type="button" class="mdl-chip__action marker-tag__action">
 							<i class="material-icons">cancel</i>
 						</button>
 				`: '')+`
@@ -47,11 +49,11 @@ class TagHandler {
 			if (event.keyCode == 13) {
 				var tag = $(this).text();
 				container.prepend(createTag(tag,$(this).parent()));
-				$('.mdl-chip__action').first().on('click', closeTagAction);
+				$('.marker-tag__action').first().on('click', closeTagAction);
 				$(this).text('');
 				marker.tags.push(tag);
 				console.log(marker);
-				//TODO update database
+				// update database
 				markers.update(marker);
 			}
 		});
