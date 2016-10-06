@@ -36,7 +36,7 @@ class TagHandler {
 	createTagEntry() {
 		this.container.append(`
 			<div class="mdl-textfield mdl-textfield--floating-label">
-				<span contenteditable="true" class="mdl-textfield__input" type="text" id="tag-entry" name="tag-entry"></span>
+				<input class="mdl-textfield__input" type="text" id="tag-entry" name="tag-entry"></span>
 				<label class="mdl-textfield__label" for="tag-entry">+tag</label>
 			</div>
 		`);
@@ -46,11 +46,12 @@ class TagHandler {
 		var closeTagAction = this.closeTagAction;
 
 		$('#tag-entry').keyup(function(event) {
+			console.log(event);
 			if (event.keyCode == 13) {
-				var tag = $(this).text();
+				var tag = $(this).val();
 				container.prepend(createTag(tag,$(this).parent()));
 				$('.marker-tag__action').first().on('click', closeTagAction);
-				$(this).text('');
+				$(this).val('');
 				marker.tags.push(tag);
 				console.log(marker);
 				// update database
