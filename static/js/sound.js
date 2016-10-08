@@ -9,11 +9,11 @@ var sound = {
 	request: function(location = null, region = null) {
 		ui.loading.show();
 
+		this.location = location;
 		if (location == null) {
 			getLocation().then( loc => sound.location = loc);
 		}
 
-		this.location = location;
 		navigator.getUserMedia({ audio: true }, // TODO switch to navigator.mediaDevices.getUserMedia(
 			stream => {
 				if (this.audioContext === undefined) { // only create audioContext if it doesn't already exist
@@ -57,10 +57,24 @@ var sound = {
 		data.append('lng', sound.location.lng());
 		data.append('date', new Date().toString());
 		data.append('region', region);
+
+		//Place temporary marker on map
+		var marker = {
+			sound: URL.createObjectURL(sound.file),
+			creator: 'you - still pending',
+			date: new Date().toString(),
+			lat: sound.location.lat(),
+			lng: sound.location.lng(),
+			tags: []
+		};
+
+		regions.injectMarker(region, marker);
+
 		if (region == null) {
 			map.panTo(sound.location);
 		}
 
+		console.time('upload sound');
 			$.ajax({
 			url : "submit",
 			type: "POST",
@@ -69,16 +83,7 @@ var sound = {
 			processData: false,
 			success: function(data) {
 				ui.createSnack('Upload completed');
-				//Place new marker on map
-				var marker = {
-					sound: URL.createObjectURL(sound.file),
-					date: new Date().toDateString(),
-					lat: sound.location.lat(),
-					lng: sound.location.lng()
-				};
-
-				regions.injectMarker(region, marker);
-
+				console.timeEnd('upload sound');
 			},
 			error: function(e) {
 				ui.createSnack('Error sending sound: '+e.toString());
