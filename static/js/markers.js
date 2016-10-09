@@ -91,9 +91,9 @@ var markers = {
 		data.append('tags', JSON.stringify(marker.tags));
 		data.append('region', marker.region);
 
-			$.ajax({
-			url : "update_tags",
-			type: "POST",
+		$.ajax({
+			url : 'update_tags',
+			type: 'POST',
 			data: data,
 			contentType: false,
 			processData: false,

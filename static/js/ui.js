@@ -18,12 +18,12 @@ var ui = {
 				text: 'Start recording?',
 				positive: {
 					title: 'yes',
-					onClick: function (e) {
-							sound.start(region)
-						}
+					onClick: function () {
+						sound.start(region);
+					}
 				},
 				negative: {
-					title: 'cancel',
+					title: 'cancel'
 				}
 			});
 		}, // requestRecording
@@ -88,9 +88,9 @@ var ui = {
 
 		recordTimer: function(region) {
 			// Timer logic
-			var time = 0.00
+			var time = 0.00;
 			var timerInterval = setInterval(function() {
-				time+= 0.01
+				time+= 0.01;
 				$('#recording-timer').text(time.toFixed(2));
 			}, 1000);
 

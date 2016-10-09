@@ -24,7 +24,7 @@ var sound = {
 
 				this.recorder = new WebAudioRecorder(mixer, {
 					workerDir: 'js/ext/web-audio-recorder/',
-					encoding: "mp3",
+					encoding: 'mp3',
 					options: {
 						mp3: {
 							bitRate: 64
@@ -74,10 +74,10 @@ var sound = {
 			map.panTo(sound.location);
 		}
 
-		console.time('upload sound');
-			$.ajax({
-			url : "submit",
-			type: "POST",
+			console.time('upload sound');
+		$.ajax({
+			url : 'submit',
+			type: 'POST',
 			data: data,
 			contentType: false,
 			processData: false,
