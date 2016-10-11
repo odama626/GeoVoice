@@ -9,6 +9,7 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var LocalStrategy = require('passport-local').Strategy;
 var GoogleStrategy = require('passport-google').Strategy;
+var pug = require('pug');
 
 
 
@@ -59,10 +60,13 @@ app.use(multer({
 app.use(express.static('static'));
 app.use(express.static('uploads'));
 
+/*
 nunjucks.configure('templates', {
 	autoescape: true,
 	express: app
-});
+});*/
+
+app.set('view engine', 'pug');
 
 app.use('/', routes);
 

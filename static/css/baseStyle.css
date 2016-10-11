@@ -1,3 +1,13 @@
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+#map {
+	height: 100%;
+}
+
 .mdl-card__center {
 	margin: auto;
 }
@@ -31,7 +41,7 @@
 	/*min-width: 200px; */
 	overflow-y: auto;
 	overflow-x: hidden;
-	
+
 	transition-property: right;
 	transition-duration: 0.5s;
 	transition-timing-function: ease-in-out;
@@ -52,11 +62,11 @@
 		transition-duration: 0.5s;
 		transition-timing-function: ease-in-out;
 	}
-	
+
 	.slide-in {
 		top: 75%;
 	}
-	
+
 }
 
 .right-panel__title {
@@ -79,10 +89,6 @@
 	padding: 10%;
 }
 
-
-
-
-
 input.map-marker {
 	visibility: hidden;
 }
@@ -101,7 +107,7 @@ input.map-marker:checked + label {
 .accordian-content {
 	border-top: 1px solid lightgrey;
 	height: 0;
-	
+
 	transition-property: height;
 	transition-duration: 1s;
 	transition-timing-function: ease-in-out;
@@ -115,7 +121,7 @@ input.map-marker:checked + label {
 	font-weight: 400;
 	line-height: 36px;
 	font-size: 20px;
-	
+
 	padding: 0 16px 0 24px;
 }
 

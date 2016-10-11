@@ -17,7 +17,7 @@ mongoClient.connect("mongodb://localhost:27017/geoVoice", function(err, database
 });
 
 router.get('/', function (req, res) {
-	res.render('index.html', {user : req.user });
+	res.render('index.pug', {user : req.user });
 });
 
 // Retrieve dialog
@@ -98,13 +98,13 @@ router.post('/self_destruct', function(req, res) {
 
 
 router.get('/register', function(req, res) {
-	res.render('register.html', { } );
+	res.render('register.pug', { } );
 });
 
 router.post('/register', function(req, res) {
 	Account.register(new Account({username: req.body.username }), req.body.password, function(err, account) {
 		if (err) {
-			return res.render('register.html', {account: account});
+			return res.render('register.pug', {account: account});
 		}
 
 		passport.authenticate('local')(req, res, function() {
@@ -114,7 +114,7 @@ router.post('/register', function(req, res) {
 });
 
 router.get('/login', function(req, res) {
-	res.render('login.html', {user: req.user });
+	res.render('login.pug', {user: req.user });
 });
 
 router.post('/login', passport.authenticate('local'), function(req, res) {
