@@ -1,5 +1,4 @@
 var express = require('express');
-var nunjucks = require('nunjucks');
 var	fs = require('fs');
 var	https = require('https');
 var	multer = require('multer');
@@ -11,8 +10,6 @@ var LocalStrategy = require('passport-local').Strategy;
 var GoogleStrategy = require('passport-google').Strategy;
 var pug = require('pug');
 
-
-
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
@@ -23,7 +20,6 @@ var markerCollection;
 var db;
 
 // setup HTTPS
-
 var httpsOptions = {
 	key: fs.readFileSync('ssl.key'),
 	cert: fs.readFileSync('ssl.cert'),
@@ -31,7 +27,6 @@ var httpsOptions = {
 };
 
 // Setup Session
-//app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(require('express-session')({
@@ -51,7 +46,6 @@ passport.deserializeUser(Account.deserializeUser());
 // mongoose
 mongoose.connect('mongodb://localhost:27017/geoVoice_passport');
 
-
 // setup parsing of requests
 app.use(multer({
 	dest: './uploads/',
@@ -59,12 +53,6 @@ app.use(multer({
 );
 app.use(express.static('static'));
 app.use(express.static('uploads'));
-
-/*
-nunjucks.configure('templates', {
-	autoescape: true,
-	express: app
-});*/
 
 app.set('view engine', 'pug');
 

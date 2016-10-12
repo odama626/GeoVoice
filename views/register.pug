@@ -1,58 +1,35 @@
-doctype html
-html
-  head
-    title Geolocation
-    meta(name="viewport", content="initial-scale=1.0, user-scalable=no")
-    meta(charset="utf-8")
-    link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700", type="text/css")
-    link(rel="stylesheet", href="https://fonts.googleapis.com/icon?family=Material+Icons")
-    link(rel="stylesheet", href="https://code.getmdl.io/1.2.1/material.indigo-pink.min.css")
-    link(rel="stylesheet", href="css/mdl-jquery-modal-dialog.css")
-    link(rel="stylesheet", href="css/baseStyle.css")
-  body
-    .mdl-layout.mdl-js-layout
-      header.mdl-layout__header
-        .mdl-layout-layout-icon
-        .mdl-layout__header-row
-          span.mdl-layout__title GeoVoice
-          .mdl-layout-spacer
-          nav.mdl-navigation
-            a.mdl-navigation__link(href="javascript:history.back()") Home
+extends layout.pug
 
-      .mdl-layout__drawer
-        span.mdl-layout__title GeoVoice
-        nav.mdl-navigation
-          a.mdl-navigation__link(href="javascript:history.back()") Home
+block navBar
+  a.mdl-navigation__link(href="javascript:history.back()") Home
 
-      main.mdl-layout__content.login-background
-        .mdl-card.mdl-shadow--2dp.mdl-card__center
-          .mdl-card__title
-            h2.mdl-card__title-text Sign up
-          .mdl-card__supporting-text
+block navMenu
+  a.mdl-navigation__link(href="javascript:history.back()") Home
 
-            form(action="register", method="post", role="form")
-              .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
-                input#username.mdl-textfield__input(type="text", name="username", pattern="^([\\w\\.]*)@([\\w\\.]*)\\.([\\w]*)")
-                label.mdl-textfield__label(for="username") Email address
-                span.mdl-textfield__error Not a valid email address
-              .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
-                input#password.mdl-textfield__input(type="password", name="password", pattern="(.){8}.*")
-                label.mdl-textfield__label(for="password") Password
-                span.mdl-textfield__error Must be at least 8 characters long
-              .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
-                input#retype-password.mdl-textfield__input(type="password", name="retype-password")
-                label.mdl-textfield__label(for="retype-password") Retype password
+block mainContent
+  main.mdl-layout__content.login-background
+    .mdl-card.mdl-shadow--2dp.mdl-card__center
+      .mdl-card__title
+        h2.mdl-card__title-text Sign up
+      .mdl-card__supporting-text
 
-              .mdl-card__actions
-                a#cancel.mdl-button.mdl-js-button.mdl-js-ripple-effect(href="/") Cancel
-                button#sign-up.mdl-button.mdl-js-button.mdl-js-ripple-effect.mdl-button--primary(type="submit") Sign up
+        form(action="register", method="post", role="form")
+          .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+            input#username.mdl-textfield__input(type="text", name="username", pattern="^([\\w\\.]*)@([\\w\\.]*)\\.([\\w]*)")
+            label.mdl-textfield__label(for="username") Email address
+            span.mdl-textfield__error Not a valid email address
+          .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+            input#password.mdl-textfield__input(type="password", name="password", pattern="(.){8}.*")
+            label.mdl-textfield__label(for="password") Password
+            span.mdl-textfield__error Must be at least 8 characters long
+          .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+            input#retype-password.mdl-textfield__input(type="password", name="retype-password")
+            label.mdl-textfield__label(for="retype-password") Retype password
 
-      .mdl-snackbar.mdl-js-snackbar(aria-live="assertive", aria-atomic="true", aria-relevant="text")
-        .mdl-snackbar__text
-          button.mdl-snackbar__action(type="button")
+          .mdl-card__actions
+            a#cancel.mdl-button.mdl-js-button.mdl-js-ripple-effect(href="/") Cancel
+            button#sign-up.mdl-button.mdl-js-button.mdl-js-ripple-effect.mdl-button--primary(type="submit") Sign up
 
-
-      script(defer, src="https://code.getmdl.io/1.1.3/material.min.js")
-      script(defer, src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js")
-
-      script(defer, src="js/ext/mdl-jquery-modal-dialog.js")
+  .mdl-snackbar.mdl-js-snackbar(aria-live="assertive", aria-atomic="true", aria-relevant="text")
+    .mdl-snackbar__text
+      button.mdl-snackbar__action(type="button")

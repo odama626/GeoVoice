@@ -110,7 +110,7 @@ var ui = {
 		addRegion: function(geofence) {
 
 			$.ajax({
-				url: 'dialogs/addRegion.html',
+				url: 'dialogs/addRegion.pug',
 				type: 'GET',
 				contentType: false,
 				processData: false,

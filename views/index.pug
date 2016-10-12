@@ -1,83 +1,65 @@
-doctype html
-html
-  head
-    title Geolocation
-    meta(name="viewport", content="initial-scale=1.0, user-scalable=no")
-    meta(charset='utf-8')
-    link(rel="stylesheet", href="css/audio.css")
-    link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700", type="text/css")
-    link(rel="stylesheet", href="https://fonts.googleapis.com/icon?family=Material+Icons")
-    link(rel="stylesheet", href="https://code.getmdl.io/1.2.1/material.indigo-pink.min.css")
-    link(rel="stylesheet", href="css/mdl-jquery-modal-dialog.css")
-    link(rel="stylesheet", href="css/baseStyle.css")
-    link(rel="stylesheet", href="css/map-icons.css")
-    link(rel="stylesheet", href="css/spectrum.css")
-    link(rel="stylesheet", href="css/better-autocomplete.css")
-  body
-    .mdl-layout.mdl-js-layout
-      header.mdl-layout__header
-        .mdl-layout-icon
-        .mdl-layout__header-row
-          span.mdl-layout__title Geovoice
-          .mdl-layout-spacer
-          nav.mdl-navigation
-            if user
-              a.mdl-navigation__link(onClick="sound.request()")
-                i.material-icons record_voice_over
-                |  Record
-              a.mdl-navigation__link #{user.username}
-            else
-              a.mdl-navigation__link(href="login") Login
-              a.mdl-navigation__link(href="register") Register
+extends layout.pug
 
-            #search-bar-container
-              .mdl-textfield.mdl-textfield--floating-label
-                input#search-bar.mdl-textfield__input(type="text", name="search-bar", placeholder="Search")
-      #layout-drawer.mdl-layout__drawer
-        if user
-          span.mdl-layout__title #{user.username}
-        else
-          span.mdl-layout__title GeoVoice
-        nav.mdl-navigation
-          if user
-            a.mdl-navigation__link(onClick="sound.request()")
-              i.material-icons record_voice_over
-              |  Record
-            a#add-region-button.mdl-navigation__link(onClick="regions.add()") Add Region
-            a.mdl-navigation__link(href="logout") Logout
-          else
-            a.mdl-navigation__link(href="login") login
-            a.mdl-navigation__link(href="register") Register
+block cssLinks
+  link(rel="stylesheet", href="css/audio.css")
+  link(rel="stylesheet", href="css/map-icons.css")
+  link(rel="stylesheet", href="css/spectrum.css")
+  link(rel="stylesheet", href="css/better-autocomplete.css")
 
-          a.mdl-navigation__link(onClick="selfDestruct()") Self Destruct
-      .map-container
-        .region-panel-container
-        #map
+block navBar
+  if user
+    a.mdl-navigation__link(onClick="sound.request()")
+      i.material-icons record_voice_over
+      |  Record
+    a.mdl-navigation__link #{user.username}
+  else
+    a.mdl-navigation__link(href="login") Login
+    a.mdl-navigation__link(href="register") Register
 
-        .mdl-snackbar.mdl-js-snackbar(aria-live="assertive", aria-atomic="true", aria-relevant="text")
-          .mdl-snackbar__text
-            button.mdl-snackbar__action(type="button")
+  #search-bar-container
+    .mdl-textfield.mdl-textfield--floating-label
+      input#search-bar.mdl-textfield__input(type="text", name="search-bar", placeholder="Search")
 
-    script(defer, src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js")
-    script(defer, src="js/ext/jquery.better-autocomplete.js")
+block navMenu
+  if user
+    a.mdl-navigation__link(onClick="sound.request()")
+      i.material-icons record_voice_over
+      |  Record
+    a#add-region-button.mdl-navigation__link(onClick="regions.add()") Add Region
+    a.mdl-navigation__link(href="logout") Logout
+  else
+    a.mdl-navigation__link(href="login") login
+    a.mdl-navigation__link(href="register") Register
 
-    script(defer, src="js/ui.js")
-    script(defer, src="js/searchHandler.js")
-    script(defer, src="js/tagHandler.js")
-    script(defer, src="js/markers.js")
-    script(defer, src="js/regions.js")
-    script(defer, src="js/sound.js")
-    script(defer, src="map.js")
+  a.mdl-navigation__link(onClick="selfDestruct()") Self Destruct
 
-    // js Libraries
-    script(defer, src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBmAuADcJ-0QF2ShETkv-xcbuEXgIbfNnE&callback=initMap&libraries=drawing")
-    script(defer, src="https://code.getmdl.io/1.2.0/material.min.js")
+block mainContent
+  .map-container
+    .region-panel-container
+    #map
 
-    // External js includes
-    script(defer, src="js/ext/ric-polyfill.js")
-    script(defer, src="js/ext/oms.min.js")
-    script(defer, src="js/ext/mdl-jquery-modal-dialog.js")
-    script(defer, src="js/ext/adapter.js")
-    script(defer, src="js/ext/web-audio-recorder/WebAudioRecorder.min.js")
-    script(defer, src="js/ext/map-icons.js")
-    script(defer, src="js/ext/spectrum.js")
+    .mdl-snackbar.mdl-js-snackbar(aria-live="assertive", aria-atomic="true", aria-relevant="text")
+      .mdl-snackbar__text
+        button.mdl-snackbar__action(type="button")
+
+block jsLibs
+  script(defer, src="js/ext/jquery.better-autocomplete.js")
+
+  script(defer, src="js/ui.js")
+  script(defer, src="js/searchHandler.js")
+  script(defer, src="js/tagHandler.js")
+  script(defer, src="js/markers.js")
+  script(defer, src="js/regions.js")
+  script(defer, src="js/sound.js")
+  script(defer, src="map.js")
+
+  // js Libraries
+  script(defer, src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBmAuADcJ-0QF2ShETkv-xcbuEXgIbfNnE&callback=initMap&libraries=drawing")
+
+  // External js includes
+  script(defer, src="js/ext/ric-polyfill.js")
+  script(defer, src="js/ext/oms.min.js")
+  script(defer, src="js/ext/adapter.js")
+  script(defer, src="js/ext/web-audio-recorder/WebAudioRecorder.min.js")
+  script(defer, src="js/ext/map-icons.js")
+  script(defer, src="js/ext/spectrum.js")

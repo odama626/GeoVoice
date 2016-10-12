@@ -1,0 +1,34 @@
+doctype html
+html
+  head
+    title Geolocation
+    meta(name="viewport", content="initial-scale=1.0, user-scalable=no")
+    meta(charset="utf-8")
+    link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700", type="text/css")
+    link(rel="stylesheet", href="https://fonts.googleapis.com/icon?family=Material+Icons")
+    link(rel="stylesheet", href="https://code.getmdl.io/1.2.1/material.indigo-pink.min.css")
+    link(rel="stylesheet", href="css/mdl-jquery-modal-dialog.css")
+    link(rel="stylesheet", href="css/baseStyle.css")
+    block cssLinks
+  body
+    .mdl-layout.mdl-js-layout
+      header.mdl-layout__header
+        .mdl-layout-icon
+        .mdl-layout__header-row
+          span.mdl-layout__title(onClick="location='/'") GeoVoice
+          .mdl-layout-spacer
+          nav.mdl-navigation
+            block navBar
+      #layout-drawer.mdl-layout__drawer
+        if user
+          span.mdl-layout__title(onClick="location='/'") #{user.username}
+        else
+          span.mdl-layout__title(onClick="location='/'") GeoVoice
+        nav.mdl-navigation
+          block navMenu
+      block mainContent
+
+    script(defer, src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js")
+    script(defer, src="https://code.getmdl.io/1.2.0/material.min.js")
+    script(defer, src="js/ext/mdl-jquery-modal-dialog.js")
+    block jsLibs
