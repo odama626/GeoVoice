@@ -49,8 +49,6 @@ var ui = {
 					var player = $('#recording-player')
 					player.attr('src', url);
 					$('#recording-save').attr('href', url);
-//					$('#audio-source').attr('src', url);
-					//player[0].pause();
 					player[0].load();
 
 					if (!ENABLE_REGIONS) {
@@ -299,8 +297,6 @@ var ui = {
 
 		requestDrawing: function() {
 			this.drawingManager.activate(true);
-
-
 		} // requestDrawing
 
 

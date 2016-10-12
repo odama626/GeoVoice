@@ -20,6 +20,10 @@ router.get('/', function (req, res) {
 	res.render('index.pug', {user : req.user });
 });
 
+router.get('/about', function( req, res) {
+	res.render('about.pug', {user : req.user });
+});
+
 // Retrieve dialog
 router.get('/dialogs/:filename', function (req, res) {
 	res.render(req.originalUrl.substr(1), {
@@ -124,10 +128,6 @@ router.post('/login', passport.authenticate('local'), function(req, res) {
 router.get('/logout', function(req, res) {
 	req.logout();
 	res.redirect('/');
-});
-
-router.get('/ping', function(req, res) {
-	res.status(200).send('pong!');
 });
 
 module.exports = router;

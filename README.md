@@ -8,8 +8,8 @@
 2. To install dependencies
   - if you don't have npm, or Node.js, you can get it from [here](https://nodejs.org/)
   ```bash
-   npm install
-   ```
+  npm install
+  ```
 3. Generate an SSH certificate
   - There is a pretty good tutorial [here](https://help.github.com/articles/generating-an-ssh-key/)
 4. set file locations for key and cert in app.js
@@ -27,7 +27,7 @@
   - Replace {server_ip} with the ip address of your server
   - If running locally, use 127.0.0.1
 7. Profit.
- 
+
 ## Moving forward
  - [x] reflow to make public markers use region 'null' and streamline marker subgroup viewing
  - [x] only show markers in one region at a time (default to region null)
@@ -37,6 +37,11 @@
  - [x] Implement User login
  - [x] Require User to be logged in to add recording/domain
  - [ ] Add error response "snacks" to block submits of users not logged in (just in case)
+ - [x] basic about page
+ - [x] add groundwork for privacy policy
+ - [x] site wide universal layout
+ - [ ] add stylized login error page
+ - [ ] add stylized 404 page
  - [x] Show username on posted markers
  - [x] Add search bar for searching for markers within time period
  - [x] Add autocomplete to search bar using "chips" for tag based searching
@@ -56,4 +61,3 @@
    - [x] Chrome
    - [ ] Safari (too old of a version)
    - [x] Firefox
-

@@ -106,7 +106,6 @@ function addPrecisePoint(event) {
 		map: map
 	});
 
-
 	showDialog({
 		title: 'Precise point record',
 		text: 'Add a recording here?',

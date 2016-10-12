@@ -1,0 +1,31 @@
+extends layout.pug
+
+block mainContent
+  main.mdl-layout__content
+    .mdl-grid.portfolio-max-width
+      .mdl-cell.mdl-cell--12-col.mdl-card.mdl-shadow--4dp
+        .mdl-card__title
+          h2.mdl-card__title-text About
+        .mdl-card__media
+          img.article-image(src="res/about-banner.png", border="0", alt="Interesting banner photo goes here")
+        .mdl-card__supporting-text
+          strong Your voice
+          span  Where you want it
+        .mdl-grid.portfolio-copy
+          h3.mdl-cell.mdl-cell--12-col.mdl-typography--headline Introduction
+          .mdl-cell.mdl-cell--6-col.mdl-card__supporting-text.no-padding
+            p
+              | Starting out, we wanted to give people the ability
+              |  to present sound snippets to the world,
+              |  when and where they wanted.  We envisioned everything from people
+              | making curated audio tours of museums, or even simply walking to
+              | to parks and making points simply with the idea of being heard.
+          .mdl-cell.mdl-cell--6-col
+            img.article-image(src="res/about-intro-filler.png", border="0", alt="")
+    footer.mdl-mini-footer
+      .mdl-mini-footer__left-section
+        .mdl-logo GeoVoice
+      .mdl-mini-footer__right-section
+        ul.mdl-mini-footer__link-list
+          li: a(href="#") Help
+          li: a(href="#") Privacy &amp; Terms
