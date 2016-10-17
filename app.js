@@ -22,8 +22,7 @@ var db;
 // setup HTTPS
 var httpsOptions = {
 	key: fs.readFileSync('ssl.key'),
-	cert: fs.readFileSync('ssl.cert'),
-	passphrase: 'PASSPHRASE_GOES_HERE'
+	cert: fs.readFileSync('ssl.crt'),
 };
 
 // Setup Session
