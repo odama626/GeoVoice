@@ -22,6 +22,7 @@ var sound = {
 				this.mediaStream = stream;
 				var mixer = this.audioContext.createMediaStreamSource(this.mediaStream);
 
+
 				this.recorder = new WebAudioRecorder(mixer, {
 					workerDir: 'js/ext/web-audio-recorder/',
 					encoding: 'mp3',
@@ -94,7 +95,9 @@ var sound = {
 	_setRecorderEvents: function(region = null) {
 		this.recorder.onComplete = (recorder, blob) => {
 			this.file = new File([blob], new Date().toISOString() + '.mp3');
+			console.log(this.file);
 			var url = URL.createObjectURL(this.file);
+			console.log(url);
 
 			// close audio input
 			this.mediaStream.getTracks()[0].stop();
