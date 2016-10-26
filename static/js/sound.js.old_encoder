@@ -19,12 +19,20 @@ var sound = {
 				if (this.audioContext === undefined) { // only create audioContext if it doesn't already exist
 					this.audioContext = new AudioContext();
 				}
-				//this.mediaStream = stream;
-				var mixer = this.audioContext.createMediaStreamSource(stream);
+				this.mediaStream = stream;
+				var mixer = this.audioContext.createMediaStreamSource(this.mediaStream);
 
-				this.recorder = new Recorder(mixer)
 
-				//this._setRecorderEvents(region);
+				this.recorder = new WebAudioRecorder(mixer, {
+					workerDir: 'js/ext/web-audio-recorder/',
+					encoding: 'mp3',
+					options: {
+						mp3: {
+							bitRate: 64
+						}
+					}
+				});
+				this._setRecorderEvents(region);
 				ui.loading.hide();
 				ui.createDialog.requestRecording(region);
 			},
@@ -32,15 +40,13 @@ var sound = {
 	}, // request
 
 	start: function(region = null) {
-		this.recorder && this.recorder.record();
+		this.recorder.startRecording()
 		ui.createDialog.recordTimer(region);
 	}, // start
 
 	stop: function(region = null) {
 		ui.loading.show();
-		this.recorder && this.recorder.stop();
-
-		this.export();
+		this.recorder.finishRecording();
 		// loading is hidden in recorder.onComplete
 	}, // stop
 
@@ -86,19 +92,12 @@ var sound = {
 		});
 	}, // upload
 
-	export: function(region = null) {
-		this.recorder && this.recorder.exportWAV(function(blob) {
-			var url = URL.createObjectURL(blob);
-			sound.file = new File([blob], new Date().toISOString()+'.wav');
-			ui.loading.hide();
-			ui.createDialog.recordPreview(sound.location, region, url);
-		});
-	} //export
-/*
 	_setRecorderEvents: function(region = null) {
 		this.recorder.onComplete = (recorder, blob) => {
 			this.file = new File([blob], new Date().toISOString() + '.mp3');
+			console.log(this.file);
 			var url = URL.createObjectURL(this.file);
+			console.log(url);
 
 			// close audio input
 			this.mediaStream.getTracks()[0].stop();
@@ -116,5 +115,5 @@ var sound = {
 			ui.createSnack('Error encoding audio: '+e);
 		};
 	} // _setRecorderEvents
-*/
+
 }; // soundHandler

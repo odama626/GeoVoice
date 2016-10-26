@@ -1,7 +1,7 @@
 # GeoVoice a place to publically share audio recordings.
 
 - You can add individual points
-- Or you can add recordings to public places (domains) such as libraries, museums etc..
+- Or you can add recordings to regions such as libraries, museums etc..
 
 ## How to get started:
 1. Fork or download repo
@@ -28,27 +28,22 @@
   - If running locally, use 127.0.0.1
 7. Profit.
 
+## Fixing sporadic missing audio issues
+ - [x] remove mp3 encoding (web-audio-recorder)
+ - [-] use raw audio, make sure audio works 100%
+ - [ ] find encoder library
+ - [ ] implement encoder library (encode after preview before upload)
+ - [ ] make sure works without problem
+
 ## Moving forward
- - [x] reflow to make public markers use region 'null' and streamline marker subgroup viewing
- - [x] only show markers in one region at a time (default to region null)
- - [x] right panel (region view) should be a bottom-panel on smaller devices
+ - [ ] (1) live location dot
+ - [ ] (2) add Admin boolean for users
  - [ ] Only send Marker information needed
- - [x] Make adding markers to domains more intuitive/dynamic
- - [x] Implement User login
- - [x] Require User to be logged in to add recording/domain
  - [ ] Add error response "snacks" to block submits of users not logged in (just in case)
- - [x] basic about page
- - [x] add groundwork for privacy policy
- - [x] site wide universal layout
  - [ ] add stylized login error page
  - [ ] add stylized 404 page
- - [x] Show username on posted markers
- - [x] Add search bar for searching for markers within time period
- - [x] Add autocomplete to search bar using "chips" for tag based searching
- - [x] Add tagging system (ex music, college etc) for markers
- - [ ] Add live irc style message panel for logged in users
- - [x] add temporary db self destruct button
-
+ - [ ] Add live irc style message panel for logged in users? :|
+ - [ ] expand About page
 
 ## Known Working
   - Linux
