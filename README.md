@@ -29,7 +29,7 @@
 7. Profit.
 
 ## Fixing sporadic missing audio issues
- - [x] remove mp3 encoding (web-audio-recorder)
+ - [x] remove mp3 encoding (web-audio-recorder)selected-marker-shape
  - [-] use raw audio, make sure audio works 100%
  - [ ] find encoder library
  - [ ] implement encoder library (encode after preview before upload)
@@ -39,7 +39,7 @@
  - [ ] (1) live location dot
  - [ ] (2) add Admin boolean for users
  - [ ] Only send Marker information needed
- - [ ] Add error response "snacks" to block submits of users not logged in (just in case)
+ - [x] Add error response "snacks" to block submits of users not logged in (just in case)
  - [ ] add stylized login error page
  - [ ] add stylized 404 page
  - [ ] Add live irc style message panel for logged in users? :|

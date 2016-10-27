@@ -63,10 +63,20 @@ var sound = {
 			tags: []
 		};
 
-		regions.injectMarker(region, marker);
 
-		if (region == null) {
-			map.panTo(sound.location);
+
+		if (region == null) { // Only pan to insert if not in a region and if point not in center
+			var mapLoc = map.getCenter();
+			if (mapLoc.equals(sound.location)) {
+				regions.injectMarker(region, marker);
+				console.log("no pan required");
+			} else { // Only wait to inject point if panning
+				console.log("panning idle listener");
+				map.panTo(sound.location);
+				google.maps.event.addListenerOnce(map, 'idle', () => regions.injectMarker(region, marker));
+			}
+		} else {
+			regions.injectMarker(region, marker);
 		}
 
 			console.time('upload sound');
@@ -81,7 +91,11 @@ var sound = {
 				console.timeEnd('upload sound');
 			},
 			error: function(e) {
-				ui.createSnack('Error sending sound: '+e.toString());
+				if (currently_logged_in) {
+					ui.createSnack('Error sending sound: '+e.toString());
+				}	else {
+					ui.createSnack('You need to be logged in to do that', 'Login', () => location='login');
+				}
 			}
 		});
 	}, // upload

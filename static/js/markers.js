@@ -10,7 +10,7 @@ var markers = {
 		var marker = new google.maps.Marker({
 			position: { lat: parseFloat(info.lat), lng: parseFloat(info.lng)},
 			map:map,
-			label: info.date
+			label: info.date.substring(0,3)
 		});
 
 		marker.info = info;
@@ -104,8 +104,7 @@ var markers = {
 				ui.createSnack('Error modifying tag');
 			}
 		});
-	}, // upload
-
+	}, // update
 	search: function() {
 
 	}

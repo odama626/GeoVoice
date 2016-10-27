@@ -18,7 +18,7 @@ var ui = {
 				text: 'Start recording?',
 				positive: {
 					title: 'yes',
-					onClick: function () {
+					onClick: function() {
 						sound.start(region);
 					}
 				},
@@ -28,7 +28,7 @@ var ui = {
 			});
 		}, // requestRecording
 
-		recordPreview: function(location,region, url) {
+		recordPreview: function(location, region, url) {
 			showDialog({ // class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
 				title: 'Sound Good?',
 				text: `
@@ -60,7 +60,7 @@ var ui = {
 					for (var place in regions.list) {
 						if (typeof regions.list[place].geofence !== 'undefined') {
 							if (getBounds(regions.list[place].geofence).contains(location)) {
-								regionsContainer.append('<option value="'+place+'">'+place+'</option>');
+								regionsContainer.append('<option value="' + place + '">' + place + '</option>');
 							}
 						}
 					}
@@ -71,7 +71,7 @@ var ui = {
 					onClick: function(e) {
 						if (ENABLE_REGIONS) {
 							var selected = $('#regions option:selected').text();
-							region = ( selected == 'none' ? null : selected);
+							region = (selected == 'none' ? null : selected);
 						} else {
 							region = null;
 						}
@@ -88,7 +88,7 @@ var ui = {
 			// Timer logic
 			var time = 0.00;
 			var timerInterval = setInterval(function() {
-				time+= 0.01;
+				time += 0.01;
 				$('#recording-timer').text(time.toFixed(2));
 			}, 1000);
 
@@ -103,7 +103,7 @@ var ui = {
 					}
 				}
 			});
-		},// recordTimer
+		}, // recordTimer
 
 		addRegion: function(geofence) {
 
@@ -122,31 +122,35 @@ var ui = {
 							$('.accordian-expand').click(
 								() => $(event.target).next('.accordian-content').toggleClass('open'));
 
-						 	// icon selection
-						 	$('.map-marker').click((event) => {
-						 		var icon = $(event.target).attr('id');
-						 		var selected = $(event.target).parent().prevAll('span').first();
-						 		var accordianContent = selected.nextAll('div').first();
-						 		selected.
-						 			attr('class','map-icon radio-map-icon '+ icon).
-						 			attr('data-icon',icon);
-					 			$(accordianContent).toggleClass('open');
-					 		});
+							// icon selection
+							$('.map-marker').click((event) => {
+								var icon = $(event.target).attr('id');
+								var selected = $(event.target).parent().prevAll('span').first();
+								var accordianContent = selected.nextAll('div').first();
+								selected.
+								attr('class', 'map-icon radio-map-icon ' + icon).
+								attr('data-icon', icon);
+								$(accordianContent).toggleClass('open');
+							});
 
 							//set initial icon
 							$('.map-icon-point-of-interest').prop('checked', true);
 							$('#selected-icon').
-								attr('class', 'map-icon radio-map-icon map-icon-point-of-interest').
-								attr('data-icon', 'map-icon-point-of-interest');
+							attr('class', 'map-icon radio-map-icon map-icon-point-of-interest').
+							attr('data-icon', 'map-icon-point-of-interest');
 
 							var initialColor = '#1998F7';
 
 							var markerShape = $('#selected-marker-shape');
-							markerShape.css({ 'color': initialColor });
+							markerShape.css({
+								'color': initialColor
+							});
 							markerShape.
-								attr('class', 'map-icon radio-map-icon map-icon-map-pin').
-								attr('data-icon', 'map-icon-map-pin');
-							markerShape.nextAll('div').first().children().css({ 'color': initialColor });
+							attr('class', 'map-icon radio-map-icon map-icon-map-pin').
+							attr('data-icon', 'map-icon-map-pin');
+							markerShape.nextAll('div').first().children().css({
+								'color': initialColor
+							});
 
 
 							$('#region-palette').spectrum({ // Color picker
@@ -157,14 +161,18 @@ var ui = {
 								hideAfterPaletteSelect: true,
 								color: initialColor,
 								palette: [
-									['#00CCBB','#1998F7', '#6331AE'],
+									['#00CCBB', '#1998F7', '#6331AE'],
 								],
 								change: function(color) {
 									var hColor = color.toHexString();
 									var markerShape = $('#selected-marker-shape');
-									$('#region-color').attr('data-color',hColor);
-									markerShape.css({ 'color': hColor });
-									markerShape.nextAll('div').first().children().css({ 'color': hColor });
+									$('#region-color').attr('data-color', hColor);
+									markerShape.css({
+										'color': hColor
+									});
+									markerShape.nextAll('div').first().children().css({
+										'color': hColor
+									});
 								},
 							});
 
@@ -196,10 +204,12 @@ var ui = {
 		}, // addRegion
 	}, // createDialog { }
 
-	createSnack: function(message) {
+	createSnack: function(message, actionText = null, actionHandler = null) {
 		var notification = document.querySelector('.mdl-js-snackbar');
 		notification.MaterialSnackbar.showSnackbar({
-			message: message
+			message: message,
+			actionText: actionText,
+			actionHandler: actionHandler
 		});
 	}, // createSnack
 
@@ -207,12 +217,14 @@ var ui = {
 
 		show: function(timeout = 3000) {
 			showLoading();
-			setTimeout(function() { ui.loading.hide() }, timeout);
+			setTimeout(function() {
+				ui.loading.hide()
+			}, timeout);
 		}, // show
 
 		hide: function() {
-			hideLoading();
-		} // hide
+				hideLoading();
+			} // hide
 
 	}, // loading
 
@@ -241,9 +253,11 @@ var ui = {
 				ui.drawingManager.fixIcons();
 				var drawingComplete = function(event) {
 					var doneButton = $('#done-drawing');
-					doneButton.css({ 'background-color': 'lightgreen' });
+					doneButton.css({
+						'background-color': 'lightgreen'
+					});
 
-					doneButton.off('click').on('click',function() {
+					doneButton.off('click').on('click', function() {
 						ui.drawingManager.destroy();
 						ui.createDialog.addRegion(event.overlay);
 					});
@@ -255,7 +269,9 @@ var ui = {
 
 		destroy: function() {
 			this.drawingManager.setMap(null);
-			this.drawingManager.setOptions({ drawingControls: false });
+			this.drawingManager.setOptions({
+				drawingControls: false
+			});
 			this.drawingManager = null;
 		}, // destroy
 
@@ -265,7 +281,7 @@ var ui = {
 				var setIcon = function(obj, icon) {
 					obj.children().children().remove();
 					obj.children().html(`<div class='drawing-manager-button'>
-																	<i class="material-icons">`+icon+`</i>
+																	<i class="material-icons">` + icon + `</i>
 																</div>`);
 				};
 
@@ -296,8 +312,8 @@ var ui = {
 		}, // fixIcons
 
 		requestDrawing: function() {
-			this.drawingManager.activate(true);
-		} // requestDrawing
+				this.drawingManager.activate(true);
+			} // requestDrawing
 
 
 	} // drawingManager

@@ -3,6 +3,7 @@ var map;
 var drawingManager;
 var _debug = true;
 var ENABLE_REGIONS = true;
+var currently_logged_in = false;
 
 
 //"use strict"
@@ -16,6 +17,9 @@ function initMap() {
 			{stylers: [{ visibility: 'simplified' }]},
 		]
   });
+
+  //Check logged in status
+  currently_logged_in = $('a[href="login"]').length ==0;
 
 	setPrototypes();
 
@@ -101,6 +105,10 @@ function getBounds(arr) {
 }
 
 function addPrecisePoint(event) {
+  if (!currently_logged_in) {
+    ui.createSnack('You need to be logged in to do that', 'Login', () => location='login');
+    return;
+  }
 	var precisePoint = new google.maps.Marker({
 		position: { lat: parseFloat(event.latLng.lat()), lng: parseFloat(event.latLng.lng()) },
 		map: map

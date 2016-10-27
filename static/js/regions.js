@@ -8,7 +8,7 @@ var regions = {
 
 		set: function(region) {
 			if (typeof region == "undefined") {
-				return;	// if database is empty, do nothing
+				return; // if database is empty, do nothing
 			}
 
 			markers.clear();
@@ -50,12 +50,12 @@ var regions = {
 		}, // refresh
 
 		clear: function() {
-			if (this.geofence != null) {
-				this.geofence.setMap(null);
-			}
-			this.set(regions.list[null]);
-			markers.resumeFetch();
-		} // clear
+				if (this.geofence != null) {
+					this.geofence.setMap(null);
+				}
+				this.set(regions.list[null]);
+				markers.resumeFetch();
+			} // clear
 
 	}, // active region
 
@@ -70,18 +70,21 @@ var regions = {
 		}
 		console.time('fetch');
 		$.ajax({
-			url : "get_markers",
+			url: "get_markers",
 			type: "GET",
 			success: function(data) {
 
 				var regionList = jQuery.parseJSON(data);
 				regions.clear();
-				for (d = 0; d<regionList.length; d++)
-				{
-					if (regionList[d].regionName == "null") {
-						regionList[d].regionName = null;
+				if (regionList.length == 0) {
+					regions.createTempList();
+				} else {
+					for (d = 0; d < regionList.length; d++) {
+						if (regionList[d].regionName == "null") {
+							regionList[d].regionName = null;
+						}
+						regions.place(regionList[d]);
 					}
-					regions.place(regionList[d]);
 				}
 
 				if (typeof regions.active.region === "undefined") {
@@ -93,7 +96,7 @@ var regions = {
 
 			},
 			error: function(e) {
-				ui.createSnack('Error retrieving sound markers: '+e.toString());
+				ui.createSnack('Error retrieving sound markers: ' + e.toString());
 			}
 		});
 	}, // fetch
@@ -104,7 +107,7 @@ var regions = {
 	}, // add
 
 	create: function(region) {
-		var location = region.geofence.c_getBounds().getCenter();//this.getPolyCenter(region.geofence);
+		var location = region.geofence.c_getBounds().getCenter(); //this.getPolyCenter(region.geofence);
 		var jsonGeofence = JSON.stringify(region.geofence.c_getLatLngLiteralArray());
 		//JSON.stringify(region.geofence = this.getCleanPolyArray(region.geofence));
 
@@ -137,7 +140,7 @@ var regions = {
 				ui.createSnack('Successfully added');
 			},
 			error: function(e) {
-				ui.createSnack('Error while adding: '+e.toString());
+				ui.createSnack('Error while adding: ' + e.toString());
 			}
 		});
 	}, // create
@@ -146,7 +149,10 @@ var regions = {
 		if (region.regionName != null) {
 			region.marker = new Marker({
 				map: map,
-				position: {'lat': parseFloat(region.lat), 'lng': parseFloat(region.lng)},
+				position: {
+					'lat': parseFloat(region.lat),
+					'lng': parseFloat(region.lng)
+				},
 				icon: {
 					path: this.parseMarkerShape(region.shape),
 					fillColor: region.color,
@@ -154,7 +160,7 @@ var regions = {
 					strokeColor: '',
 					strokeWeight: 0
 				},
-				map_icon_label: '<span class="map-icon '+region.icon+'"></span>'
+				map_icon_label: '<span class="map-icon ' + region.icon + '"></span>'
 			});
 
 			region.geofence = JSON.parse(region.geofence);
@@ -196,24 +202,36 @@ var regions = {
 	}, // parseMarkerShape
 
 	injectMarker: function(region, marker) {
-			console.log('injecting '+marker+' into '+region);
-			if (typeof this.list[region] !== 'undefined') {
-				this.list[region].markers.push(marker);
-				if (region !== null) {
-					this.panel.open(this.list[region], false);
-				}
-			} else {
-				this.fetch();
-			}
+		console.log('injecting ' + marker + ' into ' + region);
+
+		if (typeof this.list[region] == 'undefined') {
+			this.createTempList();
+		}
+
+		this.list[region].markers.push(marker);
+		if (region !== null) {
+			this.panel.open(this.list[region], false);
+		}
+		console.log('placing injected marker');
+		console.log(marker);
+		regions.active.set(regions.list[null]);
+
 	}, // injectMarker
 
+	createTempList: function() {
+		this.list[null] = {
+			regionName: null,
+			markers: []
+		}
+	}, // createTempList
+
 	clear: function() {
-			for (region in regions.list) {
-				if ( typeof regions.list[region].marker != "undefined") {
-					regions.list[region].marker.setMap(null);
-					regions.list[region].marker = null;
-				}
+		for (region in regions.list) {
+			if (typeof regions.list[region].marker != "undefined") {
+				regions.list[region].marker.setMap(null);
+				regions.list[region].marker = null;
 			}
+		}
 
 		markers.clear();
 	}, // clear
@@ -229,8 +247,10 @@ var regions = {
 			regions.active.clear();
 			$('.right-panel').removeClass('slide-in');
 			console.log('closing panel');
-			$('body, html').animate({ scrollTop: 0 }, 500);
-			setTimeout( function() {
+			$('body, html').animate({
+				scrollTop: 0
+			}, 500);
+			setTimeout(function() {
 				$('#region-panel-container').html('');
 			}, 1000);
 		}, // close
@@ -238,7 +258,7 @@ var regions = {
 		createHtml: function(region, animate) {
 			var itemsHtml = '';
 
-			for (i=0;i < region.markers.length; i++) {
+			for (i = 0; i < region.markers.length; i++) {
 				itemsHtml += regions.panel.generateItem(region.markers[i]);
 			}
 
@@ -262,14 +282,14 @@ var regions = {
 
 			var containerClasses = 'right-panel';
 			if (!animate) {
-				containerClasses+= ' slide-in';
+				containerClasses += ' slide-in';
 			}
 
 			var sheetHtml = `
-				<div class='`+containerClasses+`'>
-						<span class='right-panel__title'>`+region.regionName+`</span>
+				<div class='` + containerClasses + `'>
+						<span class='right-panel__title'>` + region.regionName + `</span>
 						<ul class='mdl-list'>
-							`+itemsHtml+`
+							` + itemsHtml + `
 						</ul>
 
 				</div>`;
@@ -284,18 +304,18 @@ var regions = {
 		}, // createHtml
 
 		generateItem: function(item) {
-			return `
+				return `
 				<li class="mdl-list__item mdl-list__item--two-line">
 					<span class="mdl-list__item-primary-content">
-						<span>`+item.date+`</span>
+						<span>` + item.date + `</span>
 						<span class="mdl-list__item-sub-title">
 							<audio controls>
-								<source type='audio/mpeg' src='`+item.sound+`'>
+								<source type='audio/mpeg' src='` + item.sound + `'>
 							</audio>
 						</span>
 					</span>
 				</li>`;
-		} // generateItem
+			} // generateItem
 	} // panel
 
 }; // regions
