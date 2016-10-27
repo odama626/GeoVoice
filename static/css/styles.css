@@ -1,19 +1,8 @@
-.portfolio-header {
-  position: relative;
-  background-image: url(images/header-bg.jpg);
-}
-
 .portfolio-header .mdl-layout__header-row {
   padding: 0;
   -webkit-justify-content: center;
       -ms-flex-pack: center;
           justify-content: center;
-}
-
-.mdl-layout__title {
-  font-size: 14px;
-  text-align: center;
-  font-weight: 300;
 }
 
 .is-compact .mdl-layout__title span {
@@ -161,9 +150,4 @@ img.article-image {
 .portfolio-contact form {
   max-width: 550px;
   margin: auto;
-}
-
-footer {
-  background-image: url(images/footer-background.png);
-  background-size: cover;
 }
