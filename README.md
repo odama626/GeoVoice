@@ -30,7 +30,7 @@
 
 ## Fixing sporadic missing audio issues
  - [x] remove mp3 encoding (web-audio-recorder)selected-marker-shape
- - [-] use raw audio, make sure audio works 100%
+ - [x] use raw audio, make sure audio works 100%
  - [ ] find encoder library
  - [ ] implement encoder library (encode after preview before upload)
  - [ ] make sure works without problem

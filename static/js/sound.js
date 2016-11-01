@@ -45,13 +45,6 @@ var sound = {
 	}, // stop
 
 	upload: function(region) {
-		//var filename = new Date().toISOString() + '.mp3';
-		var data = new FormData();
-		data.append('file', this.file);
-		data.append('lat', sound.location.lat());
-		data.append('lng', sound.location.lng());
-		data.append('date', new Date().toString());
-		data.append('region', region);
 
 		//Place temporary marker on map
 		var marker = {
@@ -62,8 +55,6 @@ var sound = {
 			lng: sound.location.lng(),
 			tags: []
 		};
-
-
 
 		if (region == null) { // Only pan to insert if not in a region and if point not in center
 			var mapLoc = map.getCenter();
@@ -78,6 +69,25 @@ var sound = {
 		} else {
 			regions.injectMarker(region, marker);
 		}
+
+		//mp3 encoder
+		console.time('mp3 encoder');
+		var mp3Data = [];
+		var mp3encoder = new lamejs.Mp3Encoder(1, 44100, 128);
+		mp3Data.push(mp3encoder.encodeBuffer(this.file));
+		mp3Data.push(mp3encoder.flush());
+		console.debug(mp3Data);
+
+
+		console.timeEnd('mp3 encoder');
+
+		//var filename = new Date().toISOString() + '.mp3';
+		var data = new FormData();
+		data.append('file', this.file);
+		data.append('lat', sound.location.lat());
+		data.append('lng', sound.location.lng());
+		data.append('date', new Date().toString());
+		data.append('region', region);
 
 			console.time('upload sound');
 		$.ajax({
@@ -108,27 +118,4 @@ var sound = {
 			ui.createDialog.recordPreview(sound.location, region, url);
 		});
 	} //export
-/*
-	_setRecorderEvents: function(region = null) {
-		this.recorder.onComplete = (recorder, blob) => {
-			this.file = new File([blob], new Date().toISOString() + '.mp3');
-			var url = URL.createObjectURL(this.file);
-
-			// close audio input
-			this.mediaStream.getTracks()[0].stop();
-
-			ui.loading.hide();
-			ui.createDialog.recordPreview(sound.location, region, url);
-		};
-		this.recorder.onEncoderLoading = (recorder, encoding) => {
-			ui.loading.show();
-		};
-		this.recorder.onEncoderLoaded = (recorder, encoding) => {
-			ui.loading.hide();
-		};
-		this.recorder.onError = (recorder, e) => {
-			ui.createSnack('Error encoding audio: '+e);
-		};
-	} // _setRecorderEvents
-*/
 }; // soundHandler
