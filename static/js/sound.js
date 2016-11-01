@@ -74,6 +74,9 @@ var sound = {
 		console.time('mp3 encoder');
 		var mp3Data = [];
 		var mp3encoder = new lamejs.Mp3Encoder(1, 44100, 128);
+		for (var i=0; i<this.file.length; i+= 1152) {
+			var sampleChunk = this.file.subArray
+		}
 		mp3Data.push(mp3encoder.encodeBuffer(this.file));
 		mp3Data.push(mp3encoder.flush());
 		console.debug(mp3Data);
