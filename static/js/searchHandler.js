@@ -18,7 +18,7 @@ var searchHandler = {
     if (this.active) {
       this.updateMarkerVisibility();
     } else {
-      regions.active.refresh();
+      activeRegion.refresh();
     }
   }, // updateActive
 

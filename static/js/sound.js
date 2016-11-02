@@ -2,7 +2,6 @@ var sound = {
 
 	recorder: null,
 	file: null,
-	mediaStream: undefined,
 	audioContext: undefined,
 	location: undefined,
 
@@ -19,7 +18,6 @@ var sound = {
 				if (this.audioContext === undefined) { // only create audioContext if it doesn't already exist
 					this.audioContext = new AudioContext();
 				}
-				//this.mediaStream = stream;
 				var mixer = this.audioContext.createMediaStreamSource(stream);
 
 				this.recorder = new Recorder(mixer)
@@ -46,45 +44,8 @@ var sound = {
 
 	upload: function(region) {
 
-		//Place temporary marker on map
-		var marker = {
-			sound: URL.createObjectURL(sound.file),
-			creator: 'you - still pending',
-			date: new Date().toString(),
-			lat: sound.location.lat(),
-			lng: sound.location.lng(),
-			tags: []
-		};
+		regions.createTempMarker(URL.createObjectURL(sound.file), sound.location, region);
 
-		if (region == null) { // Only pan to insert if not in a region and if point not in center
-			var mapLoc = map.getCenter();
-			if (mapLoc.equals(sound.location)) {
-				regions.injectMarker(region, marker);
-				console.log("no pan required");
-			} else { // Only wait to inject point if panning
-				console.log("panning idle listener");
-				map.panTo(sound.location);
-				google.maps.event.addListenerOnce(map, 'idle', () => regions.injectMarker(region, marker));
-			}
-		} else {
-			regions.injectMarker(region, marker);
-		}
-
-		//mp3 encoder
-		console.time('mp3 encoder');
-		var mp3Data = [];
-		var mp3encoder = new lamejs.Mp3Encoder(1, 44100, 128);
-		for (var i=0; i<this.file.length; i+= 1152) {
-			var sampleChunk = this.file.subArray
-		}
-		mp3Data.push(mp3encoder.encodeBuffer(this.file));
-		mp3Data.push(mp3encoder.flush());
-		console.debug(mp3Data);
-
-
-		console.timeEnd('mp3 encoder');
-
-		//var filename = new Date().toISOString() + '.mp3';
 		var data = new FormData();
 		data.append('file', this.file);
 		data.append('lat', sound.location.lat());
@@ -92,7 +53,7 @@ var sound = {
 		data.append('date', new Date().toString());
 		data.append('region', region);
 
-			console.time('upload sound');
+		console.time('upload sound');
 		$.ajax({
 			url : 'submit',
 			type: 'POST',
@@ -115,6 +76,7 @@ var sound = {
 
 	export: function(region = null) {
 		this.recorder && this.recorder.exportWAV(function(blob) {
+			sound.blob = blob;
 			var url = URL.createObjectURL(blob);
 			sound.file = new File([blob], new Date().toISOString()+'.wav');
 			ui.loading.hide();

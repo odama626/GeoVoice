@@ -2,63 +2,6 @@ var regions = {
 
 	list: [],
 
-	active: { // methods and members for currently active region
-		geofence: null,
-		region: undefined,
-
-		set: function(region) {
-			if (typeof region == "undefined") {
-				return; // if database is empty, do nothing
-			}
-
-			markers.clear();
-
-			this.region = region;
-			if (typeof region.geofence !== "undefined") {
-				this.geofence = new google.maps.Polygon({
-					paths: region.geofence,
-					strokeColor: region.color,
-					strokeOpacity: 0.8,
-					strokeWeight: 2,
-					fillColor: region.color,
-					fillOpacity: 0.35
-				});
-
-				this.geofence.setMap(map);
-				markers.closeInfoWindow();
-				markers.pauseFetch();
-
-			}
-
-			if (region.regionName !== null) {
-				markers.pauseFetch();
-				map.fitBounds(getBounds(region.geofence));
-			}
-
-			this.refresh();
-
-		}, // set
-
-		refresh: function() {
-			if (searchHandler.active) {
-				searchHandler.updateMarkerVisibility();
-			} else {
-				this.region.markers.forEach(function(element, i) {
-					markers.place(element);
-				});
-			}
-		}, // refresh
-
-		clear: function() {
-				if (this.geofence != null) {
-					this.geofence.setMap(null);
-				}
-				this.set(regions.list[null]);
-				markers.resumeFetch();
-			} // clear
-
-	}, // active region
-
 	fetch: function() {
 		//var bounds = map.getBounds();
 		// TODO create ajax request for markers, then delete current markers and show new
@@ -87,10 +30,10 @@ var regions = {
 					}
 				}
 
-				if (typeof regions.active.region === "undefined") {
-					regions.active.set(regions.list[null]);
+				if (typeof activeRegion.region === "undefined") {
+					activeRegion.set(regions.list[null]);
 				} else {
-					regions.active.refresh();
+					activeRegion.refresh();
 				}
 				console.timeEnd('fetch');
 
@@ -166,9 +109,9 @@ var regions = {
 			region.geofence = JSON.parse(region.geofence);
 
 			region.marker.addListener('click', function() {
-				regions.active.clear();
-				//regions.panel.close();
-				regions.panel.open(region);
+				activeRegion.clear();
+				//regionPanel.close();
+				regionPanel.open(region);
 			});
 		}
 		//markers.list.push(marker);
@@ -201,6 +144,32 @@ var regions = {
 
 	}, // parseMarkerShape
 
+	createTempMarker: function(url, location, region) {
+		//Place temporary marker on map
+		var marker = {
+			sound: url,
+			creator: 'you - still pending',
+			date: new Date().toString(),
+			lat: location.lat(),
+			lng: location.lng(),
+			tags: []
+		};
+
+		if (region == null) { // Only pan to insert if not in a region and if point not in center
+			var mapLoc = map.getCenter();
+			if (mapLoc.equals(location)) {
+				regions.injectMarker(region, marker);
+				console.log("no pan required");
+			} else { // Only wait to inject point if panning
+				console.log("panning idle listener");
+				map.panTo(location);
+				google.maps.event.addListenerOnce(map, 'idle', () => regions.injectMarker(region, marker));
+			}
+		} else {
+			regions.injectMarker(region, marker);
+		}
+	}, // createTempMarker
+
 	injectMarker: function(region, marker) {
 		console.log('injecting ' + marker + ' into ' + region);
 
@@ -214,7 +183,7 @@ var regions = {
 		}
 		console.log('placing injected marker');
 		console.log(marker);
-		regions.active.set(regions.list[null]);
+		activeRegion.set(regions.list[null]);
 
 	}, // injectMarker
 
@@ -234,88 +203,5 @@ var regions = {
 		}
 
 		markers.clear();
-	}, // clear
-
-	panel: {
-
-		open: function(region, animate = true) {
-			regions.active.set(region);
-			this.createHtml(region, animate);
-		}, // open
-
-		close: function() {
-			regions.active.clear();
-			$('.right-panel').removeClass('slide-in');
-			console.log('closing panel');
-			$('body, html').animate({
-				scrollTop: 0
-			}, 500);
-			setTimeout(function() {
-				$('#region-panel-container').html('');
-			}, 1000);
-		}, // close
-
-		createHtml: function(region, animate) {
-			var itemsHtml = '';
-
-			for (i = 0; i < region.markers.length; i++) {
-				itemsHtml += regions.panel.generateItem(region.markers[i]);
-			}
-
-			if (itemsHtml == '') {
-				itemsHtml = `
-					<div id='no-recordings'>
-						<p>There aren't any recordings yet, why don't you add one?</p>
-					</div>
-				`
-			}
-
-			itemsHtml += `
-				<div style="padding-left:15px">
-					<button
-						class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect right-panel__button'
-						onClick='regions.panel.close()'>
-
-						Close
-					</button>
-				</div>`;
-
-			var containerClasses = 'right-panel';
-			if (!animate) {
-				containerClasses += ' slide-in';
-			}
-
-			var sheetHtml = `
-				<div class='` + containerClasses + `'>
-						<span class='right-panel__title'>` + region.regionName + `</span>
-						<ul class='mdl-list'>
-							` + itemsHtml + `
-						</ul>
-
-				</div>`;
-
-			$('#region-panel-container').html(sheetHtml);
-
-			if (animate) {
-				setTimeout(function() {
-					$('.right-panel').addClass('slide-in');
-				}, 100);
-			}
-		}, // createHtml
-
-		generateItem: function(item) {
-				return `
-				<li class="mdl-list__item mdl-list__item--two-line">
-					<span class="mdl-list__item-primary-content">
-						<span>` + item.date + `</span>
-						<span class="mdl-list__item-sub-title">
-							<audio controls>
-								<source type='audio/mpeg' src='` + item.sound + `'>
-							</audio>
-						</span>
-					</span>
-				</li>`;
-			} // generateItem
-	} // panel
-
+	} // clear
 }; // regions

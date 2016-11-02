@@ -24,7 +24,7 @@ function initMap() {
 	setPrototypes();
 
 	google.maps.event.addListener(map, 'idle', regions.fetch);
-	map.addListener('click', () => { regions.panel.close(); markers.closeInfoWindow() });
+	map.addListener('click', () => { regionPanel.close(); markers.closeInfoWindow() });
 
 	google.maps.event.addListener(map, 'rightclick', addPrecisePoint);
 
@@ -35,7 +35,7 @@ function initMap() {
 	// Close navigation drawer on <a> click
 	$('a').click( function() {
 		markers.closeInfoWindow();
-		regions.panel.close();
+		regionPanel.close();
 		$( '.mdl-layout__drawer, .mdl-layout__obfuscator' ).removeClass( 'is-visible' );
 	});
 
