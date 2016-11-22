@@ -34,14 +34,14 @@ var sound = {
 				});
 				this._setRecorderEvents(region);
 				ui.loading.hide();
-				ui.createDialog.requestRecording(region);
+				ui.soundUi.request(region);
 			},
 			e => ui.createSnack('Error initializing mic: '+e.toString()));
 	}, // request
 
 	start: function(region = null) {
 		this.recorder.startRecording()
-		ui.createDialog.recordTimer(region);
+		ui.soundUi.timer(region);
 	}, // start
 
 	stop: function(region = null) {
@@ -103,7 +103,7 @@ var sound = {
 			this.mediaStream.getTracks()[0].stop();
 
 			ui.loading.hide();
-			ui.createDialog.recordPreview(sound.location, region, url);
+			ui.soundUi.preview(sound.location, region, url);
 		};
 		this.recorder.onEncoderLoading = (recorder, encoding) => {
 			ui.loading.show();

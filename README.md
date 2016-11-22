@@ -36,8 +36,12 @@
  - [ ] make sure works without problem
 
 ## Moving forward
- - [ ] (1) live location dot
- - [ ] (2) add Admin boolean for users
+ - [x] (1) live location dot
+ - [ ] add Admin boolean for users
+ - [ ] add Audio sequences (Jukebox)
+ - [ ] Set Region "sequence" type to put region marker on first marker in sequence
+ - [ ] Add gear to "seqence" region ui to allow reorganizing markers
+ - [ ] Add all "sequence" regions to add sound combobox
  - [ ] Only send Marker information needed
  - [x] Add error response "snacks" to block submits of users not logged in (just in case)
  - [ ] add stylized login error page

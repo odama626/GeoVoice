@@ -33,12 +33,12 @@ var markers = {
 	}, // place
 
 	pauseFetch: function() {
-		console.log('pause fetch');
+		debugLog('pause fetch');
 		this.fetchActive = false;
 	}, // pauseFetch
 
 	resumeFetch: function() {
-		console.log('resume fetch');
+		debugLog('resume fetch');
 		this.fetchActive = true;
 	}, // resumeFetch
 
@@ -61,7 +61,7 @@ var markers = {
 	}, // closeInfoWindow
 
 	omsClickListener: function(marker, event) {
-		console.time('marker info');
+		debugTime('marker info');
 		markers.closeInfoWindow();
 		markers.pauseFetch();
 		$('dv audio').remove();
@@ -80,7 +80,7 @@ var markers = {
 		markers.infoWindow.open(map, marker);
 		var tagContainer = $('#tag-container');
 		new TagHandler(marker.info, tagContainer);
-		console.timeEnd('marker info');
+		debugTime('marker info', true);
 
 	}, // omsClickListener
 

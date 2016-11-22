@@ -11,13 +11,12 @@ var regions = {
 		if (!markers.fetchActive) {
 			return;
 		}
-		console.time('fetch');
+		debugTime('fetch');
 		$.ajax({
 			url: "get_markers",
 			type: "GET",
 			success: function(data) {
-
-				var regionList = jQuery.parseJSON(data);
+				var regionList = JSON.parse(data);
 				regions.clear();
 				if (regionList.length == 0) {
 					regions.createTempList();
@@ -35,7 +34,7 @@ var regions = {
 				} else {
 					activeRegion.refresh();
 				}
-				console.timeEnd('fetch');
+				debugTime('fetch', true);
 
 			},
 			error: function(e) {
@@ -45,24 +44,14 @@ var regions = {
 	}, // fetch
 
 	add: function() {
-		ui.drawingManager.init();
-
+		regionUi.add.requestType();
 	}, // add
 
 	create: function(region) {
-		var location = region.geofence.c_getBounds().getCenter(); //this.getPolyCenter(region.geofence);
-		var jsonGeofence = JSON.stringify(region.geofence.c_getLatLngLiteralArray());
-		//JSON.stringify(region.geofence = this.getCleanPolyArray(region.geofence));
-
-		region.lat = location.lat();
-		region.lng = location.lng();
-		region.shape = region.shape.substring('map-icon-'.length);
 		region.markers = [];
-		region.geofence = jsonGeofence;
+		this.place(region); // ! this changes region.geofence from JSON string to array
 
-		// Convert geofence into array of { lat:, lng: }
-
-		this.place(region);
+		var geoJson = region.geofence == null ? null : JSON.stringify(region.geofence);
 
 		var data = new FormData();
 		data.append('regionName', region.regionName);
@@ -71,7 +60,8 @@ var regions = {
 		data.append('color', region.color);
 		data.append('shape', region.shape);
 		data.append('icon', region.icon);
-		data.append('geofence', jsonGeofence);
+		data.append('type', region.type);
+		data.append('geofence', geoJson);
 
 		$.ajax({
 			url: 'submit_region',
@@ -88,7 +78,7 @@ var regions = {
 		});
 	}, // create
 
-	place: function(region) {
+	place: function(region) {  // ! this changes region.geofence from string to array
 		if (region.regionName != null) {
 			region.marker = new Marker({
 				map: map,
@@ -106,7 +96,20 @@ var regions = {
 				map_icon_label: '<span class="map-icon ' + region.icon + '"></span>'
 			});
 
-			region.geofence = JSON.parse(region.geofence);
+			// move region marker if type is sequence
+			if (region.type == 'sequence') {
+				if (region.markers.length > 0) {
+					region.marker.position = new google.maps.LatLng({
+						lat : parseFloat(region.markers[0].lat),
+						lng : parseFloat(region.markers[0].lng)
+					});
+				}
+			}
+
+			if (typeof region.geofence == 'string') {
+				region.geofence = JSON.parse(region.geofence);
+			}
+
 
 			region.marker.addListener('click', function() {
 				activeRegion.clear();
@@ -159,11 +162,10 @@ var regions = {
 			var mapLoc = map.getCenter();
 			if (mapLoc.equals(location)) {
 				regions.injectMarker(region, marker);
-				console.log("no pan required");
+				debugLog("no pan required");
 			} else { // Only wait to inject point if panning
-				console.log("panning idle listener");
-				map.panTo(location);
-				google.maps.event.addListenerOnce(map, 'idle', () => regions.injectMarker(region, marker));
+				debugLog("panning idle listener");
+				panToPromise(location).then(regions.injectMarker(region, marker));
 			}
 		} else {
 			regions.injectMarker(region, marker);
@@ -171,7 +173,7 @@ var regions = {
 	}, // createTempMarker
 
 	injectMarker: function(region, marker) {
-		console.log('injecting ' + marker + ' into ' + region);
+		debugLog('injecting ' + marker + ' into ' + region);
 
 		if (typeof this.list[region] == 'undefined') {
 			this.createTempList();
@@ -179,10 +181,10 @@ var regions = {
 
 		this.list[region].markers.push(marker);
 		if (region !== null) {
-			this.panel.open(this.list[region], false);
+			regionPanel.open(this.list[region], false);
 		}
-		console.log('placing injected marker');
-		console.log(marker);
+		debugLog('placing injected marker');
+		debugLog(marker);
 		activeRegion.set(regions.list[null]);
 
 	}, // injectMarker
@@ -201,7 +203,6 @@ var regions = {
 				regions.list[region].marker = null;
 			}
 		}
-
 		markers.clear();
 	} // clear
 }; // regions

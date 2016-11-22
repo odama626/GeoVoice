@@ -20,18 +20,18 @@ var sound = {
 				}
 				var mixer = this.audioContext.createMediaStreamSource(stream);
 
-				this.recorder = new Recorder(mixer)
+				this.recorder = new Recorder(mixer, { numChannels: 1});
 
 				//this._setRecorderEvents(region);
 				ui.loading.hide();
-				ui.createDialog.requestRecording(region);
+				soundUi.request(region);
 			},
 			e => ui.createSnack('Error initializing mic: '+e.toString()));
 	}, // request
 
 	start: function(region = null) {
 		this.recorder && this.recorder.record();
-		ui.createDialog.recordTimer(region);
+		soundUi.timer(region);
 	}, // start
 
 	stop: function(region = null) {
@@ -39,11 +39,11 @@ var sound = {
 		this.recorder && this.recorder.stop();
 
 		this.export();
+		this.recorder.clear();
 		// loading is hidden in recorder.onComplete
 	}, // stop
 
 	upload: function(region) {
-
 		regions.createTempMarker(URL.createObjectURL(sound.file), sound.location, region);
 
 		var data = new FormData();
@@ -53,7 +53,7 @@ var sound = {
 		data.append('date', new Date().toString());
 		data.append('region', region);
 
-		console.time('upload sound');
+		debugTime('upload sound');
 		$.ajax({
 			url : 'submit',
 			type: 'POST',
@@ -62,7 +62,7 @@ var sound = {
 			processData: false,
 			success: function(data) {
 				ui.createSnack('Upload completed');
-				console.timeEnd('upload sound');
+				debugTime('upload sound', true);
 			},
 			error: function(e) {
 				if (currently_logged_in) {
@@ -76,11 +76,10 @@ var sound = {
 
 	export: function(region = null) {
 		this.recorder && this.recorder.exportWAV(function(blob) {
-			sound.blob = blob;
 			var url = URL.createObjectURL(blob);
 			sound.file = new File([blob], new Date().toISOString()+'.wav');
 			ui.loading.hide();
-			ui.createDialog.recordPreview(sound.location, region, url);
+			soundUi.preview(sound.location, region, url);
 		});
 	} //export
 }; // soundHandler

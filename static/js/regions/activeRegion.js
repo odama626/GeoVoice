@@ -10,7 +10,7 @@ var activeRegion = { // methods and members for currently active region
     markers.clear();
 
     this.region = region;
-    if (typeof region.geofence !== "undefined") {
+    if (typeof region.geofence !== "undefined" && region.geofence !== null ) {
       this.geofence = new google.maps.Polygon({
         paths: region.geofence,
         strokeColor: region.color,
@@ -24,24 +24,21 @@ var activeRegion = { // methods and members for currently active region
       markers.closeInfoWindow();
       markers.pauseFetch();
 
-    }
-
-    if (region.regionName !== null) {
-      markers.pauseFetch();
       map.fitBounds(getBounds(region.geofence));
     }
 
     this.refresh();
-
   }, // set
 
   refresh: function() {
     if (searchHandler.active) {
       searchHandler.updateMarkerVisibility();
     } else {
-      this.region.markers.forEach(function(element, i) {
-        markers.place(element);
-      });
+      if (this.region.type == 'classic') {
+        this.region.markers.forEach(function(element, i) {
+          markers.place(element);
+        });
+      }
     }
   }, // refresh
 

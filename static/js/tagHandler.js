@@ -1,7 +1,7 @@
 class TagHandler {
 
 	constructor(marker, container) {
-		console.time('tag handler');
+		debugTime('tag handler');
 		this.marker = marker;
 		this.container = container;
 		this.closeTagAction = function() {
@@ -17,7 +17,7 @@ class TagHandler {
 		$('.marker-tag__action').on('click',this.closeTagAction);
 
 		this.createTagEntry();
-		console.timeEnd('tag handler');
+		debugTime('tag handler', true);
 	}
 
 	createTag(tagName, deletable = true) {
@@ -46,14 +46,14 @@ class TagHandler {
 		var closeTagAction = this.closeTagAction;
 
 		$('#tag-entry').keyup(function(event) {
-			console.log(event);
+			debugLog(event);
 			if (event.keyCode == 13) {
 				var tag = $(this).val();
 				container.prepend(createTag(tag,$(this).parent()));
 				$('.marker-tag__action').first().on('click', closeTagAction);
 				$(this).val('');
 				marker.tags.push(tag);
-				console.log(marker);
+				debugLog(marker);
 				// update database
 				markers.update(marker);
 			}

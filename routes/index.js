@@ -13,6 +13,7 @@ mongoClient.connect("mongodb://localhost:27017/geoVoice", function(err, database
 
 	db = database;
 	markerCollection = db.collection('markers');
+
 //	markerCollection.drop();
 });
 
@@ -68,6 +69,17 @@ router.post('/update_tags', function (req, res) {
 	console.log('updated tags on '+req.body.sound);
 });
 
+router.post('/update_marker_order', function(req, res) {
+	console.log(JSON.parse(req.body.markers));
+	console.log(markerCollection.update(
+		{ '_id': req.body.regionId },
+		{
+			$set: {'markers' : JSON.parse(req.body.markers)}
+		}
+	));
+	res.end('SUCCESS');
+});
+
 // Add a new sound region
 router.post('/submit_region', function(req, res) {
 	var region = {
@@ -78,7 +90,8 @@ router.post('/submit_region', function(req, res) {
 		"icon": req.body.icon,
 		"shape": req.body.shape,
 		"markers": [],
-		"geofence": req.body.geofence
+		"geofence": req.body.geofence,
+		"type": req.body.type
 	};
 	markerCollection.insert(region);
 	res.end('SUCCESS');
@@ -88,7 +101,7 @@ router.post('/submit_region', function(req, res) {
 // retrieve markers
 router.get('/get_markers', function(req, res) {
 	markerCollection.find().toArray( function(err, items) {
-		res.send(JSON.stringify(items, null, 2));
+		res.send(JSON.stringify(items));
 	});
 
 	console.log("Sending markers");

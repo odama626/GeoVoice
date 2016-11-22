@@ -8,7 +8,7 @@ var regionPanel = {
   close: function() {
     activeRegion.clear();
     $('.right-panel').removeClass('slide-in');
-    console.log('closing panel');
+    debugLog('closing panel');
     $('body, html').animate({
       scrollTop: 0
     }, 500);
@@ -20,43 +20,64 @@ var regionPanel = {
   createHtml: function(region, animate) {
     var itemsHtml = '';
 
-    for (i = 0; i < region.markers.length; i++) {
-      itemsHtml += regionPanel.generateItem(region.markers[i]);
+    var listContainer = document.createElement('ul');
+    listContainer.className = "mdl-list";
+
+
+    if (region.type == 'sequence')
+      if (region.markers.length > 0) {
+        var sequence = new MarkerSequence(region);
+        listContainer.appendChild(sequence.getElement());
+      }
+    else if (region.type == 'classic') {
+      for (i = 0; i < region.markers.length; i++) {
+        listContainer.appendChild(regionPanel.generateItem(region.markers[i]));
+      }
     }
 
-    if (itemsHtml == '') {
-      itemsHtml = `
-        <div id='no-recordings'>
-          <p>There aren't any recordings yet, why don't you add one?</p>
-        </div>
-      `
+    // Show no recording message if no markers exist
+    if (listContainer.childElementCount == 0) {
+      var p = document.createElement('P');
+      p.textContent = "There aren't any recordings yet, why don't you add one?";
+
+      var div = document.createElement("div");
+      div.id = "no-recordings";
+      div.appendChild(p);
+
+      listContainer.appendChild(div);
     }
 
-    itemsHtml += `
-      <div style="padding-left:15px">
-        <button
-          class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect right-panel__button'
-          onClick='regionPanel.close()'>
+    // Create a close panel button
+    var button = document.createElement("button");
+    button.className = "mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect right-panel__button";
+    button.setAttribute("onClick", "regionPanel.close()");
+    button.textContent = "Close";
 
-          Close
-        </button>
-      </div>`;
+    var div = document.createElement("div");
+    div.style = "padding-left:15px;";
+    div.appendChild(button);
+
+    listContainer.appendChild(div);
 
     var containerClasses = 'right-panel';
     if (!animate) {
       containerClasses += ' slide-in';
     }
 
-    var sheetHtml = `
-      <div class='` + containerClasses + `'>
-          <span class='right-panel__title'>` + region.regionName + `</span>
-          <ul class='mdl-list'>
-            ` + itemsHtml + `
-          </ul>
+    // Create the main container
+    var sheetContainer = document.createElement('div');
+    sheetContainer.className = containerClasses;
 
-      </div>`;
+    sheetContainer.appendChild(this.createTitle(region.regionName));
+    sheetContainer.appendChild(this.createGear(
+      () => {
 
-    $('.region-panel-container').html(sheetHtml);
+        regionPanelSettings.constructor(region, sheetContainer);
+        //ui.createSnack('Yes, I will eventually do something cool');
+      }));
+    sheetContainer.appendChild(listContainer);
+
+    document.getElementById('region-panel-container').appendChild(sheetContainer);
 
     if (animate) {
       setTimeout(function() {
@@ -65,17 +86,46 @@ var regionPanel = {
     }
   }, // createHtml
 
+  createTitle: function(title) {
+    var span = document.createElement('span');
+    span.className = 'right-panel__title';
+    span.textContent = title;
+    return span;
+  }, // createTitle
+
+  createGear: function(onClick) {
+    var i = document.createElement('i');
+    i.className = 'region-panel__settings_button material-icons';
+    i.textContent = 'settings';
+
+    var a = document.createElement('a');
+    a.className = 'mdl-navigation__link';
+    a.addEventListener('click', onClick);
+    a.appendChild(i);
+    return a;
+  }, // createGear
+
   generateItem: function(item) {
-    return `
-      <li class="mdl-list__item mdl-list__item--two-line">
-        <span class="mdl-list__item-primary-content">
-          <span>` + item.date + `</span>
-          <span class="mdl-list__item-sub-title">
-            <audio controls>
-              <source type='audio/mpeg' src='` + item.sound + `'>
-            </audio>
-          </span>
-        </span>
-      </li>`;
+    var audioControls = document.createElement("audio");
+    audioControls.controls = true;
+    audioControls.src = item.sound;
+
+    var subTitle = document.createElement("span");
+    subTitle.className = "mdl-list__item-sub-title";
+    subTitle.appendChild(audioControls);
+
+    var dateContent = document.createElement("span");
+    dateContent.textContent = item.date;
+
+    var primaryContent = document.createElement("span");
+    primaryContent.className = "mdl-list__item-primary-content";
+    primaryContent.appendChild(dateContent);
+    primaryContent.appendChild(subTitle);
+
+    var li = document.createElement("li");
+    li.className = "mdl-list__item mdl-list__item--two-line";
+    li.append(primaryContent);
+
+    return li;
   } // generateItem
-} // regionPanel.
+} // regionPanel
