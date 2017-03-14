@@ -5,7 +5,7 @@ var sound = {
 	audioContext: undefined,
 	location: undefined,
 
-	request: function(location = null, region = null) {
+	request: function(location = null, region = 'null') {
 		ui.loading.show();
 
 		this.location = location;
@@ -51,6 +51,7 @@ var sound = {
 		data.append('lat', sound.location.lat());
 		data.append('lng', sound.location.lng());
 		data.append('date', new Date().toString());
+		data.append('type','sound');
 		data.append('region', region);
 
 		debugTime('upload sound');

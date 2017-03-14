@@ -34,7 +34,11 @@ var activeRegion = { // methods and members for currently active region
     if (searchHandler.active) {
       searchHandler.updateMarkerVisibility();
     } else {
-      if (this.region.type == 'classic') {
+      if (this.region.regionName == null) { // default global region
+        this.region.markers.forEach(function(element, i) {
+          markers.place(element);
+        });
+      } else if (this.region.type == 'classic') {
         this.region.markers.forEach(function(element, i) {
           markers.place(element);
         });

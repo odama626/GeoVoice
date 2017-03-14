@@ -24,9 +24,16 @@ block navMenu
   if user
     a.mdl-navigation__link(onClick="sound.request()")
       i.material-icons record_voice_over
-      |  Record
-    a#add-region-button.mdl-navigation__link(onClick="regions.add()") Add Region
-    a.mdl-navigation__link(href="logout") Logout
+      |  Record Audio
+    a.mdl-navigation__link(onClick="videoUi.request()")
+      i.material-icons  videocam
+      |  Record Video
+    a#add-region-button.mdl-navigation__link(onClick="regions.add()")
+      i.material-icons group_work
+      |  Add Region
+    a.mdl-navigation__link(href="logout")
+      i.material-icons exit_to_app
+      |  Logout
   else
     a.mdl-navigation__link(href="login") login
     a.mdl-navigation__link(href="register") Register
@@ -50,6 +57,7 @@ block jsLibs
   script(src="js/ui/soundUi.js")
   script(src="js/ui/regionUi.js")
   script(src="js/ui/drawingUi.js")
+  script(src="js/ui/videoUi.js")
   script(src="js/searchHandler.js")
   script(src="js/tagHandler.js")
   script(src="js/markers.js")
