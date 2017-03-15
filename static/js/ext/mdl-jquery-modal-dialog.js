@@ -21,19 +21,23 @@ function showDialog(options) {
         id: 'orrsDiag',
         title: null,
         text: null,
+        neutral: false,
         negative: false,
         positive: false,
         cancelable: true,
         contentStyle: null,
-        onLoaded: false
+        onLoaded: false,
+        hideOther: true
     }, options);
 
-    // remove existing dialogs
-    $('.dialog-container').remove();
-    $(document).unbind("keyup.dialog");
+    if (options.hideOther) {
+        // remove existing dialogs
+        $('.dialog-container').remove();
+        $(document).unbind("keyup.dialog");
+    }
 
-    $('<div id="' + options.id + '" class="dialog-container"><div class="mdl-card mdl-shadow--16dp"></div></div>').appendTo("body");
-    var dialog = $('#orrsDiag');
+    $('<div id="' + options.id + '" class="dialog-container"><div class="mdl-card mdl-shadow--16dp" id="' + options.id + '_content"></div></div>').appendTo("body");
+    var dialog = $('#' + options.id);
     var content = dialog.find('.mdl-card');
     if (options.contentStyle != null) content.css(options.contentStyle);
     if (options.title != null) {
@@ -42,20 +46,32 @@ function showDialog(options) {
     if (options.text != null) {
         $('<p>' + options.text + '</p>').appendTo(content);
     }
-    if (options.negative || options.positive) {
+    if (options.neutral || options.negative || options.positive) {
         var buttonBar = $('<div class="mdl-card__actions dialog-button-bar"></div>');
+        if (options.neutral) {
+            options.neutral = $.extend({
+                id: 'neutral',
+                title: 'Neutral',
+                onClick: null
+            }, options.neutral);
+            var neuButton = $('<button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="' + options.neutral.id + '">' + options.neutral.title + '</button>');
+            neuButton.click(function (e) {
+                e.preventDefault();
+                if (options.neutral.onClick == null || !options.neutral.onClick(e))
+                    hideDialog(dialog)
+            });
+            neuButton.appendTo(buttonBar);
+        }
         if (options.negative) {
             options.negative = $.extend({
                 id: 'negative',
                 title: 'Cancel',
-                onClick: function () {
-                    return false;
-                }
+                onClick: null
             }, options.negative);
             var negButton = $('<button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="' + options.negative.id + '">' + options.negative.title + '</button>');
             negButton.click(function (e) {
                 e.preventDefault();
-                if (!options.negative.onClick(e))
+                if (options.negative.onClick == null || !options.negative.onClick(e))
                     hideDialog(dialog)
             });
             negButton.appendTo(buttonBar);
@@ -64,14 +80,12 @@ function showDialog(options) {
             options.positive = $.extend({
                 id: 'positive',
                 title: 'OK',
-                onClick: function () {
-                    return false;
-                }
+                onClick: null
             }, options.positive);
             var posButton = $('<button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" id="' + options.positive.id + '">' + options.positive.title + '</button>');
             posButton.click(function (e) {
                 e.preventDefault();
-                if (!options.positive.onClick(e))
+                if (options.positive.onClick == null || !options.positive.onClick(e))
                     hideDialog(dialog)
             });
             posButton.appendTo(buttonBar);
