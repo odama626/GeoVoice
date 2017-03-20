@@ -40,6 +40,7 @@ router.post('/submit', function(req, res) {
 		"lng": req.body.lng,
 		"region": req.body.region,
 		"date": req.body.date,
+		"type": req.body.type,
 		"sound": req.files[0].filename,
 		"creator": req.user.username,
 		"tags": []

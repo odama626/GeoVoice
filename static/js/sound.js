@@ -82,5 +82,7 @@ var sound = {
 			ui.loading.hide();
 			soundUi.preview(sound.location, region, url);
 		});
+		this.audioContext.close();
+		this.audioContext = undefined
 	} //export
 }; // soundHandler

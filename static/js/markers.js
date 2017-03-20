@@ -66,23 +66,37 @@ var markers = {
 		markers.pauseFetch();
 		$('dv audio').remove();
 		var date = new Date(marker.info.date);
+
 		markers.infoWindow.setContent(`
 				<h5>Created by `+marker.info.creator+ `</h5>
 				<h8>At `+ date.toLocaleTimeString() +' on '+date.toLocaleDateString()+ `</h8> <br>
-				<audio controls>
-					<source type="audio/mpeg" src="`+marker.info.sound+`">
-				</audio>
+				`+markers.getMediaElement(marker)+`
 
 				<br>
 				<span id="tag-container">
 				</span>
 				`);
+
+				/*<audio controls>
+					<source type="audio/mpeg" src="`+marker.info.sound+`">
+				</audio>*/
 		markers.infoWindow.open(map, marker);
 		var tagContainer = $('#tag-container');
 		new TagHandler(marker.info, tagContainer);
 		debugTime('marker info', true);
 
 	}, // omsClickListener
+
+	getMediaElement: function(marker) {
+		if (marker.info.type == 'sound') {
+			return '<audio controls><source type="audio/mpeg" src="'+marker.info.sound+'"></audio>';
+		} else if (marker.info.type == 'video') {
+			return '<video controls style="width:100%" src="'+marker.info.sound+'"></video>';
+		} else {
+			console.log('unknown media type');
+			console.log(marker.info);
+		}
+	}, // getMediaElement
 
 	update: function(marker) {
 		//var filename = new Date().toISOString() + '.mp3';

@@ -11,3 +11,11 @@
 .hidden {
 	display: none;
 }
+
+
+/* video */
+.overlay-br {
+	position:absolute;
+	top: 0;
+	right: 0;
+}

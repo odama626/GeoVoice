@@ -9,8 +9,9 @@ block cssLinks
 block navBar
   if user
     a.mdl-navigation__link(onClick="sound.request()")
-      i.material-icons record_voice_over
-      |  Record
+      i.material-icons mic
+    a.mdl-navigation__link(onClick="video.request()")
+      i.material-icons videocam
     a.mdl-navigation__link #{user.username}
   else
     a.mdl-navigation__link(href="login") Login
@@ -23,9 +24,9 @@ block navBar
 block navMenu
   if user
     a.mdl-navigation__link(onClick="sound.request()")
-      i.material-icons record_voice_over
+      i.material-icons mic
       |  Record Audio
-    a.mdl-navigation__link(onClick="videoUi.request()")
+    a.mdl-navigation__link(onClick="video.request()")
       i.material-icons  videocam
       |  Record Video
     a#add-region-button.mdl-navigation__link(onClick="regions.add()")
@@ -66,6 +67,7 @@ block jsLibs
   script(src="js/regions/regionPanel.js")
   script(src="js/regions/regionPanelSettings.js")
   script(src="js/sound.js")
+  script(src="js/video.js")
   script(src="map.js")
   script(src="js/markerSequence.js")
 
@@ -76,6 +78,7 @@ block jsLibs
   script(src="js/ext/ric-polyfill.js")
   script(src="js/ext/oms.min.js")
   script(src="js/ext/adapter.js")
-  script(src="js/ext/recorder.js")
+  script(src="js/ext/recorder.js") // to be phased out
+  script(src="https://cdn.webrtc-experiment.com/MediaStreamRecorder.js")
   script(src="js/ext/map-icons.js")
   script(src="js/ext/spectrum.js")

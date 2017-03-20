@@ -12,6 +12,10 @@ html, body {
 	margin: auto;
 }
 
+.mdl-navigation__link {
+	cursor: pointer;
+}
+
 .login-background {
 	background-image: url('http://netdna.webdesignerdepot.com/uploads/2013/11/featured3.jpg');
 	-webkit-background-size: cover;
