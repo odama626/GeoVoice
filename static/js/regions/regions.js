@@ -147,7 +147,7 @@ var regions = {
 
 	}, // parseMarkerShape
 
-	createTempMarker: function(url, location, region) {
+	createTempMarker: function(url, location, region, type) {
 		//Place temporary marker on map
 		var marker = {
 			sound: url,
@@ -155,6 +155,7 @@ var regions = {
 			date: new Date().toString(),
 			lat: location.lat(),
 			lng: location.lng(),
+			type: type,
 			tags: []
 		};
 

@@ -4,21 +4,21 @@ var video = {
   stream: null,
   file: null,
   blob: null,
+  location: undefined,
 
   interval: 3000, // recording interval
 
   request: function(location = null, region = 'null') {
     ui.loading.show();
-
-    this.location = location;
-    if (location == null) {
+    console.log(location);
+    video.location = location;
+    if (this.location == null) {
       getLocation().then( loc => video.location = loc);
     }
 
     navigator.getUserMedia({ audio: true, video: true},
       stream => {
         if (this.videoRecorder === undefined) {
-          console.log('blah');
           this.videoRecorder = new MediaStreamRecorder(stream);
           console.log(this.videoRecorder);
           this.videoRecorder.mimeType = "video/webm";
@@ -60,12 +60,12 @@ var video = {
 
   upload: function(region) {
     //this.videoRecorder.save(this.blob, "");
-    regions.createTempMarker(URL.createObjectURL(this.blob), this.location, region);
+    regions.createTempMarker(URL.createObjectURL(this.blob), video.location, region, 'video');
 
     var data = new FormData();
     data.append('file', this.file);
-    data.append('lat', this.location.lat());
-    data.append('lng', this.location.lng());
+    data.append('lat', video.location.lat());
+    data.append('lng', video.location.lng());
     data.append('date', new Date().toString());
     data.append('type', 'video');
     data.append('region', region);

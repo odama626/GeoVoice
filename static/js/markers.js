@@ -19,7 +19,7 @@ var markers = {
 		if (this.oms === undefined) { // setup spiderfier if undefined
 			this.oms = new OverlappingMarkerSpiderfier(map);
 
-			this.infoWindow = new google.maps.InfoWindow();
+			this.infoWindow = new google.maps.InfoWindow( {maxWidth: 640 });
 
 			google.maps.event.addListener(this.infoWindow, 'closeclick', markers.closeInfoWindow);
 
@@ -31,6 +31,15 @@ var markers = {
 
 		searchHandler.mapTags(info);
 	}, // place
+
+	placeInfoWindow(position, content) {
+		if (this.infoWindow === undefined) {
+			this.infoWindow = new google.maps.InfoWindow({ maxWidth: 640});
+			google.maps.event.addListener(this.infoWindow, 'closeclick', markers.closeInfoWindow);
+		}
+		this.infoWindow.setPosition(position);
+		this.infoWindow.setContent(content);
+	}, // placeInfoWindow
 
 	pauseFetch: function() {
 		debugLog('pause fetch');
@@ -77,9 +86,6 @@ var markers = {
 				</span>
 				`);
 
-				/*<audio controls>
-					<source type="audio/mpeg" src="`+marker.info.sound+`">
-				</audio>*/
 		markers.infoWindow.open(map, marker);
 		var tagContainer = $('#tag-container');
 		new TagHandler(marker.info, tagContainer);
@@ -91,7 +97,7 @@ var markers = {
 		if (marker.info.type == 'sound') {
 			return '<audio controls><source type="audio/mpeg" src="'+marker.info.sound+'"></audio>';
 		} else if (marker.info.type == 'video') {
-			return '<video controls style="width:100%" src="'+marker.info.sound+'"></video>';
+			return '<video controls type="video/webm" style="width:100%" src="'+marker.info.sound+'"></video>';
 		} else {
 			console.log('unknown media type');
 			console.log(marker.info);

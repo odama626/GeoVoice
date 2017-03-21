@@ -8,6 +8,18 @@ html, body {
 	height: 100%
 }
 
+.infowindow-button {
+	margin-left: 4px;
+}
+
+.infowindow-button-container {
+	position: absolute;
+	display: inline-flex;
+	right: 1px;
+	bottom: 1px;
+
+}
+
 .mdl-card__center {
 	margin: auto;
 }

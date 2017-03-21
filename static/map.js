@@ -103,8 +103,9 @@ function getLocation() {
 		if (navigator.geolocation) {
 		  navigator.geolocation.getCurrentPosition(function(position) {
 		  	resolve(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
-		  }, function() {
+		  }, function(e) {
 		    ui.createSnack('The geolocation service failed');
+        console.log(e);
 		  });
 		} else {
 		  // Browser doesn't support Geolocation
@@ -151,28 +152,29 @@ function addPrecisePoint(event) {
     ui.createSnack('You need to be logged in to do that', 'Login', () => location='login');
     return;
   }
-	var precisePoint = new google.maps.Marker({
-		position: { lat: parseFloat(event.latLng.lat()), lng: parseFloat(event.latLng.lng()) },
-		map: map
-	});
-
-	showDialog({
-		title: 'Precise point record',
-		text: 'Add a recording here?',
-		positive: {
-			title: 'yes',
-			onClick: function (e) {
-				precisePoint.setMap(null);
-				sound.request(event.latLng);
-			}
-		},
-		negative: {
-			title: 'cancel',
-			onClick: function(e) {
-				precisePoint.setMap(null);
-			}
-		}
-	});
+  console.log('addPrecisePoint(event)');
+  console.log(event);
+  markers.closeInfoWindow();
+  markers.placeInfoWindow(event.latLng,
+    `
+      <h5 style="padding-bottom:8px;">Add a point here?</h5>
+      sneaky
+        <div class="infowindow-button-container">
+          <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab infowindow-button" id="sound-request">
+            <i class="material-icons">mic</i>
+          </button>
+          <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab infowindow-button" id="video-request">
+            <i class="material-icons">videocam</i>
+          </button>
+        </div>
+    `);
+  google.maps.event.addListenerOnce(markers.infoWindow, 'domready', () => {
+    var soundRequest = document.getElementById('sound-request');
+    var videoRequest = document.getElementById('video-request');
+    soundRequest.onclick = () => {sound.request(event.latLng);};
+    videoRequest.onclick = () => {video.request(event.latLng);};
+  });
+  markers.infoWindow.open(map);
 } // addPrecisePoint
 
 function selfDestruct() {
