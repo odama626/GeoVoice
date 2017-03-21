@@ -79,7 +79,7 @@ var video = {
       processData: false,
       success: function(data) {
         ui.createSnack('upload completed');
-        debugTime('upload sound', true);
+        debugTime('upload video', true);
       },
       error: function(e) {
         if (currently_logged_in) {

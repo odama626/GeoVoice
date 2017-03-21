@@ -38,7 +38,7 @@ var regions = {
 
 			},
 			error: function(e) {
-				ui.createSnack('Error retrieving sound markers: ' + e.toString());
+				ui.createSnack('Error retrieving markers: ' + e.toString());
 			}
 		});
 	}, // fetch
@@ -150,7 +150,7 @@ var regions = {
 	createTempMarker: function(url, location, region, type) {
 		//Place temporary marker on map
 		var marker = {
-			sound: url,
+			media: url,
 			creator: 'you - still pending',
 			date: new Date().toString(),
 			lat: location.lat(),

@@ -8,18 +8,17 @@ class MarkerSequence {
 
   initializeElement() {
     if (this.region.markers[0].type == 'sound') {
-      this.audio = document.createElement("audio");
-      this.audio.type='audio/mpeg';
+      this.mediaElement = document.createElement("audio");
+      this.mediaElement.type='audio/mpeg';
     } else if (this.region.markers[0].type == 'video') {
-      this.audio = document.createElement("video");
-      this.audio.style.heoght='100%';
-      this.audio.type='video/webm';
+      this.mediaElement = document.createElement("video");
+      this.mediaElement.type='video/webm';
     }
-    this.audio.controls = true;
-    this.audio.src = this.region.markers[0].sound;
+    this.mediaElement.controls = true;
+    this.mediaElement.src = this.region.markers[0].media;
 
     var subTitle = document.createElement("div");
-    subTitle.appendChild(this.audio);
+    subTitle.appendChild(this.mediaElement);
 
     this.text = document.createElement('span');
     this.text.textContent = this.region.markers.length+' marker';
@@ -32,8 +31,8 @@ class MarkerSequence {
     this.element = document.createElement('div');
   //  this.element.className = 'mdl-list__item mdl-list__item--two-line';
 
-    this.audio.onended = () => this.nextMarker();
-    this.audio.onplay = () => this.started();
+    this.mediaElement.onended = () => this.nextMarker();
+    this.mediaElement.onplay = () => this.started();
     this.element.append(primaryContent);
 
   //  map.panTo(getLoc(this.region.markers[0]));
@@ -62,11 +61,10 @@ class MarkerSequence {
     }
 
     mediaElement.controls = true;
-    //mediaElement.src = this.region.markers[0].sound;
     mediaElement.onended = () => this.nextMarker();
     mediaElement.onplay = () => this.started();
-    this.audio.replaceWith(mediaElement);
-    this.audio = mediaElement;
+    this.mediaElement.replaceWith(mediaElement);
+    this.mediaElement = mediaElement;
   }
 
   nextMarker() {
@@ -97,10 +95,10 @@ class MarkerSequence {
     });*/
 
     panToPromise(getLoc(this.region.markers[this.currentMarker])).then(() =>{
-      this.audio.pause();
-      this.audio.currentTime = 0.00;
-      this.audio.src = this.region.markers[this.currentMarker].sound;
-      this.audio.play();
+      this.mediaElement.pause();
+      this.mediaElement.currentTime = 0.00;
+      this.mediaElement.src = this.region.markers[this.currentMarker].media;
+      this.mediaElement.play();
     });
   }
 

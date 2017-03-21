@@ -41,7 +41,7 @@ router.post('/submit', function(req, res) {
 		"region": req.body.region,
 		"date": req.body.date,
 		"type": req.body.type,
-		"sound": req.files[0].filename,
+		"media": req.files[0].filename,
 		"creator": req.user.username,
 		"tags": []
 	};
@@ -61,13 +61,13 @@ router.post('/update_tags', function (req, res) {
 	console.log(req.body.tags);
 	markerCollection.update(
 		{ 'regionName': req.body.region,
-			'markers.sound': req.body.sound },
+			'markers.media': req.body.media },
 		{
 			$set: { 'markers.$.tags': tags}
 		}
 	);
 	res.end('SUCCESS');
-	console.log('updated tags on '+req.body.sound);
+	console.log('updated tags on '+req.body.media);
 });
 
 router.post('/update_marker_order', function(req, res) {

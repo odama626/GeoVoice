@@ -95,9 +95,9 @@ var markers = {
 
 	getMediaElement: function(marker) {
 		if (marker.info.type == 'sound') {
-			return '<audio controls><source type="audio/mpeg" src="'+marker.info.sound+'"></audio>';
+			return '<audio controls><source type="audio/mpeg" src="'+marker.info.media+'"></audio>';
 		} else if (marker.info.type == 'video') {
-			return '<video controls type="video/webm" style="width:100%" src="'+marker.info.sound+'"></video>';
+			return '<video controls type="video/webm" style="width:100%" src="'+marker.info.media+'"></video>';
 		} else {
 			console.log('unknown media type');
 			console.log(marker.info);
@@ -107,7 +107,7 @@ var markers = {
 	update: function(marker) {
 		//var filename = new Date().toISOString() + '.mp3';
 		var data = new FormData();
-		data.append('sound', marker.sound);
+		data.append('media', marker.media);
 		data.append('tags', JSON.stringify(marker.tags));
 		data.append('region', marker.region);
 

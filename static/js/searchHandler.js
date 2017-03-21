@@ -74,7 +74,7 @@ var searchHandler = {
 
   arrayHasSound: function(array, marker) {
     for (var i=0; i<array.length; i++) {
-      if (array[i].sound === marker.sound) {
+      if (array[i].media === marker.media) {
         return true;
       }
     }

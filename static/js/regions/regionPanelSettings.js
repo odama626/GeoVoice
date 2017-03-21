@@ -82,7 +82,7 @@ var regionPanelSettings = {
   generateItem: function(item) {
     var audioControls = document.createElement("audio");
     audioControls.controls = true;
-    audioControls.src = item.sound;
+    audioControls.src = item.media;
 
     var subTitle = document.createElement("span");
     subTitle.className = "mdl-list__item-sub-title";
