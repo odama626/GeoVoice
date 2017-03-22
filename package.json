@@ -5,16 +5,28 @@
   "main": "app.js",
   "dependencies": {
     "body-parser": "^1.15.2",
+    "compression": "^1.6.2",
+    "cookie-parser": "^1.4.3",
     "express": "^4.14.0",
+    "express-minify": "^0.2.0",
+    "express-session": "^1.14.1",
     "fs": "0.0.2",
     "https": "^1.0.0",
     "mongodb": "^2.2.5",
+    "mongoose": "^4.6.2",
     "multer": "^1.2.0",
-    "nunjucks": "^2.4.2"
+    "passport": "^0.3.2",
+    "passport-google": "^0.3.0",
+    "passport-local": "^1.0.0",
+    "passport-local-mongoose": "^4.0.0",
+    "pug": "^2.0.0-beta6"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "david": "^11.0.0"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "david": "david.js"
   },
   "repository": {
     "type": "git",

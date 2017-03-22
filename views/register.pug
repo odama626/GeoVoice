@@ -1,0 +1,36 @@
+extends layout.pug
+
+block navBar
+  a.mdl-navigation__link(href="javascript:history.back()") Home
+
+block navMenu
+  a.mdl-navigation__link(href="javascript:history.back()") Home
+
+block mainContent
+  main.mdl-layout__content.login-background
+    .mdl-card.mdl-shadow--2dp.mdl-card__center
+      .mdl-card__title
+        h2.mdl-card__title-text Sign up
+      .mdl-card__supporting-text
+
+        form(action="register", method="post", role="form")
+          .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+            input#username.mdl-textfield__input(type="text", name="username", pattern="^([\\w\\.]*)@([\\w\\.]*)\\.([\\w]*)")
+            label.mdl-textfield__label(for="username") Email address
+            span.mdl-textfield__error Not a valid email address
+          .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+            input#password.mdl-textfield__input(type="password", name="password", pattern="(.){8}.*")
+            label.mdl-textfield__label(for="password") Password
+            span.mdl-textfield__error Must be at least 8 characters long
+          .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+            input#retype-password.mdl-textfield__input(type="password", name="retype-password", onblur="validatePassword()")
+            label#retype-password-label.mdl-textfield__label(for="retype-password") Retype password
+            span#retype-password-error.mdl-textfield__error
+
+          .mdl-card__actions
+            a#cancel.mdl-button.mdl-js-button.mdl-js-ripple-effect(href="/") Cancel
+            button#sign-up.mdl-button.mdl-js-button.mdl-js-ripple-effect.mdl-button--primary(type="submit",disabled) Sign up
+
+  .mdl-snackbar.mdl-js-snackbar(aria-live="assertive", aria-atomic="true", aria-relevant="text")
+    .mdl-snackbar__text
+      button.mdl-snackbar__action(type="button")

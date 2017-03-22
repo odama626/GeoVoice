@@ -1,0 +1,27 @@
+form
+  .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+    input#region-name.mdl-textfield__input(type="text")
+    label.mdl-textfield__label(for="location") Name Place
+
+#region-color(data-color="#1998F7") Pick a color
+  input#region-palette(type="text")
+
+.accordian
+  span.accordian-title Pick an icon
+  span#selected-icon.map-icons
+  a.accordian-expand V
+  .accordian-content
+    for icon in regionIcons
+      input.map-marker(id=icon, name="regionIcons", type="radio")
+      label(for=icon)
+        span(class=icon+" map-icon radio-map-icon")
+
+.accordian
+  span.accordian-title Pick marker shape
+  span#selected-marker-shape.map-icon
+  a.accordian-expand V
+  .accordian-content
+    for icon in regionMarkers
+      input.map-marker(id=icon, name="regionIcons", type="radio")
+      label(for=icon)
+        span(class=icon+" map-icon radio-map-icon")

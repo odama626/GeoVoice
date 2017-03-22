@@ -1,107 +1,128 @@
+/* global OverlappingMarkerSpiderfier: false, searchHandler: false, TagHandler: false */
+/* exported markers */
+
 var markers = {
 
-	list: [],
-	oms: undefined, // OverlappingMarkerSpiderfier
-	infoWindow: undefined,
-	fetchActive: true,
-	
+  list: [],
+  oms: undefined, // OverlappingMarkerSpiderfier
+  infoWindow: undefined,
+  fetchActive: true,
 
-	place: function(info) {
-		var marker = new google.maps.Marker({
-			position: { lat: parseFloat(info.lat), lng: parseFloat(info.lng)},
-			map:map,
-			label: info.date
-		});
-		
-		marker.info = info;
-		
-		if (this.oms === undefined) { // setup spiderfier if undefined
-			this.oms = new OverlappingMarkerSpiderfier(map);
-			
-			this.infoWindow = new google.maps.InfoWindow();
-			
-			google.maps.event.addListener(this.infoWindow, 'closeclick', markers.closeInfoWindow);
-			
-			this.oms.addListener('click', markers.omsClickListener);
-		}
-	
-		markers.list.push(marker);
-		this.oms.addMarker(marker);
-	}, // place
-	
-	pauseFetch: function() {
-		console.log('pause fetch');
-		this.fetchActive = false;
-	}, // pauseFetch
-	
-	resumeFetch: function() {
-		console.log('resume fetch');
-		this.fetchActive = true;
-	}, // resumeFetch
-	
-	fetch: function() {
-		//var bounds = map.getBounds();
-		// TODO create ajax request for markers, then delete current markers and show new
-		// https://developers.google.com/maps/articles/toomanymarkers#distancebasedclustering	
 
-		// Dont refresh markers if InfoWindow is open
-		if (!markers.fetchActive) {
-			return;
-		}
-		console.log('fetch');
-		
-		$.ajax({
-			url : "get_markers",
-			type: "GET",
-			success: function(data) {
-				var regionList = jQuery.parseJSON(data);
-				markers.clear();
-				for (d = 0; d<regionList.length; d++)
-				{
-					if (regionList[d].regionName == "null") {
-						var markerList = regionList[d].markers;
-						for (i = 0; i<markerList.length; i++) {
-							markers.place(markerList[i]);
-						}
-					} else {
-						regions.place(regionList[d]);
-					}
-				}
-			},
-			error: function(e) {
-				ui.createSnack('Error retrieving sound markers: '+e.toString());
-			}
-		});
-	}, // fetch
-	
-	clear: function() {
-		for (var i = 0; i< markers.list.length; i++) {
-			markers.list[i].setMap(null);
-		}
-		if (this.oms !== undefined) {
-			this.oms.clearMarkers();
-		}
-		markers.list = [];
-	}, // clear
-	
-	closeInfoWindow: function() {
-		if (this.infoWindow !== null && typeof this.infoWindow !== 'undefined') {
-			this.infoWindow.setMap(null);
-			
-		}
-		markers.resumeFetch();
-	}, // closeInfoWindow
-	
-	omsClickListener: function(marker, event) {
-		markers.closeInfoWindow();
-		markers.pauseFetch();
-		$('audio').remove();
-		markers.infoWindow.setContent(`
-				<h5>Created `+marker.info.date+ `</h5>
-				<audio controls>
-					<source type="audio/mpeg" src="`+marker.info.sound+`">
-				</audio>`);
-		markers.infoWindow.open(map, marker);
-	} // omsClickListener
-	
+  place: function(info) {
+    var marker = new google.maps.Marker({
+      position: { lat: parseFloat(info.lat), lng: parseFloat(info.lng)},
+      map:map,
+      label: info.date.substring(0,3)
+    });
+
+    marker.info = info;
+    info.marker = marker;
+
+    if (this.oms === undefined) { // setup spiderfier if undefined
+      this.oms = new OverlappingMarkerSpiderfier(map);
+
+      this.infoWindow = new google.maps.InfoWindow( {maxWidth: 640 });
+
+      google.maps.event.addListener(this.infoWindow, 'closeclick', markers.closeInfoWindow);
+
+      this.oms.addListener('click', markers.omsClickListener);
+    }
+
+    markers.list.push(marker);
+    this.oms.addMarker(marker);
+
+    searchHandler.mapTags(info);
+  }, // place
+
+  placeInfoWindow(position, content) {
+    if (this.infoWindow === undefined) {
+      this.infoWindow = new google.maps.InfoWindow({ maxWidth: 640});
+      google.maps.event.addListener(this.infoWindow, 'closeclick', markers.closeInfoWindow);
+    }
+    this.infoWindow.setPosition(position);
+    this.infoWindow.setContent(content);
+  }, // placeInfoWindow
+
+  pauseFetch: function() {
+    this.fetchActive = false;
+  }, // pauseFetch
+
+  resumeFetch: function() {
+    this.fetchActive = true;
+  }, // resumeFetch
+
+  clear: function() {
+    for (var i = 0; i< markers.list.length; i++) {
+      markers.list[i].setMap(null);
+    }
+    if (this.oms !== undefined) {
+      this.oms.clearMarkers();
+    }
+    markers.list = [];
+  }, // clear
+
+  closeInfoWindow: function() {
+    if (this.infoWindow !== null && typeof this.infoWindow !== 'undefined') {
+      this.infoWindow.setMap(null);
+
+    }
+    markers.resumeFetch();
+  }, // closeInfoWindow
+
+  omsClickListener: function(marker) {
+    markers.closeInfoWindow();
+    markers.pauseFetch();
+    $('dv audio').remove();
+    var date = new Date(marker.info.date);
+
+    markers.infoWindow.setContent(`
+				<h5>Created by `+marker.info.creator+ `</h5>
+				<h8>At `+ date.toLocaleTimeString() +' on '+date.toLocaleDateString()+ `</h8> <br>
+				`+markers.getMediaElement(marker)+`
+
+				<br>
+				<span id="tag-container">
+				</span>
+				`);
+
+    markers.infoWindow.open(map, marker);
+    var tagContainer = $('#tag-container');
+    new TagHandler(marker.info, tagContainer);
+
+  }, // omsClickListener
+
+  getMediaElement: function(marker) {
+    if (marker.info.type == 'sound') {
+      return '<audio controls><source type="audio/mpeg" src="'+marker.info.media+'"></audio>';
+    } else if (marker.info.type == 'video') {
+      return '<video controls type="video/webm" style="width:100%" src="'+marker.info.media+'"></video>';
+    }
+    return '<h3>Unknown media type</h3>';
+  }, // getMediaElement
+
+  update: function(marker) {
+		//var filename = new Date().toISOString() + '.mp3';
+    var data = new FormData();
+    data.append('media', marker.media);
+    data.append('tags', JSON.stringify(marker.tags));
+    data.append('region', marker.region);
+
+    $.ajax({
+      url : 'update_tags',
+      type: 'POST',
+      data: data,
+      contentType: false,
+      processData: false,
+      success: function() {
+        ui.createSnack('tag modification completed');
+      },
+      error: function() {
+        ui.createSnack('Error modifying tag');
+      }
+    });
+  }, // update
+  search: function() {
+
+  }
 }; // markers

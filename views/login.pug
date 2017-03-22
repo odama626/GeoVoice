@@ -1,0 +1,28 @@
+extends layout.pug
+
+block navBar
+  a.mdl-navigation__link(href="javascript:history.back()") Home
+
+block navMenu
+  a.mdl-navigation__link(href="javascript:history.back()") Home
+
+block mainContent
+  main.mdl-layout__content.login-background
+
+    .mdl-card.mdl-shadow--2dp.mdl-card__center
+      .mdl-card__title
+        h2.mdl-card__title-text Sign in
+      .mdl-card__supporting-text
+        form#login-form(action="/login", method="post")
+          .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+            input#username.mdl-textfield__input(type="text", name="username")
+            label.mdl-textfield__label(for="username") Email address
+          .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+            input#password.mdl-textfield__input(type="password", name="password")
+            label.mdl-textfield__label(for="password") Password
+          a#register.mdl-button.mdl-js-button.mdl-js-ripple-effect(href="register") Register
+          button#sign-in.mdl-button.mdl-js-button.mdl-js-ripple-effect.mdl-button.primary(type="submit") Sign in
+
+  .mdl-snackbar.mdl-js-snackbar(aria-live="assertive", aria-atomic="true", aria-relevant="text")
+    .mdl-snackbar__text
+      button.mdl-snackbar__action(type="button")
