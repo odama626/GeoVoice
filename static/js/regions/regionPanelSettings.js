@@ -1,4 +1,4 @@
-/* global regionPanel */
+/* global regionPanel: false, Sortable: false */
 /* export regionPanelSettings */
 
 var regionPanelSettings = {

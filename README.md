@@ -1,5 +1,7 @@
 # GeoVoice a place to publically share audio recordings.
 
+![dependency status](https://david-dm.org/omarzion/Geovoice.svg)
+
 - You can add individual points
 - Or you can add recordings to regions such as libraries, museums etc..
 

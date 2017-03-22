@@ -19,9 +19,12 @@
     "mongoose": "^4.6.2",
     "pug": "^2.0.0-beta6"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "david": "^11.0.0"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "david": "david.js"
   },
   "repository": {
     "type": "git",
