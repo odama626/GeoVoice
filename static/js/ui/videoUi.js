@@ -1,3 +1,6 @@
+/* global videoUi: false, showDialog: false */
+/* exported videoUi */
+
 var videoUi = {
 
   request: function(videoSource, region) {
@@ -14,7 +17,7 @@ var videoUi = {
       },
       negative: {
         title: 'cancel',
-        onClick: function(e) {
+        onClick: function() {
           video.cleanup();
         }
       }
@@ -36,19 +39,19 @@ var videoUi = {
             '</div>',
       positive: {
         title: 'done',
-        onClick: e => {
+        onClick: function() {
           video.stop(region);
           clearInterval(timerInterval);
         }
       },
       negative: {
         title: 'cancel',
-        onClick: function(e) {
+        onClick: function() {
           video.cleanup();
           clearInterval(timerInterval);
         }
       }
-    })
+    });
   }, // timer
 
   preview: function(location, region, url) {
@@ -68,7 +71,7 @@ var videoUi = {
       <a id='recording-save' download="recording.webm">Save</a>
       </span>
       `,
-      onLoaded: function(e) {
+      onLoaded: function() {
         var player = document.querySelector('#recording-player');
         player.src = url;
         document.querySelector('#recording-save').href = url;
@@ -95,7 +98,7 @@ var videoUi = {
       },
       positive: {
         title: 'yes',
-        onClick: function(e) {
+        onClick: function() {
           if (ENABLE_REGIONS) {
             var selected = $('#regions option:selected').text();
             region = (selected == 'none' ? null : selected);
@@ -108,7 +111,7 @@ var videoUi = {
       },
       negative: {
         title: 'no',
-        onClick: function(e) {
+        onClick: function() {
           video.cleanup();
         }
       }

@@ -1,4 +1,5 @@
 /* global videoUi: false, RecordRTC: false */
+/* exported video */
 
 var video = {
   videoStream: null,

@@ -1,3 +1,5 @@
+/* exported soundUi */
+
 var soundUi = {
 
   request: function(region) {
@@ -33,8 +35,8 @@ var soundUi = {
           <a id='recording-save' download="recording.mp3">Save</a>
           </span>
         `,
-      onLoaded: function(e) {
-        var player = $('#recording-player')
+      onLoaded: function() {
+        var player = $('#recording-player');
         player.attr('src', url);
         $('#recording-save').attr('href', url);
         player[0].load();
@@ -58,7 +60,7 @@ var soundUi = {
       },
       positive: {
         title: 'yes',
-        onClick: function(e) {
+        onClick: function() {
           if (ENABLE_REGIONS) {
             var selected = $('#regions option:selected').text();
             region = (selected == 'none' ? null : selected);
@@ -87,11 +89,11 @@ var soundUi = {
       text: '<h4><a id="recording-timer">0.00</a></h4>',
       positive: {
         title: 'done',
-        onClick: function(e) {
+        onClick: function() {
           sound.stop(region);
           clearInterval(timerInterval);
         }
       }
     });
   } // recordTimer
-}
+};

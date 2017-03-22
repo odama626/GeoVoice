@@ -1,3 +1,6 @@
+/* global drawingUi: false */
+/* exported regionUi */
+
 var regionUi = {
 
   add: {
@@ -8,17 +11,17 @@ var regionUi = {
             We now support two different types of regions
             <div id='regionUi-container'></div>
             `,
-        onLoaded: (e) => {
+        onLoaded: () => {
           var container = document.getElementById('regionUi-container');
-          var classicDesc = "Classic - region has a geofence, and marker to open";
-          var sequenceDesc = "Sequence - region markers are played in sequence";
+          var classicDesc = 'Classic - region has a geofence, and marker to open';
+          var sequenceDesc = 'Sequence - region markers are played in sequence';
 
           container.appendChild(ui.createRadio('classic', classicDesc, 'classic', 'type', true));
           container.appendChild(ui.createRadio('sequence', sequenceDesc, 'sequence', 'type'));
         },
         positive: {
           title: 'Ok',
-          onClick: (e) => {
+          onClick: () => {
             var container = document.getElementById('regionUi-container');
             var selectionId = container.querySelector('input:checked').id;
 
@@ -33,8 +36,7 @@ var regionUi = {
         negative: {
           title: 'Cancel'
         }
-
-      })
+      });
     }, // requestType
 
     sequence: function(location) {
@@ -45,20 +47,20 @@ var regionUi = {
         lng: location.lng(),
         geofence: null,
         type: 'sequence'
-      }
+      };
+
       this.showCreateDialog(region);
     }, // sequence
 
     classic: function(geofence) {
       var location = geofence.c_getBounds().getCenter();
 
-
       var region = {
         lat: location.lat(),
         lng: location.lng(),
         geofence: geofence.c_getLatLngLiteralArray(),
         type: 'classic'
-      }
+      };
 
       geofence.setMap(null);
 
@@ -76,7 +78,7 @@ var regionUi = {
           showDialog({
             title: 'Add Region',
             text: data,
-            onLoaded: function(e) {
+            onLoaded: function() {
 
               // accordian animation
               $('.accordian-expand').click(
@@ -139,7 +141,7 @@ var regionUi = {
             },
             positive: {
               title: 'okay',
-              onClick: function(e) {
+              onClick: function() {
                 var color = $('#region-color').data('color');
                 var icon = $('#selected-icon').attr('data-icon');
                 var shape = $('#selected-marker-shape').attr('data-icon');
@@ -155,10 +157,10 @@ var regionUi = {
             }
           });
         },
-        error: function(e) {
+        error: function() {
           ui.createSnack('Couldn\'t fetch dialog');
         }
       });
     }, // showCreateDialog
   }
-}
+};

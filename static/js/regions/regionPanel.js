@@ -1,3 +1,6 @@
+/* global activeRegion: false, MarkerSequence: false, regionPanelSettings: false */
+/* exported regionPanel */
+
 var regionPanel = {
 
   open: function(region, animate = true) {
@@ -8,7 +11,6 @@ var regionPanel = {
   close: function() {
     activeRegion.clear();
     $('.right-panel').removeClass('slide-in');
-    debugLog('closing panel');
     $('body, html').animate({
       scrollTop: 0
     }, 500);
@@ -18,10 +20,9 @@ var regionPanel = {
   }, // close
 
   createHtml: function(region, animate) {
-    var itemsHtml = '';
 
     var listContainer = document.createElement('ul');
-    listContainer.className = "mdl-list";
+    listContainer.className = 'mdl-list';
 
 
     if (region.type == 'sequence')
@@ -29,32 +30,32 @@ var regionPanel = {
         var sequence = new MarkerSequence(region);
         listContainer.appendChild(sequence.getElement());
       }
-    else if (region.type == 'classic') {
-      for (i = 0; i < region.markers.length; i++) {
-        listContainer.appendChild(regionPanel.generateItem(region.markers[i]));
+      else if (region.type == 'classic') {
+        for (var i = 0; i < region.markers.length; i++) {
+          listContainer.appendChild(regionPanel.generateItem(region.markers[i]));
+        }
       }
-    }
 
     // Show no recording message if no markers exist
     if (listContainer.childElementCount == 0) {
       var p = document.createElement('P');
-      p.textContent = "There aren't any recordings yet, why don't you add one?";
+      p.textContent = 'There aren\'t any recordings yet, why don\'t you add one?';
 
-      var div = document.createElement("div");
-      div.id = "no-recordings";
-      div.appendChild(p);
+      var divNo = document.createElement('div');
+      divNo.id = 'no-recordings';
+      divNo.appendChild(p);
 
-      listContainer.appendChild(div);
+      listContainer.appendChild(divNo);
     }
 
     // Create a close panel button
-    var button = document.createElement("button");
-    button.className = "mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect right-panel__button";
-    button.setAttribute("onClick", "regionPanel.close()");
-    button.textContent = "Close";
+    var button = document.createElement('button');
+    button.className = 'mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect right-panel__button';
+    button.setAttribute('onClick', 'regionPanel.close()');
+    button.textContent = 'Close';
 
-    var div = document.createElement("div");
-    div.style = "padding-left:15px;";
+    var div = document.createElement('div');
+    div.style = 'padding-left:15px;';
     div.appendChild(button);
 
     listContainer.appendChild(div);
@@ -106,26 +107,26 @@ var regionPanel = {
   }, // createGear
 
   generateItem: function(item) {
-    var audioControls = document.createElement("audio");
+    var audioControls = document.createElement('audio');
     audioControls.controls = true;
     audioControls.src = item.media;
 
-    var subTitle = document.createElement("span");
-    subTitle.className = "mdl-list__item-sub-title";
+    var subTitle = document.createElement('span');
+    subTitle.className = 'mdl-list__item-sub-title';
     subTitle.appendChild(audioControls);
 
-    var dateContent = document.createElement("span");
+    var dateContent = document.createElement('span');
     dateContent.textContent = item.date;
 
-    var primaryContent = document.createElement("span");
-    primaryContent.className = "mdl-list__item-primary-content";
+    var primaryContent = document.createElement('span');
+    primaryContent.className = 'mdl-list__item-primary-content';
     primaryContent.appendChild(dateContent);
     primaryContent.appendChild(subTitle);
 
-    var li = document.createElement("li");
-    li.className = "mdl-list__item mdl-list__item--two-line";
+    var li = document.createElement('li');
+    li.className = 'mdl-list__item mdl-list__item--two-line';
     li.append(primaryContent);
 
     return li;
   } // generateItem
-} // regionPanel
+}; // regionPanel

@@ -1,3 +1,6 @@
+/* global regionPanel */
+/* export regionPanelSettings */
+
 var regionPanelSettings = {
   constructor: function(region, parent) {
     this.region = region;
@@ -18,16 +21,11 @@ var regionPanelSettings = {
 
     var ul = document.createElement('ul');
     ul.className = 'mdl-list';
-
-    this.region.markers.forEach(
-      (item, index, array) => { ul.appendChild(this.generateItem(item))}
-    );
-
+    this.region.markers.forEach((item) => { ul.appendChild(this.generateItem(item)); });
     this.parent.appendChild(ul);
 
-    var region = this.region;
-
-    var sortable = Sortable.create(ul, {
+    var region = this.region; // TODO see if this is needed
+    var sortable = Sortable.create(ul, { // TODO see if this is needed
       handle: '.drag_handle',
       onEnd: this.reorderMarkers
     });
@@ -35,35 +33,33 @@ var regionPanelSettings = {
 
   updateMarkerOrder: function() {
     var data = new FormData();
-		data.append('regionId', this.region._id);
-		data.append('markers', JSON.stringify(this.region.markers));
+    data.append('regionId', this.region._id);
+    data.append('markers', JSON.stringify(this.region.markers));
 
-		$.ajax({
-			url : 'update_marker_order',
-			type: 'POST',
-			data: data,
-			contentType: false,
-			processData: false,
-			success: function(data) {
-				ui.createSnack('marker reorder complete');
-			},
-			error: function(e) {
-				ui.createSnack('Error reordering markers');
-			}
-		});
+    $.ajax({
+      url : 'update_marker_order',
+      type: 'POST',
+      data: data,
+      contentType: false,
+      processData: false,
+      success: function() {
+        ui.createSnack('marker reorder complete');
+      },
+      error: function() {
+        ui.createSnack('Error reordering markers');
+      }
+    });
   },
 
   reorderMarkers: function(event) {
-    console.log(regionPanelSettings.region.markers);
     var movedMarker = regionPanelSettings.region.markers[event.oldIndex];
     regionPanelSettings.region.markers.splice(event.oldIndex,1);
     regionPanelSettings.region.markers.splice(event.newIndex, 0, movedMarker);
-    console.log(regionPanelSettings.region.markers);
   },
 
   createBackButton: function(onClick) {
     var i = document.createElement('i');
-    i.className = 'region-panel__settings_button material-icons'
+    i.className = 'region-panel__settings_button material-icons';
     i.textContent = 'arrow_back';
 
     var a = document.createElement('a');
@@ -80,19 +76,19 @@ var regionPanelSettings = {
   },
 
   generateItem: function(item) {
-    var audioControls = document.createElement("audio");
+    var audioControls = document.createElement('audio');
     audioControls.controls = true;
     audioControls.src = item.media;
 
-    var subTitle = document.createElement("span");
-    subTitle.className = "mdl-list__item-sub-title";
+    var subTitle = document.createElement('span');
+    subTitle.className = 'mdl-list__item-sub-title';
     subTitle.appendChild(audioControls);
 
-    var dateContent = document.createElement("span");
+    var dateContent = document.createElement('span');
     dateContent.textContent = item.date;
 
-    var primaryContent = document.createElement("span");
-    primaryContent.className = "mdl-list__item-primary-content";
+    var primaryContent = document.createElement('span');
+    primaryContent.className = 'mdl-list__item-primary-content';
     primaryContent.appendChild(dateContent);
     primaryContent.appendChild(subTitle);
 
@@ -101,8 +97,8 @@ var regionPanelSettings = {
     dragHandle.textContent= 'drag_handle';
     dragHandle.style = 'padding-right: 10px; color:#757575;';
 
-    var li = document.createElement("li");
-    li.className = "mdl-list__item mdl-list__item--two-line";
+    var li = document.createElement('li');
+    li.className = 'mdl-list__item mdl-list__item--two-line';
     li.style = 'border-top: 1px solid #ddd;';
 
     li.appendChild(dragHandle);
@@ -111,4 +107,4 @@ var regionPanelSettings = {
     return li;
   }
 
-} // regionPanelSettings
+}; // regionPanelSettings

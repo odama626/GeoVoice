@@ -8,16 +8,16 @@ class MarkerSequence {
 
   initializeElement() {
     if (this.region.markers[0].type == 'sound') {
-      this.mediaElement = document.createElement("audio");
+      this.mediaElement = document.createElement('audio');
       this.mediaElement.type='audio/mpeg';
     } else if (this.region.markers[0].type == 'video') {
-      this.mediaElement = document.createElement("video");
+      this.mediaElement = document.createElement('video');
       this.mediaElement.type='video/webm';
     }
     this.mediaElement.controls = true;
     this.mediaElement.src = this.region.markers[0].media;
 
-    var subTitle = document.createElement("div");
+    var subTitle = document.createElement('div');
     subTitle.appendChild(this.mediaElement);
 
     this.text = document.createElement('span');
@@ -36,7 +36,7 @@ class MarkerSequence {
     this.element.append(primaryContent);
 
   //  map.panTo(getLoc(this.region.markers[0]));
-  map.panTo(this.region.marker.getPosition());
+    map.panTo(this.region.marker.getPosition());
   }
 
   started() {
@@ -50,12 +50,12 @@ class MarkerSequence {
         == this.region.markers[this.currentMarker].type) {
       return; // current and next markers are same type, nothing to do
     }
-    var mediaElement
+    var mediaElement;
     if (this.region.markers[this.currentMarker].type == 'sound') {
-      mediaElement = document.createElement("audio");
+      mediaElement = document.createElement('audio');
       mediaElement.type='audio/mpeg';
     } else if (this.region.markers[this.currentMarker].type == 'video') {
-      mediaElement = document.createElement("video");
+      mediaElement = document.createElement('video');
       mediaElement.style.heoght='100%';
       mediaElement.type='video/webm';
     }
@@ -85,7 +85,7 @@ class MarkerSequence {
 
     if (this.region)
 
-    this.temporaryMarker = this.region.markers[this.currentMarker];
+      this.temporaryMarker = this.region.markers[this.currentMarker];
     markers.place(this.temporaryMarker);
 
     // move marker to next sound location

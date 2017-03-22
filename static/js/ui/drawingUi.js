@@ -1,3 +1,5 @@
+/* exported drawingUi */
+
 var drawingUi = {
 
   manager: null,
@@ -57,8 +59,8 @@ var drawingUi = {
 
       };
 
-      var panButton = $(this).find("[title='Stop drawing']");
-      var polyButton = $(this).find("[title='Draw a shape']");
+      var panButton = $(this).find('[title="Stop drawing"]');
+      var polyButton = $(this).find('[title=[Draw a shape"]');
       var container = panButton.parent().parent();
 
       // Change DrawingManager button icons
@@ -89,7 +91,7 @@ var drawingUi = {
     div.id = id;
     div.draggable = false;
     div.title = title;
-    div.className = "drawing-manager-button-container";
+    div.className = 'drawing-manager-button-container';
     div.appendChild(span);
 
     var outerDiv = document.createElement('div');
@@ -104,7 +106,7 @@ var drawingUi = {
   }, // createButton
 
   requestDrawing: function() {
-      this.manager.activate(true);
-    } // requestDrawing
+    this.manager.activate(true);
+  } // requestDrawing
 
-} // drawingUi
+}; // drawingUi

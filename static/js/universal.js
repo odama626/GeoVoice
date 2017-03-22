@@ -8,7 +8,7 @@ function validatePassword() {
     passVer.parentElement.classList.remove('is-invalid');
   } else {
     var label = document.getElementById('retype-password-error');
-    label.innerHTML = 'passwords don\'t match'
+    label.innerHTML = 'passwords don\'t match';
     passVer.parentElement.classList.add('is-invalid');
     passVer.onkeypress = validatePassword;
   }
