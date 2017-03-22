@@ -2,8 +2,7 @@
 
 ![dependency status](https://david-dm.org/omarzion/Geovoice.svg)
 
-- You can add individual points
-- Or you can add recordings to regions such as libraries, museums etc..
+- You can add media and mark it on the map
 
 ## How to get started:
 1. Fork or download repo
@@ -30,22 +29,9 @@
   - If running locally, use 127.0.0.1
 7. Profit.
 
-## Fixing sporadic missing audio issues
- - [x] remove mp3 encoding (web-audio-recorder)selected-marker-shape
- - [x] use raw audio, make sure audio works 100%
- - [ ] find encoder library
- - [ ] implement encoder library (encode after preview before upload)
- - [ ] make sure works without problem
-
 ## Moving forward
- - [x] (1) live location dot
  - [ ] add Admin boolean for users
- - [ ] add Audio sequences (Jukebox)
- - [ ] Set Region "sequence" type to put region marker on first marker in sequence
- - [ ] Add gear to "seqence" region ui to allow reorganizing markers
- - [ ] Add all "sequence" regions to add sound combobox
  - [ ] Only send Marker information needed
- - [x] Add error response "snacks" to block submits of users not logged in (just in case)
  - [ ] add stylized login error page
  - [ ] add stylized 404 page
  - [ ] Add live irc style message panel for logged in users? :|
