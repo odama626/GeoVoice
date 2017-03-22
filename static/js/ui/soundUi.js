@@ -1,24 +1,51 @@
+/* global sound: false */
 /* exported soundUi */
 
 var soundUi = {
 
-  request: function(region) {
+  request: function() {
     showDialog({
       title: 'Record some audio',
-      text: 'Start recording?',
+      text: 'Start recording? <a class="clickable" onClick="soundUi.requestUpload()">upload</a>',
       positive: {
         title: 'yes',
         onClick: function() {
-          sound.start(region);
+          sound.start();
         }
+      },
+      negative: {
+        title: 'cancel',
+        onClick: function() {
+          sound.cleanup();
+        }
+      }
+    });
+  }, // requestRecording
+
+  requestUpload: function() { // request upload instead of recording
+    sound.cleanup();
+    showDialog({
+      title: 'Lets do some dragging then',
+      text: '<div id="dropContainer"></div>',
+      onLoaded: () => {
+        var container = document.getElementById('dropContainer');
+        var dropZone = ui.createDropZone( (file) => {
+          //var reader = new FileReader();
+          sound.blob = file;
+          ui.loading.show();
+          soundUi.preview(sound.location, URL.createObjectURL(file));
+          ui.loading.hide();
+
+        }, 'audio');
+        container.append(dropZone);
       },
       negative: {
         title: 'cancel'
       }
     });
-  }, // requestRecording
+  }, // requestUpload
 
-  preview: function(location, region, url) {
+  preview: function(location, url) {
     showDialog({ // class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
       title: 'Sound Good?',
       text: `
@@ -61,6 +88,7 @@ var soundUi = {
       positive: {
         title: 'yes',
         onClick: function() {
+          var region;
           if (ENABLE_REGIONS) {
             var selected = $('#regions option:selected').text();
             region = (selected == 'none' ? null : selected);
@@ -68,15 +96,19 @@ var soundUi = {
             region = null;
           }
           sound.upload(region);
+          sound.cleanup();
         }
       },
       negative: {
-        title: 'no'
+        title: 'no',
+        onClick: function() {
+          sound.cleanup();
+        }
       }
     });
   }, // recordPreview
 
-  timer: function(region) {
+  timer: function() {
     // Timer logic
     var time = 0.00;
     var timerInterval = setInterval(function() {
@@ -90,7 +122,14 @@ var soundUi = {
       positive: {
         title: 'done',
         onClick: function() {
-          sound.stop(region);
+          sound.stop();
+          clearInterval(timerInterval);
+        }
+      },
+      negative: {
+        title: 'cancel',
+        onClick: function() {
+          sound.cleanup();
           clearInterval(timerInterval);
         }
       }

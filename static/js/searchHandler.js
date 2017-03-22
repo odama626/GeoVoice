@@ -54,21 +54,21 @@ var searchHandler = {
   mapTags: function(marker) {
     if (marker.tags != undefined) {
       requestIdleCallback(function() {
-  			for (var i=0; i<marker.tags.length; i++) {
-    if (marker.tags[i] in searchHandler.tagMap) {
-      if (!searchHandler.arrayHasSound(searchHandler.tagMap[marker.tags[i]],marker)) {
-            //if (!searchHandler.tagMap[marker.tags[i]].includes(marker)) {
-        searchHandler.tagMap[marker.tags[i]].push(marker);
-      }
-    } else {
-      searchHandler.tagMap[marker.tags[i]] = [];
-      searchHandler.tagMap[marker.tags[i]].push(marker);
-    }
-  				if (!searchHandler.tagList.includes(marker.tags[i])) {
-  					searchHandler.tagList.push(marker.tags[i]);
-  				}
-  			}
-  		});
+        for (var i=0; i<marker.tags.length; i++) {
+          if (marker.tags[i] in searchHandler.tagMap) {
+            if (!searchHandler.arrayHasSound(searchHandler.tagMap[marker.tags[i]],marker)) {
+                  //if (!searchHandler.tagMap[marker.tags[i]].includes(marker)) {
+              searchHandler.tagMap[marker.tags[i]].push(marker);
+            }
+          } else {
+            searchHandler.tagMap[marker.tags[i]] = [];
+            searchHandler.tagMap[marker.tags[i]].push(marker);
+          }
+          if (!searchHandler.tagList.includes(marker.tags[i])) {
+            searchHandler.tagList.push(marker.tags[i]);
+          }
+        }
+      });
     }
   }, // mapTags
 

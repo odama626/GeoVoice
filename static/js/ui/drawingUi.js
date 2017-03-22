@@ -60,7 +60,7 @@ var drawingUi = {
       };
 
       var panButton = $(this).find('[title="Stop drawing"]');
-      var polyButton = $(this).find('[title=[Draw a shape"]');
+      var polyButton = $(this).find('[title="Draw a shape"]');
       var container = panButton.parent().parent();
 
       // Change DrawingManager button icons

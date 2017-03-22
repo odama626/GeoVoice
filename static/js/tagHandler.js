@@ -1,7 +1,6 @@
 class TagHandler {
 
   constructor(marker, container) {
-    debugTime('tag handler');
     this.marker = marker;
     this.container = container;
     this.closeTagAction = function() {
@@ -17,7 +16,6 @@ class TagHandler {
     $('.marker-tag__action').on('click',this.closeTagAction);
 
     this.createTagEntry();
-    debugTime('tag handler', true);
   }
 
   createTag(tagName, deletable = true) {

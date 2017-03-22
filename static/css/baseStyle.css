@@ -20,6 +20,18 @@ html, body {
 
 }
 
+.clickable{
+	cursor: pointer;
+}
+
+.drop-zone {
+	color: #bbb;
+	text-align: center;
+	border: 2px dashed #bbb;
+	border-radius: 5px;
+	padding: 50px;
+}
+
 .mdl-card__center {
 	margin: auto;
 }

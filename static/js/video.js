@@ -8,7 +8,7 @@ var video = {
   blob: null,
   location: null,
 
-  request: function(location = null, region = 'null') {
+  request: function(location = null) {
     ui.loading.show();
     this.location = location;
     if (this.location == null) {
@@ -25,26 +25,24 @@ var video = {
       this.stream = stream;
       this.videoStream = URL.createObjectURL(stream);
       ui.loading.hide();
-      videoUi.request(this.videoStream, region);
+      videoUi.request(this.videoStream);
     }).catch(e => ui.createSnack('Error initializing camera: '+e.toString()));
   }, // request
 
-  start: function(region = null) {
+  start: function() {
     ui.loading.show();
     this.videoRecorder.startRecording();
-    videoUi.timer(region, video.videoStream);
+    videoUi.timer(video.videoStream);
     ui.loading.hide();
   }, // start
 
-  stop: function(region = null) {
+  stop: function() {
     ui.loading.show();
     this.videoRecorder.stopRecording( (vidUrl) => {
       video.blob = video.videoRecorder.getBlob();
-      videoUi.preview(location, region, vidUrl);
+      videoUi.preview(location, vidUrl);
       ui.loading.hide();
     });
-
-    //video.export(region);
   }, // stop
 
   upload: function(region) {
@@ -78,12 +76,16 @@ var video = {
   }, // upload
 
   cleanup: function() {
-    var tracks = this.stream.getTracks();
-    tracks.forEach( (track) => track.stop() );
+    if (this.stream != null) {
+      var tracks = this.stream.getTracks();
+      tracks.forEach( (track) => track.stop() );
 
-    this.videoRecorder.clearRecordedData();
+      this.videoRecorder.clearRecordedData();
+    }
+
     this.blob = null;
     this.stream = null;
     this.videoStream = null;
+    this.videoRecorder = null;
   }
 }; // videoUi

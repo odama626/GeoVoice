@@ -1,4 +1,6 @@
 var express = require('express');
+var compression = require('compression');
+var minify = require('express-minify');
 var	fs = require('fs');
 var	https = require('https');
 var	multer = require('multer');
@@ -10,10 +12,15 @@ var LocalStrategy = require('passport-local').Strategy;
 var GoogleStrategy = require('passport-google').Strategy;
 var pug = require('pug');
 
+
+
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
 var app = express();
+
+app.use(compression());
+app.use(minify()); // enable minify on production
 var port = 5000;
 var database;
 var markerCollection;
@@ -48,8 +55,9 @@ mongoose.connect('mongodb://localhost:27017/geoVoice_passport');
 // setup parsing of requests
 app.use(multer({
 	dest: './uploads/',
- }).any()
-);
+}).any());
+
+
 app.use(express.static('static'));
 app.use(express.static('uploads'));
 

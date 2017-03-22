@@ -1,3 +1,6 @@
+/* global OverlappingMarkerSpiderfier: false, searchHandler: false, TagHandler: false */
+/* exported markers */
+
 var markers = {
 
   list: [],
@@ -42,12 +45,10 @@ var markers = {
   }, // placeInfoWindow
 
   pauseFetch: function() {
-    debugLog('pause fetch');
     this.fetchActive = false;
   }, // pauseFetch
 
   resumeFetch: function() {
-    debugLog('resume fetch');
     this.fetchActive = true;
   }, // resumeFetch
 
@@ -69,8 +70,7 @@ var markers = {
     markers.resumeFetch();
   }, // closeInfoWindow
 
-  omsClickListener: function(marker, event) {
-    debugTime('marker info');
+  omsClickListener: function(marker) {
     markers.closeInfoWindow();
     markers.pauseFetch();
     $('dv audio').remove();
@@ -89,7 +89,6 @@ var markers = {
     markers.infoWindow.open(map, marker);
     var tagContainer = $('#tag-container');
     new TagHandler(marker.info, tagContainer);
-    debugTime('marker info', true);
 
   }, // omsClickListener
 
@@ -98,10 +97,8 @@ var markers = {
       return '<audio controls><source type="audio/mpeg" src="'+marker.info.media+'"></audio>';
     } else if (marker.info.type == 'video') {
       return '<video controls type="video/webm" style="width:100%" src="'+marker.info.media+'"></video>';
-    } else {
-      console.log('unknown media type');
-      console.log(marker.info);
     }
+    return '<h3>Unknown media type</h3>';
   }, // getMediaElement
 
   update: function(marker) {
@@ -117,10 +114,10 @@ var markers = {
       data: data,
       contentType: false,
       processData: false,
-      success: function(data) {
+      success: function() {
         ui.createSnack('tag modification completed');
       },
-      error: function(e) {
+      error: function() {
         ui.createSnack('Error modifying tag');
       }
     });
@@ -128,5 +125,4 @@ var markers = {
   search: function() {
 
   }
-
 }; // markers

@@ -3,16 +3,17 @@
 
 var videoUi = {
 
-  request: function(videoSource, region) {
+  request: function(videoSource) {
     showDialog({
       title: 'Record a video',
       text: 'Start recording?<br>'+
-              '<video width="100%" autoplay muted src="'+videoSource+'"></video>'
+              '<video width="100%" autoplay muted src="'+videoSource+'"></video>'+
+              '<a class="clickable" onClick="videoUi.requestUpload()">upload</a>'
       ,
       positive: {
         title: 'yes',
         onClick: function() {
-          video.start(region);
+          video.start();
         }
       },
       negative: {
@@ -24,7 +25,30 @@ var videoUi = {
     });
   }, //request
 
-  timer: (region, videoSource) => {
+  requestUpload: function() { // request upload instead of recording
+    video.cleanup();
+    showDialog({
+      title: 'Lets do some dragging then',
+      text: '<div id="dropContainer"></div>',
+      onLoaded: () => {
+        var container = document.getElementById('dropContainer');
+        var dropZone = ui.createDropZone( (file) => {
+          //var reader = new FileReader();
+          video.blob = file;
+          ui.loading.show();
+          videoUi.preview(video.location, URL.createObjectURL(file));
+          ui.loading.hide();
+
+        }, 'video');
+        container.append(dropZone);
+      },
+      negative: {
+        title: 'cancel'
+      }
+    });
+  }, // requestUpload
+
+  timer: (videoSource) => {
     var time = 0.00;
     var timerInterval = setInterval(() => {
       time += 0.01;
@@ -40,7 +64,7 @@ var videoUi = {
       positive: {
         title: 'done',
         onClick: function() {
-          video.stop(region);
+          video.stop();
           clearInterval(timerInterval);
         }
       },
@@ -54,7 +78,7 @@ var videoUi = {
     });
   }, // timer
 
-  preview: function(location, region, url) {
+  preview: function(location, url) {
     showDialog({
       title: 'Look Good?',
       text: `
@@ -99,6 +123,7 @@ var videoUi = {
       positive: {
         title: 'yes',
         onClick: function() {
+          var region;
           if (ENABLE_REGIONS) {
             var selected = $('#regions option:selected').text();
             region = (selected == 'none' ? null : selected);

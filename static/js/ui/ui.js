@@ -28,6 +28,30 @@ var ui = {
     return label;
   }, // createCheckbox
 
+  createDropZone: function(callback, type = '') {
+    var dropZone = document.createElement('div');
+    dropZone.innerHTML = 'Drop Files here';
+    dropZone.className = 'drop-zone';
+    dropZone.addEventListener('dragover', event => event.preventDefault(), false);
+    dropZone.addEventListener('drop', (event) => {
+      event.preventDefault();
+      var file = event.dataTransfer.files[0];
+      if (file.type.startsWith(type)) {
+        callback(file);
+      } else {
+        dropZone.innerHTML = 'Only accepts '+type;
+      }
+    }, false);
+    return dropZone;
+  }, // createDropZone
+
+  createAudio: function(url) {
+    var audio = document.createElement('audio');
+    audio.controls = true;
+    audio.src = url;
+    return audio;
+  }, // createAudio
+
   createRadio: function(id, labelText, value, group, checked = false) {
     var span = document.createElement('span');
     span.className = 'mdl-radio__label';

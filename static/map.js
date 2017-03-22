@@ -1,3 +1,7 @@
+/* global regionPanel: false, map: true, currently_logged_in: true */
+/* exported initMap drawingManager */
+
+
 //Global Variables
 var map;
 var drawingManager;
@@ -15,32 +19,32 @@ function initMap() {
     mapTypeControl: false,
     styles: [
 			{stylers: [{ visibility: 'simplified' }]},
-		]
+    ]
   });
 
   //Check logged in status
   currently_logged_in = $('a[href="login"]').length ==0;
 
-	setPrototypes();
+  setPrototypes();
   createUserDot();
 
-	google.maps.event.addListener(map, 'idle', regions.fetch);
-	map.addListener('click', () => { regionPanel.close(); markers.closeInfoWindow() });
+  google.maps.event.addListener(map, 'idle', regions.fetch);
+  map.addListener('click', () => { regionPanel.close(); markers.closeInfoWindow(); });
 
-	google.maps.event.addListener(map, 'rightclick', addPrecisePoint);
+  google.maps.event.addListener(map, 'rightclick', addPrecisePoint);
 
-	getLocation().then((loc) => map.setCenter(loc));
+  getLocation().then((loc) => map.setCenter(loc));
 
 	// Close navigation drawer on <a> click
-	$('a').click( () => {
-		markers.closeInfoWindow();
-		regionPanel.close();
-		$( '.mdl-layout__drawer, .mdl-layout__obfuscator' ).removeClass( 'is-visible' );
-	});
+  $('a').click( () => {
+    markers.closeInfoWindow();
+    regionPanel.close();
+    $( '.mdl-layout__drawer, .mdl-layout__obfuscator' ).removeClass( 'is-visible' );
+  });
 
-	if (ENABLE_REGIONS == false) {
-		disableRegions();
-	}
+  if (ENABLE_REGIONS == false) {
+    disableRegions();
+  }
 
   $(document).ready(() => {
     $('#search-bar').betterAutocomplete('init', searchHandler.tagList, {},
@@ -71,51 +75,40 @@ function createUserDot() {
     getLocation().then((loc) => {
       liveUserLocation.setPosition(loc);
       debugLog('Updating user location');
-      setTimeout(updateLiveLocation, 30000)
-    }),
-    30000
+      setTimeout(updateLiveLocation, 30000);
+    }), 30000
   });
 }
 
 
 function disableRegions() {
-	$('#add-region-button').remove();
+  $('#add-region-button').remove();
 } // disableRegions
 
 function debugLog(text) {
-	if (_debug) {
-		console.log(text);
+  if (_debug) {
+    console.log(text);
 	}
 } // debugLog
 
-function debugTime(text, end = false) {
-  if (_debug) {
-    if (end) {
-      console.timeEnd(text);
-    } else {
-      console.time(text);
-    }
-  }
-} // debugTime
-
 function getLocation() {
-	return new Promise( function(resolve, reject) {
-		if (navigator.geolocation) {
-		  navigator.geolocation.getCurrentPosition(function(position) {
-		  	resolve(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
-		  }, function(e) {
-		    ui.createSnack('The geolocation service failed');
+  return new Promise( function(resolve) {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        resolve(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
+      }, function(e) {
+        ui.createSnack('The geolocation service failed');
         console.log(e);
-		  });
-		} else {
-		  // Browser doesn't support Geolocation
-		  ui.createSnack('You browser doesn\'t support geolocation.');
-		}
+      });
+    } else {
+      // Browser doesn't support Geolocation
+      ui.createSnack('You browser doesn\'t support geolocation.');
+    }
   });
 } // getLocation
 
 function panToPromise(location) {
-  return new Promise( function (resolve, reject) {
+  return new Promise( function (resolve) {
     map.panTo(location);
     google.maps.event.addListenerOnce(map, 'idle', resolve);
   });
@@ -126,34 +119,32 @@ function getLoc(m) {
 }
 
 function setPrototypes() {
-	google.maps.Polygon.prototype.c_getBounds = function() {
-		var bounds = new google.maps.LatLngBounds();
-		this.getPath().forEach(function(element, index) {bounds.extend( element)});
-		return bounds;
-	};
+  google.maps.Polygon.prototype.c_getBounds = function() {
+    var bounds = new google.maps.LatLngBounds();
+    this.getPath().forEach(function(element) {bounds.extend( element); });
+    return bounds;
+  };
 
-	google.maps.Polygon.prototype.c_getLatLngLiteralArray = function() {
-		var arr = [];
-		this.getPath().forEach(function(element, index) {
-			arr.push({ lat: element.lat(), lng: element.lng() });
-		});
-		return arr;
-	};
+  google.maps.Polygon.prototype.c_getLatLngLiteralArray = function() {
+    var arr = [];
+    this.getPath().forEach(function(element) {
+      arr.push({ lat: element.lat(), lng: element.lng() });
+    });
+    return arr;
+  };
 } // setPrototypes
 
 function getBounds(arr) {
-	var bounds = new google.maps.LatLngBounds();
-	arr.forEach(function(element, index) { bounds.extend(element) });
-	return bounds;
+  var bounds = new google.maps.LatLngBounds();
+  arr.forEach(function(element) { bounds.extend(element); });
+  return bounds;
 } // getBounds
 
 function addPrecisePoint(event) {
   if (!currently_logged_in) {
-    ui.createSnack('You need to be logged in to do that', 'Login', () => location='login');
+    ui.createSnack('You need to be logged in to do that', 'Login', () => location.href='login');
     return;
   }
-  console.log('addPrecisePoint(event)');
-  console.log(event);
   markers.closeInfoWindow();
   markers.placeInfoWindow(event.latLng,
     `
@@ -178,16 +169,16 @@ function addPrecisePoint(event) {
 } // addPrecisePoint
 
 function selfDestruct() {
-	$.ajax({
-		url: 'self_destruct',
-		type: 'POST',
-		contentType: false,
-		processData: false,
-		success: function(data) {
-			ui.createSnack('Successfully added');
-		},
-		error: function(e) {
-			ui.createSnack('Error while adding: '+e.toString());
-		}
-	});
+  $.ajax({
+    url: 'self_destruct',
+    type: 'POST',
+    contentType: false,
+    processData: false,
+    success: function() {
+      ui.createSnack('Successfully added');
+    },
+    error: function(e) {
+      ui.createSnack('Error while adding: '+e.toString());
+    }
+  });
 } // selfDestruct
