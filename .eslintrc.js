@@ -4,13 +4,18 @@ module.exports = {
         "es6": true
     },
     "globals": {
-      "jquery": true
+      "$": false,
+      "jquery": false,
+      "ui": false,
+      "regions": false,
+      "currently_logged_in": false,
+      "getLocation": false
     },
     "extends": "eslint:recommended",
     "rules": {
         "indent": [
             "error",
-            "tab"
+            2
         ],
         "linebreak-style": [
             "error",

@@ -17,7 +17,7 @@ var applyPolyfill = function () {
     var deadline = {
         timeRemaining: IDLE_ENOUGH_DELAY
     };
-
+  
     var isFree = function () {
         return timeoutId === null;
     }

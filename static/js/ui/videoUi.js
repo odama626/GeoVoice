@@ -45,6 +45,7 @@ var videoUi = {
         title: 'cancel',
         onClick: function(e) {
           video.cleanup();
+          clearInterval(timerInterval);
         }
       }
     })
@@ -113,5 +114,4 @@ var videoUi = {
       }
     });
   }
-
-}
+};
