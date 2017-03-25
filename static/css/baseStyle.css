@@ -43,7 +43,7 @@ html, body {
 	cursor: pointer;
 }
 
-.mdl-navigation__link:hover {
+span > .mdl-navigation__link:hover {
 	background-color: #e0e0e0;
 }
 
