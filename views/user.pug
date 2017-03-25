@@ -1,0 +1,20 @@
+extends layout.pug
+
+block cssLinks
+  link(rel="stylesheet", href="css/styles.css")
+
+block mainContent
+  main.mdl-layout__content
+    .mdl-grid.portfolio-max-width
+      .mdl-cell.mdl-cell--12-col.mdl-card.mdl-shadow--4dp
+        .mdl-card__title
+          img.user-pic.drop-zone(src='img/'+user.image, style="margin-right: 50px;", alt="user image")
+          h2.mdl-card__title-text(style="margin: auto 0;") #{user.username}
+        .mdl-card__portfolio-copy
+          h3.mdl-cell.mdl-cell-12-col.mdl-typography--headline Your markers
+          ul.mdl-list
+            li.mdl-list__item.mdl-list__item--two-line
+              span.mdl-list__item-primary-content
+                span date and time
+                span.mdl-lst__item-sub-title
+                  audio(controls, src='null')

@@ -30,13 +30,12 @@ var soundUi = {
       onLoaded: () => {
         var container = document.getElementById('dropContainer');
         var dropZone = ui.createDropZone( (file) => {
-          //var reader = new FileReader();
           sound.blob = file;
           ui.loading.show();
           soundUi.preview(sound.location, URL.createObjectURL(file));
           ui.loading.hide();
 
-        }, 'audio');
+        }, { type: 'audio' });
         container.append(dropZone);
       },
       negative: {

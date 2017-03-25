@@ -56,7 +56,7 @@ class MarkerSequence {
       mediaElement.type='audio/mpeg';
     } else if (this.region.markers[this.currentMarker].type == 'video') {
       mediaElement = document.createElement('video');
-      mediaElement.style.heoght='100%';
+      mediaElement.style.height='100%';
       mediaElement.type='video/webm';
     }
 
@@ -77,9 +77,7 @@ class MarkerSequence {
       markers.resumeFetch();
       return;
     }
-
-
-
+    
     this.currentMarker = this.currentMarker+1;
     this.getNewElement();
 
@@ -87,12 +85,6 @@ class MarkerSequence {
 
       this.temporaryMarker = this.region.markers[this.currentMarker];
     markers.place(this.temporaryMarker);
-
-    // move marker to next sound location
-    /*this.region.marker.position = new google.maps.LatLng({
-      lat : parseFloat(this.region.markers[this.currentMarker].lat),
-      lng : parseFloat(this.region.markers[this.currentMarker].lng)
-    });*/
 
     panToPromise(getLoc(this.region.markers[this.currentMarker])).then(() =>{
       this.mediaElement.pause();

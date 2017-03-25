@@ -39,7 +39,7 @@ var videoUi = {
           videoUi.preview(video.location, URL.createObjectURL(file));
           ui.loading.hide();
 
-        }, 'video');
+        }, { type: 'video' });
         container.append(dropZone);
       },
       negative: {

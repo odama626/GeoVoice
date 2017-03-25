@@ -5,7 +5,7 @@ var regionPanelSettings = {
   constructor: function(region, parent) {
     this.region = region;
     this.parent = parent;
-    this.clearContainer();
+    ui.clearContainer(parent);
     this.initializeElement();
   },
 
@@ -21,11 +21,11 @@ var regionPanelSettings = {
 
     var ul = document.createElement('ul');
     ul.className = 'mdl-list';
-    this.region.markers.forEach((item) => { ul.appendChild(this.generateItem(item)); });
+    this.region.markers.forEach((item) => { ul.appendChild(ui.createMarkerLi(item)); });
     this.parent.appendChild(ul);
 
     var region = this.region; // TODO see if this is needed
-    var sortable = Sortable.create(ul, { // TODO see if this is needed
+    var sortable = Sortable.create(ul, { // makes marker list sortable
       handle: '.drag_handle',
       onEnd: this.reorderMarkers
     });
@@ -68,43 +68,4 @@ var regionPanelSettings = {
     a.appendChild(i);
     return a;
   },
-
-  clearContainer: function() {
-    while (this.parent.firstChild) {
-      this.parent.removeChild(this.parent.firstChild);
-    }
-  },
-
-  generateItem: function(item) {
-    var audioControls = document.createElement('audio');
-    audioControls.controls = true;
-    audioControls.src = item.media;
-
-    var subTitle = document.createElement('span');
-    subTitle.className = 'mdl-list__item-sub-title';
-    subTitle.appendChild(audioControls);
-
-    var dateContent = document.createElement('span');
-    dateContent.textContent = item.date;
-
-    var primaryContent = document.createElement('span');
-    primaryContent.className = 'mdl-list__item-primary-content';
-    primaryContent.appendChild(dateContent);
-    primaryContent.appendChild(subTitle);
-
-    var dragHandle = document.createElement('i');
-    dragHandle.className = 'drag_handle material-icons';
-    dragHandle.textContent= 'drag_handle';
-    dragHandle.style = 'padding-right: 10px; color:#757575;';
-
-    var li = document.createElement('li');
-    li.className = 'mdl-list__item mdl-list__item--two-line';
-    li.style = 'border-top: 1px solid #ddd;';
-
-    li.appendChild(dragHandle);
-    li.appendChild(primaryContent);
-
-    return li;
-  }
-
 }; // regionPanelSettings

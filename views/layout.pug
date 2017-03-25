@@ -17,15 +17,15 @@ html
       header.mdl-layout__header
         .mdl-layout-icon
         .mdl-layout__header-row
-          span.mdl-layout__title(onClick="location='/'") GeoVoice
+          span.mdl-layout__title.clickable(onClick="location='/'") GeoVoice
           .mdl-layout-spacer
           nav.mdl-navigation
             block navBar
       #layout-drawer.mdl-layout__drawer
         if user
-          span.mdl-layout__title(onClick="location='/'") #{user.username}
+          span.mdl-layout__title.clickable(onClick="location='user'") #{user.username}
         else
-          span.mdl-layout__title(onClick="location='/'") GeoVoice
+          span.mdl-layout__title.clickable(onClick="location='/'") GeoVoice
         nav.mdl-navigation
           block navMenu
           a.mdl-navigation__link(href="/about") About

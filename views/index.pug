@@ -12,7 +12,7 @@ block navBar
       i.material-icons mic
     a.mdl-navigation__link(onClick="video.request()")
       i.material-icons videocam
-    a.mdl-navigation__link #{user.username}
+    a.mdl-navigation__link(href="user") #{user.username}
   else
     a.mdl-navigation__link(href="login") Login
     a.mdl-navigation__link(href="register") Register

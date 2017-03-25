@@ -139,6 +139,14 @@ router.post('/login', passport.authenticate('local'), function(req, res) {
 	res.redirect('/');
 });
 
+router.get('/user', function(req, res) {
+	if (req.user) {
+		res.render('user.pug', {user: req.user });
+	} else {
+		res.redirect('/login');
+	}
+});
+
 router.get('/logout', function(req, res) {
 	req.logout();
 	res.redirect('/');

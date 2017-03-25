@@ -28,22 +28,77 @@ var ui = {
     return label;
   }, // createCheckbox
 
-  createDropZone: function(callback, type = '') {
+  createDropZone: function(callback, options) {
+    options.type = options.type || '';
+    options.class = options.class || 'drop-zone';
     var dropZone = document.createElement('div');
     dropZone.innerHTML = 'Drop Files here';
-    dropZone.className = 'drop-zone';
+    dropZone.className = options.class;
     dropZone.addEventListener('dragover', event => event.preventDefault(), false);
     dropZone.addEventListener('drop', (event) => {
       event.preventDefault();
       var file = event.dataTransfer.files[0];
-      if (file.type.startsWith(type)) {
+      if (file.type.startsWith(options.type)) {
         callback(file);
       } else {
-        dropZone.innerHTML = 'Only accepts '+type;
+        dropZone.innerHTML = 'Only accepts '+options.type;
       }
     }, false);
     return dropZone;
   }, // createDropZone
+
+  createMarkerLi: function(marker) {
+    var media;
+    if (marker.type == 'audio') {
+      media = document.createElement('audio');
+      media.controls = true;
+      media.src = marker.media;
+    } else if (marker.type == 'video') {
+      media = document.createElement('a');
+      media.className = 'mdl-navigation__link';
+      media.innerHTML = 'View video';
+      media.style = 'padding: 10px;';
+      media.onclick = () => this.popoutVideo(marker.media);
+    }
+
+    var subTitle = document.createElement('span');
+    subTitle.className = 'mdl-list__item-sub-title';
+    subTitle.appendChild(media);
+
+    var dateContent = document.createElement('span');
+    dateContent.textContent = marker.date;
+
+    var primaryContent = document.createElement('span');
+    primaryContent.className = 'mdl-list__item-primary-content';
+    primaryContent.appendChild(dateContent);
+    primaryContent.appendChild(subTitle);
+
+    var dragHandle = document.createElement('i');
+    dragHandle.className = 'drag_handle material-icons';
+    dragHandle.textContent= 'drag_handle';
+    dragHandle.style = 'padding-right: 10px; color:#757575;';
+
+    var li = document.createElement('li');
+    li.className = 'mdl-list__item mdl-list__item--two-line';
+    li.style = 'border-top: 1px solid #ddd;';
+
+    li.appendChild(dragHandle);
+    li.appendChild(primaryContent);
+
+    return li;
+  }, // createMarkerLi
+
+  popoutVideo: function(src) {
+    showDialog({
+      text: '<video width="100%" type="video/webm" controls src='+src+'></vide>'
+    })
+  }, // popoutVideo
+
+  clearContainer: function(container) {
+    while(container.firstChild) {
+      container.removeChild(container.firstChild);
+    }
+  }, // clearContainer
 
   createAudio: function(url) {
     var audio = document.createElement('audio');
