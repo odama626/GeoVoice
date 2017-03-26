@@ -48,7 +48,7 @@ var sound = {
     data.append('lat', this.location.lat());
     data.append('lng', this.location.lng());
     data.append('date', new Date().toString());
-    data.append('type','sound');
+    data.append('type','audio');
     data.append('region', region);
 
     $.ajax({

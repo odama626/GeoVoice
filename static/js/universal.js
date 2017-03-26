@@ -70,5 +70,39 @@ var user = {
         }
       }
     });
-  }
+  }, // uploadImage
+
+  fetchMarkers: function() {
+    fetch('get_user_markers', { credentials: 'include'})
+    .then( (response) => {
+      return response.json();
+    })
+    .then( (body) => {
+      var markers = [];
+      for (var r = 0; r < body.length; r++) {
+        for (var m = 0; m < body[r].markers.length; m++) {
+          markers.push(body[r].markers[m]);
+        }
+      }
+      if (markers.length > 0) {
+        markers.sort(user.markerSort);
+
+        var container = document.getElementById('user-markers');
+        ui.clearContainer(container);
+        markers.forEach( (marker) => {
+          var li = ui.createMarkerLi(marker);
+          container.append();
+        });
+      }
+    });
+  }, // fetchMarkers
+
+  markerSort: function(a, b) {
+    var da = new Date(a.date);
+    var db = new Date(b.date);
+    if (da < db) {
+      return 1;
+    }
+    return -1;
+  }, // sortFunc
 };

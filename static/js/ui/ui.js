@@ -49,7 +49,7 @@ var ui = {
 
   createMarkerLi: function(marker) {
     var media;
-    if (marker.type == 'audio') {
+    if (marker.type == 'audio' || marker.type == 'sound') {
       media = document.createElement('audio');
       media.controls = true;
       media.src = marker.media;

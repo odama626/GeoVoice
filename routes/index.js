@@ -163,6 +163,37 @@ router.get('/user', function(req, res) {
 	}
 });
 
+/*{
+	markers: {
+		$elemMatch: {
+			creator: { $eq: req.user.username }
+		}
+	}
+})
+*/
+
+router.get('/get_user_markers', function(req, res) {
+	if (req.user) {
+		markerCollection.aggregate([
+				{
+					$project: {
+						markers: {
+							$filter: {
+								input: "$markers",
+								as: "marker",
+								cond: { $eq: ["$$marker.creator", req.user.username]}
+							}
+						}
+					}
+				}
+		]).toArray( function(err, items) {
+				res.send(JSON.stringify(items));
+		});
+	} else {
+		res.redirect('/login');
+	}
+});
+
 router.get('/logout', function(req, res) {
 	req.logout();
 	res.redirect('/');

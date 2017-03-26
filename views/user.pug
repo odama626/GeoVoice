@@ -14,7 +14,7 @@ block mainContent
           h2.mdl-card__title-text(style="margin: auto 0;") #{displayName}
         .mdl-card__portfolio-copy
           h3.mdl-cell.mdl-cell-12-col.mdl-typography--headline Your markers
-          ul.mdl-list
+          ul#user-markers.mdl-list
             li.mdl-list__item
               span.mdl-list__item-primary-content
                 | Nothing to show, go add some markers!
@@ -26,3 +26,4 @@ block mainContent
 block jsLibs
   script(src='js/ui/ui.js')
   script(src='https://cdnjs.cloudflare.com/ajax/libs/croppie/2.4.1/croppie.js')
+  script user.fetchMarkers()
