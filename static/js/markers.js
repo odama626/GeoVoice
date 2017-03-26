@@ -76,9 +76,21 @@ var markers = {
     $('dv audio').remove();
     var date = new Date(marker.info.date);
 
+    var imageUrl = 'img/'+marker.info.creator+'.png';
+
+    fetch(imageUrl) // TODO come up with a nicer way of setting default user image, preferably getting user's image from DB
+    .then((response) => {
+      if (!response.ok) {
+        imageUrl = 'img/default_profile_image.png';
+        var img = document.querySelector('.user-pic');
+        img.style['background-image'] = 'url("img/default_profile_image.png")';
+      }
+    });
+
     markers.infoWindow.setContent(`
-				<h5>Created by `+marker.info.creator+ `</h5>
-				<h8>At `+ date.toLocaleTimeString() +' on '+date.toLocaleDateString()+ `</h8> <br>
+				<div class="user-pic" style="margin-top: 18px; margin-right: 5px; float:left; background-image: url(`+imageUrl+`)">
+        </div><div style="float:left"><h5>`+marker.info.creator+ `</h5>
+				<h8>At `+ date.toLocaleTimeString() +' on '+date.toLocaleDateString()+ `</h8></div> <br>
 				`+markers.getMediaElement(marker)+`
 
 				<br>
@@ -89,7 +101,6 @@ var markers = {
     markers.infoWindow.open(map, marker);
     var tagContainer = $('#tag-container');
     new TagHandler(marker.info, tagContainer);
-
   }, // omsClickListener
 
   getMediaElement: function(marker) {

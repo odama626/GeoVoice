@@ -7,12 +7,21 @@ var router = express.Router();
 var siteData = require('../site-data').siteData;
 
 // Setup marker database connection
-mongoClient.connect("mongodb://localhost:27017/geoVoice", function(err, database) {
+mongoClient.connect('mongodb://localhost:27017/geoVoice', function(err, database) {
 	if (err) { return console.dir(err); }
-	console.log("connected to DB");
+	console.log('connected to DB');
 
 	db = database;
 	markerCollection = db.collection('markers');
+
+//	markerCollection.drop();
+});
+
+mongoClient.connect('mongodb://localhost:27017/geoVoice_passport', function(err, database) {
+	if (err) { return console.dir(err); }
+	console.log('connected to DB');
+
+	accounts = database.collection('accounts');
 
 //	markerCollection.drop();
 });
@@ -36,14 +45,14 @@ router.get('/dialogs/:filename', function (req, res) {
 // Add a new sound marker
 router.post('/submit', function(req, res) {
 	var doc = {
-		"lat": req.body.lat,
-		"lng": req.body.lng,
-		"region": req.body.region,
-		"date": req.body.date,
-		"type": req.body.type,
-		"media": req.files[0].filename,
-		"creator": req.user.username,
-		"tags": []
+		'lat': req.body.lat,
+		'lng': req.body.lng,
+		'region': req.body.region,
+		'date': req.body.date,
+		'type': req.body.type,
+		'media': req.files[0].filename,
+		'creator': req.user.username,
+		'tags': []
 	};
 	markerCollection.update(
 		{ regionName: req.body.region},
@@ -52,8 +61,15 @@ router.post('/submit', function(req, res) {
 		},
 		{ upsert: true }
 	);
-	console.log("Added new marker");
+	console.log('Added new marker');
 	res.end('SUCCESS');
+});
+
+router.post('/user', function(req, res) {
+	if (req.user) {
+		accounts.update({ _id: req.user._id}, { $set: {image: req.files[0].filename}});
+		res.end('SUCCESS');
+	};
 });
 
 router.post('/update_tags', function (req, res) {
@@ -84,19 +100,19 @@ router.post('/update_marker_order', function(req, res) {
 // Add a new sound region
 router.post('/submit_region', function(req, res) {
 	var region = {
-		"regionName": req.body.regionName,
-		"lat": req.body.lat,
-		"lng": req.body.lng,
-		"color": req.body.color,
-		"icon": req.body.icon,
-		"shape": req.body.shape,
-		"markers": [],
-		"geofence": req.body.geofence,
-		"type": req.body.type
+		'regionName': req.body.regionName,
+		'lat': req.body.lat,
+		'lng': req.body.lng,
+		'color': req.body.color,
+		'icon': req.body.icon,
+		'shape': req.body.shape,
+		'markers': [],
+		'geofence': req.body.geofence,
+		'type': req.body.type
 	};
 	markerCollection.insert(region);
 	res.end('SUCCESS');
-	console.log("Added new region");
+	console.log('Added new region');
 });
 
 // retrieve markers
@@ -105,7 +121,7 @@ router.get('/get_markers', function(req, res) {
 		res.send(JSON.stringify(items));
 	});
 
-	console.log("Sending markers");
+	console.log('Sending markers');
 });
 
 // Wipe database (Temporary)

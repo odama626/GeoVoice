@@ -33,6 +33,15 @@ html, body {
 	min-width: 10vw;
 	min-height: 10vw;
 	line-height: 10vw;
+	overflow: hidden;
+}
+
+.user-pic {
+	width: 64px;
+	height: 64px;
+	background-size: cover;
+	background-position: center;
+	border-radius: 10px;
 }
 
 .mdl-card__center {

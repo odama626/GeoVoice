@@ -2,19 +2,27 @@ extends layout.pug
 
 block cssLinks
   link(rel="stylesheet", href="css/styles.css")
+  link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.4.1/croppie.min.css")
 
 block mainContent
-  main.mdl-layout__content
+  main.mdl-layout__content.login-background
     .mdl-grid.portfolio-max-width
       .mdl-cell.mdl-cell--12-col.mdl-card.mdl-shadow--4dp
         .mdl-card__title
-          img.user-pic.drop-zone(src='img/'+user.image, style="margin-right: 50px;", alt="user image")
-          h2.mdl-card__title-text(style="margin: auto 0;") #{user.username}
+          img.user-pic.drop-zone(src='img/'+user.image, onload="user.picDropZone()", alt="user image")
+          - var displayName = (user.name ? user.name : user.username)
+          h2.mdl-card__title-text(style="margin: auto 0;") #{displayName}
         .mdl-card__portfolio-copy
           h3.mdl-cell.mdl-cell-12-col.mdl-typography--headline Your markers
           ul.mdl-list
-            li.mdl-list__item.mdl-list__item--two-line
+            li.mdl-list__item
               span.mdl-list__item-primary-content
-                span date and time
-                span.mdl-lst__item-sub-title
-                  audio(controls, src='null')
+                | Nothing to show, go add some markers!
+                
+  .mdl-snackbar.mdl-js-snackbar(aria-live="assertive", aria-atomic="true", aria-relevant="text")
+    .mdl-snackbar__text
+    button.mdl-snackbar__action(type="button")
+
+block jsLibs
+  script(src='js/ui/ui.js')
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/croppie/2.4.1/croppie.js')

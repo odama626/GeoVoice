@@ -53,9 +53,30 @@ passport.deserializeUser(Account.deserializeUser());
 mongoose.connect('mongodb://localhost:27017/geoVoice_passport');
 
 // setup parsing of requests
-app.use(multer({
-	dest: './uploads/',
-}).any());
+var storage = multer.diskStorage({
+	destination: function(req, file, cb) {
+		if (file.originalname.endsWith('.png')) {
+			cb(null, './uploads/img/');
+		} else {
+			cb(null, './uploads/');
+		}
+
+	},
+	filename: function (req, file, cb) {
+		if (file.originalname.endsWith('.webm')) {
+				cb(null,Date.now()+'.webm');
+		} else if (file.originalname.endsWith('.wav')) {
+			cb(null,Date.now()+'.wav');
+		} else if (file.originalname.endsWith('.png')) {
+			var filename = req.user.username+'.png';
+			fs.unlinkSync('./uploads/img/'+filename);
+			cb(null, filename);
+		}
+	}
+});
+
+
+app.use(multer({ storage: storage }).any());
 
 
 app.use(express.static('static'));

@@ -1,3 +1,6 @@
+/* global getLoc: false */
+/* exported MarkerSequence */
+
 class MarkerSequence {
   constructor(region) {
     this.region = region;
@@ -13,6 +16,7 @@ class MarkerSequence {
     } else if (this.region.markers[0].type == 'video') {
       this.mediaElement = document.createElement('video');
       this.mediaElement.type='video/webm';
+      this.mediaElement.style.width = '45vw';
     }
     this.mediaElement.controls = true;
     this.mediaElement.src = this.region.markers[0].media;
@@ -56,7 +60,7 @@ class MarkerSequence {
       mediaElement.type='audio/mpeg';
     } else if (this.region.markers[this.currentMarker].type == 'video') {
       mediaElement = document.createElement('video');
-      mediaElement.style.height='100%';
+      mediaElement.style.width='45vw';
       mediaElement.type='video/webm';
     }
 
@@ -77,7 +81,7 @@ class MarkerSequence {
       markers.resumeFetch();
       return;
     }
-    
+
     this.currentMarker = this.currentMarker+1;
     this.getNewElement();
 

@@ -22,11 +22,13 @@
     "pug": "^2.0.0-beta6"
   },
   "devDependencies": {
-    "david": "^11.0.0"
+    "david": "^11.0.0",
+    "node-sass": "^4.5.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "david": "david.js"
+    "david": "david.js",
+
   },
   "repository": {
     "type": "git",
@@ -38,4 +40,9 @@
     "url": "https://github.com/omarzion/GeoVoice/issues"
   },
   "homepage": "https://github.com/omarzion/GeoVoice#readme"
+  },
+  "disabledScripts": {
+    "css": "node-sass static/css/* -o dist",
+    "css:watch": "npm run css && node-sass static/css/* -wo dist"
+  }
 }

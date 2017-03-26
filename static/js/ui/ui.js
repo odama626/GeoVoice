@@ -29,10 +29,10 @@ var ui = {
   }, // createCheckbox
 
   createDropZone: function(callback, options) {
-    options.type = options.type || '';
+    options.type = options.type || 'image';
     options.class = options.class || 'drop-zone';
     var dropZone = document.createElement('div');
-    dropZone.innerHTML = 'Drop Files here';
+    dropZone.innerHTML = 'Drop '+options.type+' here';
     dropZone.className = options.class;
     dropZone.addEventListener('dragover', event => event.preventDefault(), false);
     dropZone.addEventListener('drop', (event) => {
@@ -93,6 +93,31 @@ var ui = {
       text: '<video width="100%" type="video/webm" controls src='+src+'></vide>'
     })
   }, // popoutVideo
+
+  createCropModal: function(src, callback) {
+    var croppie;
+    showDialog({
+      text: '<div id="croppie-target"></div>',
+      onLoaded: function() {
+        var target = document.getElementById('croppie-target');
+        croppie = new Croppie(target, {
+          viewport: { width: '10vw', height: '10vw'},
+          boundary: { width: 300, height: 300}
+        });
+        croppie.bind({ url: src});
+      },
+      positive: {
+        title: 'ok',
+        onClick: function() {
+          croppie.result({type: 'blob'}).then(callback);
+        }
+      },
+      negative: {
+        title: 'cancel'
+      }
+    });
+
+  }, // createCropModal
 
   clearContainer: function(container) {
     while(container.firstChild) {
@@ -162,11 +187,10 @@ var ui = {
     var location = null;
 
     var getMapClick = function() {
-      google.maps.event.addListenerOnce(map, 'click',
-				(e) => {
-  location = e.latLng;
-  showDialog(confirmContent);
-});
+      google.maps.event.addListenerOnce(map, 'click', (e) => {
+        location = e.latLng;
+        showDialog(confirmContent);
+      });
     };
 
     var confirmContent = {
