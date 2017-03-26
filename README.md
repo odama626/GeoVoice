@@ -4,6 +4,20 @@
 
 - You can add media and mark it on the map
 
+## Roadmap
+ - [ ] Cross device compatibility
+ - [ ] CSS animations to give sublte hints on how to use siteData
+ - [ ] find out why some videos are choppy on playback
+ - [ ] start working on api
+   - [ ] banner-ad that expands
+
+## Interesting use cases
+ - Farmer's marker
+ - open house
+ - university
+ - group meetups
+ - landmarks
+
 ## How to get started:
 1. Fork or download repo
 2. To install dependencies
@@ -30,7 +44,7 @@
 7. Profit.
 
 ## Moving forward
- - [ ] add Admin boolean for users
+ - [ ] implement admin features
  - [ ] Only send Marker information needed
  - [ ] add stylized login error page
  - [ ] add stylized 404 page
