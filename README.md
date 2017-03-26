@@ -5,14 +5,22 @@
 - You can add media and mark it on the map
 
 ## Roadmap
- - [ ] Cross device compatibility
- - [ ] CSS animations to give sublte hints on how to use siteData
- - [ ] find out why some videos are choppy on playback
+ - [ ] # Cross device compatibility
+ - [ ] # CSS animations to give sublte hints on how to use siteData
+ - [ ] # find out why some videos are choppy on playback
  - [ ] start working on api
    - [ ] banner-ad that expands
- - [ ] expand About page
-   - [ ] create FAQ
-   - [ ] introduction page / video overview of features
+ - [ ] # expand About page
+   - [ ] # create FAQ
+   - [ ] # introduction page / video overview of features
+ - [ ] # User page
+   - [ ] allow deletion of markers
+   - [ ] # reset password
+   - [ ] # email validation on register
+   - [ ] use username instead of email on markers
+   - [ ] private sharing of markers
+   - [ ] treeview of markers based on region
+   - [ ] ability to view other users' profile
  - [ ] implement admin features
  - [ ] Only send Marker information needed
  - [ ] add stylized login error page
