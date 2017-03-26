@@ -10,6 +10,26 @@
  - [ ] find out why some videos are choppy on playback
  - [ ] start working on api
    - [ ] banner-ad that expands
+ - [ ] expand About page
+   - [ ] create FAQ
+   - [ ] introduction page / video overview of features
+ - [ ] implement admin features
+ - [ ] Only send Marker information needed
+ - [ ] add stylized login error page
+ - [ ] add stylized 404 page
+
+## Known Working
+ - Linux
+  - [x] Chrome
+  - [x] Firefox
+ - Android
+  - [x] Chrome
+  - [x] Firefox (laggy after sound upload)
+ - Windows
+  - [x] Chrome
+  - [ ] Safari (too old of a version)
+  - [x] Firefox
+
 
 ## Interesting use cases
  - Farmer's marker
@@ -42,23 +62,3 @@
   - Replace {server_ip} with the ip address of your server
   - If running locally, use 127.0.0.1
 7. Profit.
-
-## Moving forward
- - [ ] implement admin features
- - [ ] Only send Marker information needed
- - [ ] add stylized login error page
- - [ ] add stylized 404 page
- - [ ] Add live irc style message panel for logged in users? :|
- - [ ] expand About page
-
-## Known Working
-  - Linux
-   - [x] Chrome
-   - [x] Firefox
-  - Android
-   - [x] Chrome
-   - [x] Firefox (laggy after sound upload)
-  - Windows
-   - [x] Chrome
-   - [ ] Safari (too old of a version)
-   - [x] Firefox
