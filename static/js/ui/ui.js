@@ -31,18 +31,32 @@ var ui = {
   createDropZone: function(callback, options) {
     options.type = options.type || 'image';
     options.class = options.class || 'drop-zone';
-    var dropZone = document.createElement('div');
-    dropZone.innerHTML = 'Drop '+options.type+' here';
-    dropZone.className = options.class;
-    dropZone.addEventListener('dragover', event => event.preventDefault(), false);
-    dropZone.addEventListener('drop', (event) => {
-      event.preventDefault();
-      var file = event.dataTransfer.files[0];
+    options.enablePicker = options.enablePicker || true;
+
+    var handleFile = function(file) {
       if (file.type.startsWith(options.type)) {
         callback(file);
       } else {
         dropZone.innerHTML = 'Only accepts '+options.type;
       }
+    }
+
+    var dropZone = document.createElement('div')
+    dropZone.innerHTML = 'Drop '+options.type+' here';
+    dropZone.className = options.class;
+
+    if (options.enablePicker) {
+      var input = document.createElement('input');
+      input.type = "file";
+      input.accept = options.type+'/*';
+      input.onchange = (e) => { handleFile(input.files[0]); };
+      dropZone.addEventListener('click', event => { input.click();});
+    }
+
+    dropZone.addEventListener('dragover', event => event.preventDefault(), false)
+    dropZone.addEventListener('drop', (event) => {
+      event.preventDefault();
+      handleFile(event.dataTransfer.files[0]);
     }, false);
     return dropZone;
   }, // createDropZone
