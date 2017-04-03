@@ -43,7 +43,7 @@ var ui = {
 
     var dropZone = document.createElement('div')
     dropZone.innerHTML = 'Drop '+options.type+' here';
-    dropZone.className = options.class;
+    dropZone.className = options.class+' clickable';
 
     if (options.enablePicker) {
       var input = document.createElement('input');
@@ -80,7 +80,7 @@ var ui = {
     subTitle.appendChild(media);
 
     var dateContent = document.createElement('span');
-    dateContent.textContent = marker.date;
+    dateContent.textContent = new Date(marker.date).toLocaleTimeString()+' on '+ new Date(marker.date).toLocaleDateString();
 
     var primaryContent = document.createElement('span');
     primaryContent.className = 'mdl-list__item-primary-content';

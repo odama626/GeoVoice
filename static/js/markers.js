@@ -62,6 +62,31 @@ var markers = {
     markers.list = [];
   }, // clear
 
+  sort: function(a, b) {
+    if (a.date < b.date) {
+      return 1;
+    }
+    return -1;
+  }, // sort
+
+  delete: function(region, media) {
+    return new Promise( (resolve, reject) => {
+      var data = new FormData();
+      data.append('media', media);
+      data.append('region', region);
+
+      $.ajax({
+        url : 'delete_marker',
+        type: 'POST',
+        data: data,
+        contentType: false,
+        processData: false,
+        success: resolve,
+        error: reject
+      });
+    });
+  }, // delete
+
   closeInfoWindow: function() {
     if (this.infoWindow !== null && typeof this.infoWindow !== 'undefined') {
       this.infoWindow.setMap(null);
@@ -104,7 +129,7 @@ var markers = {
   }, // omsClickListener
 
   getMediaElement: function(marker) {
-    if (marker.info.type == 'sound') {
+    if (marker.info.type == 'audio') {
       return '<audio controls><source type="audio/mpeg" src="'+marker.info.media+'"></audio>';
     } else if (marker.info.type == 'video') {
       return '<video controls type="video/webm" style="width:100%" src="'+marker.info.media+'"></video>';

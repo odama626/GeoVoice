@@ -86,6 +86,24 @@ router.post('/update_tags', function (req, res) {
 	console.log('updated tags on '+req.body.media);
 });
 
+router.post('/delete_marker', function (req, res) {
+	if (req.user) {
+		markerCollection.update(
+			{ 'regionName': req.body.region,
+				'markers.media': req.body.media,
+			 	'markers.creator': req.user.username },
+			{
+				$pull: { 'markers': { media: req.body.media}}
+			}
+		);
+		res.end('SUCCESS');
+		console.log('deleted marker'+req.body.media);
+	} else {
+		res.end(403);
+		console.log('refused to delete marker'+req.body.media);
+	}
+});
+
 router.post('/update_marker_order', function(req, res) {
 	console.log(JSON.parse(req.body.markers));
 	console.log(markerCollection.update(
@@ -162,15 +180,6 @@ router.get('/user', function(req, res) {
 		res.redirect('/login');
 	}
 });
-
-/*{
-	markers: {
-		$elemMatch: {
-			creator: { $eq: req.user.username }
-		}
-	}
-})
-*/
 
 router.get('/get_user_markers', function(req, res) {
 	if (req.user) {

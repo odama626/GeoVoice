@@ -41,7 +41,7 @@ var sound = {
   }, // stop
 
   upload: function(region) {
-    regions.createTempMarker(URL.createObjectURL(this.blob), this.location, region, 'sound');
+    regions.createTempMarker(URL.createObjectURL(this.blob), this.location, region, 'audio');
 
     var data = new FormData();
     data.append('file',  new File([this.blob], new Date().toISOString()+'.wav'));

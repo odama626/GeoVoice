@@ -78,31 +78,49 @@ var user = {
       return response.json();
     })
     .then( (body) => {
-      var markers = [];
+      var points = [];
+      console.log(body);
       for (var r = 0; r < body.length; r++) {
         for (var m = 0; m < body[r].markers.length; m++) {
-          markers.push(body[r].markers[m]);
+          points.push(body[r].markers[m]);
         }
       }
-      if (markers.length > 0) {
-        markers.sort(user.markerSort);
+      console.log(points);
+      if (points.length > 0) {
+        points.sort(markers.sort);
 
         var container = document.getElementById('user-markers');
         ui.clearContainer(container);
-        markers.forEach( (marker) => {
+        points.forEach( (marker) => {
           var li = ui.createMarkerLi(marker);
-          container.append();
+          li.setAttribute('id', marker.media);
+          li.innerHTML += ('<i class="material-icons clickable" style="float:right;"'
+              +' onclick="user.delete(\''+marker.region+'\',\''+marker.media+'\')">delete</i>');
+          container.append(li);
         });
       }
     });
   }, // fetchMarkers
 
-  markerSort: function(a, b) {
-    var da = new Date(a.date);
-    var db = new Date(b.date);
-    if (da < db) {
-      return 1;
-    }
-    return -1;
-  }, // sortFunc
+  delete: function(region, media) {
+    console.log('deleting', media);
+    markers.delete(region, media)
+    .then((res) => {
+      var el = document.getElementById(media);
+      var wrapper = document.createElement('div');
+      var height = el.style.height;
+      el.parentNode.replaceChild(wrapper, el);
+      wrapper.appendChild(el);
+      wrapper.style.overflow = 'hidden';
+      wrapper.style.height = '72px';
+      wrapper.style.transition = 'all 250ms ease-in-out';
+      setTimeout( () => {
+        wrapper.style.height = '0px';
+        setTimeout( () => { wrapper.remove()}, 250);
+      }, 200);
+    })
+    .catch( () => {
+      ui.createSnack('Unable to delete marker');
+    });
+  }
 };

@@ -33,6 +33,21 @@ function initMap() {
 
   google.maps.event.addListener(map, 'rightclick', addPrecisePoint);
 
+
+  google.maps.event.addListener(map, 'mousedown', (e) => {
+    global_mouseup = false;
+    setTimeout(() => {
+      if (global_mouseup == false) {
+        global_mouseup = true;
+        addPrecisePoint(e);
+      }
+    }, 500);
+  });
+  google.maps.event.addListener(map, 'mouseup', (e) => {
+    global_mouseup = true;
+  });
+  google.maps.event.addListener(map, 'dragstart',  (e) => { global_mouseup = true; });
+
   getLocation().then((loc) => map.setCenter(loc));
 
 	// Close navigation drawer on <a> click
@@ -162,8 +177,8 @@ function addPrecisePoint(event) {
   google.maps.event.addListenerOnce(markers.infoWindow, 'domready', () => {
     var soundRequest = document.getElementById('sound-request');
     var videoRequest = document.getElementById('video-request');
-    soundRequest.onclick = () => {sound.request(event.latLng);};
-    videoRequest.onclick = () => {video.request(event.latLng);};
+    soundRequest.onclick = () => { markers.infoWindow.close(); sound.request(event.latLng);};
+    videoRequest.onclick = () => { markers.infoWindow.close(); video.request(event.latLng);};
   });
   markers.infoWindow.open(map);
 } // addPrecisePoint
