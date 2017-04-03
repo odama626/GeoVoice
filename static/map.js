@@ -133,6 +133,11 @@ function getLoc(m) {
   return { lat: parseFloat(m.lat), lng: parseFloat(m.lng)};
 }
 
+function getBaseUrl() {
+    var re = new RegExp(/^.*\/\/[^\/]+/);
+    return re.exec(window.location.href);
+}
+
 function setPrototypes() {
   google.maps.Polygon.prototype.c_getBounds = function() {
     var bounds = new google.maps.LatLngBounds();
@@ -185,7 +190,7 @@ function addPrecisePoint(event) {
 
 function selfDestruct() {
   $.ajax({
-    url: 'self_destruct',
+    url: '/self_destruct',
     type: 'POST',
     contentType: false,
     processData: false,

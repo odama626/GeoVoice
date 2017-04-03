@@ -57,7 +57,7 @@ var video = {
     data.append('region', region);
 
     $.ajax({
-      url: 'submit',
+      url: '/submit',
       type: 'POST',
       data: data,
       contentType: false,

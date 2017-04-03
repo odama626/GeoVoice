@@ -1,7 +1,7 @@
 extends layout.pug
 
 block cssLinks
-  link(rel="stylesheet", href="css/styles.css")
+  link(rel="stylesheet", href="/css/styles.css")
 
 block mainContent
   main.mdl-layout__content
@@ -10,7 +10,7 @@ block mainContent
         .mdl-card__title
           h2.mdl-card__title-text About
         .mdl-card__media
-          img.article-image(src="res/about-banner.png", border="0", alt="Interesting banner photo goes here")
+          img.article-image(src="/res/about-banner.png", border="0", alt="Interesting banner photo goes here")
         .mdl-card__supporting-text
           strong Your voice
           span  Where you want it
@@ -24,7 +24,7 @@ block mainContent
               | making curated audio tours of museums, or even simply walking to
               | to parks and making points simply with the idea of being heard.
           .mdl-cell.mdl-cell--6-col
-            img.article-image(src="res/about-intro-filler.png", border="0", alt="")
+            img.article-image(src="/res/about-intro-filler.png", border="0", alt="")
     footer.mdl-mini-footer
       .mdl-mini-footer__left-section
         .mdl-logo GeoVoice

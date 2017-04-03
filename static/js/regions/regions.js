@@ -15,7 +15,7 @@ var regions = {
       return;
     }
     $.ajax({
-      url: 'get_markers',
+      url: '/get_markers',
       type: 'GET',
       success: function(data) {
         var regionList = JSON.parse(data);
@@ -31,17 +31,34 @@ var regions = {
           }
         }
 
-        if (typeof activeRegion.region === 'undefined') {
-          activeRegion.set(regions.list[null]);
-        } else {
-          activeRegion.refresh();
-        }
+        regions.updateActiveRegion(regionList);
+
       },
       error: function(e) {
         ui.createSnack('Error retrieving markers: ' + e.toString());
       }
     });
   }, // fetch
+
+  updateActiveRegion: function(regionList) {
+    if (typeof activeRegion.region === 'undefined') {
+      var rP = location.href.indexOf('region');
+      var regionName = null;
+      if (rP > -1) {
+        var id = location.href.slice(rP+'region/'.length);
+        regionList.some( (region) => {
+          if (region._id == id) {
+            regionPanel.open(regions.list[region.regionName]);
+            return true;
+          }
+        });
+      } else {
+        activeRegion.set(regions.list[null]);
+      }
+    } else {
+      activeRegion.refresh();
+    }
+  }, // updateActiveRegion
 
   add: function() {
     regionUi.add.requestType();
@@ -64,7 +81,7 @@ var regions = {
     data.append('geofence', geoJson);
 
     $.ajax({
-      url: 'submit_region',
+      url: '/submit_region',
       type: 'POST',
       contentType: false,
       processData: false,

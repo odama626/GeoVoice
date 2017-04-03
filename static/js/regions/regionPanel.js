@@ -4,12 +4,16 @@
 var regionPanel = {
 
   open: function(region, animate = true) {
+    //console.log(region);
+    panToPromise(getLoc(region));
+    history.replaceState('', region.regionName+' - Geovoice', getBaseUrl()+'/region/'+region._id);
     activeRegion.set(region);
     this.createHtml(region, animate);
   }, // open
 
   close: function() {
     activeRegion.clear();
+    history.replaceState('', 'Geovoice', getBaseUrl());
     $('.right-panel').removeClass('slide-in');
     $('body, html').animate({
       scrollTop: 0

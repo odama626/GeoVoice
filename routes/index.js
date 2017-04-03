@@ -34,6 +34,10 @@ router.get('/about', function( req, res) {
 	res.render('about.pug', {user : req.user });
 });
 
+router.get('/region/:regionid', function( req, res) {
+	res.render('index.pug', {user: req.user, region: req.params.regionid});
+});
+
 // Retrieve dialog
 router.get('/dialogs/:filename', function (req, res) {
 	res.render(req.originalUrl.substr(1), {

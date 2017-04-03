@@ -37,7 +37,7 @@ var regionPanelSettings = {
     data.append('markers', JSON.stringify(this.region.markers));
 
     $.ajax({
-      url : 'update_marker_order',
+      url : '/update_marker_order',
       type: 'POST',
       data: data,
       contentType: false,

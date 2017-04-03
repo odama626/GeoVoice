@@ -70,7 +70,7 @@ var regionUi = {
 
     showCreateDialog: function(region) {
       $.ajax({
-        url: 'dialogs/addRegion.pug',
+        url: '/dialogs/addRegion.pug',
         type: 'GET',
         contentType: false,
         processData: false,

@@ -76,7 +76,7 @@ var markers = {
       data.append('region', region);
 
       $.ajax({
-        url : 'delete_marker',
+        url : '/delete_marker',
         type: 'POST',
         data: data,
         contentType: false,
@@ -145,7 +145,7 @@ var markers = {
     data.append('region', marker.region);
 
     $.ajax({
-      url : 'update_tags',
+      url : '/update_tags',
       type: 'POST',
       data: data,
       contentType: false,

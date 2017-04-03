@@ -55,7 +55,7 @@ var user = {
     data.append('file', new File([blob], new Date().toISOString()+'.png'));
 
     $.ajax({
-      url: 'user',
+      url: '/user',
       type: 'POST',
       data: data,
       contentType: false,
