@@ -69,7 +69,9 @@ var storage = multer.diskStorage({
 			cb(null,Date.now()+'.wav');
 		} else if (file.originalname.endsWith('.png')) {
 			var filename = req.user.username+'.png';
-			fs.unlinkSync('./uploads/img/'+filename);
+			if (fs.existsSync('./uploads/img/'+filename)) {
+				fs.unlinkSync('./uploads/img/'+filename);
+			}
 			cb(null, filename);
 		}
 	}

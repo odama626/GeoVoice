@@ -34,17 +34,30 @@ var drawingUi = {
           regionUi.add.classic(event.overlay);
         });
       };
-
       google.maps.event.addListener(drawingUi.manager, 'overlaycomplete', drawingComplete);
-    }, 1000);
+    }, 200);
+
+    // self destruct if user clicks anything else
+    document.querySelectorAll('a').forEach( (a) => {
+      a.addEventListener('click', () => {
+        drawingUi.destroy();
+        var event = this;
+        document.querySelectorAll('a').forEach( (aa) => {
+          aa.removeEventListener('click', event);
+        });
+      });
+    });
   }, // init
 
   destroy: function() {
-    this.manager.setMap(null);
-    this.manager.setOptions({
-      drawingControls: false
-    });
+    if (this.manager != null) {
+      this.manager.setMap(null);
+      this.manager.setOptions({
+        drawingControls: false
+      });
     this.manager = null;
+    }
+
   }, // destroy
 
   fixIcons: function() {
@@ -63,6 +76,12 @@ var drawingUi = {
       var polyButton = $(this).find('[title="Draw a shape"]');
       var container = panButton.parent().parent();
 
+      panButton.attr('id', 'pan-tool');
+      polyButton.attr('id', 'line-tool');
+      polyButton.addClass('help');
+      polyButton.attr('title', '');
+      polyButton.attr('overflow', 'visible');
+
       // Change DrawingManager button icons
       setIcon(panButton, 'pan_tool');
       setIcon(polyButton, 'linear_scale');
@@ -71,8 +90,19 @@ var drawingUi = {
       var doneButton = drawingUi.createButton('done-drawing', 'Finished drawing', 'check');
       container.append(doneButton);
     });
-
+    drawingUi.showHelp(document.getElementById('line-tool'), document.getElementById('done-drawing'));
   }, // fixIcons
+
+  showHelp: function(polyButton, doneButton) {
+    setTimeout( () => { polyButton.classList.add('help');
+      setTimeout( () => {
+        polyButton.classList.remove('help');
+        doneButton.classList.add('help');
+        setTimeout( () => doneButton.classList.remove('help'),
+          4000);
+      }, 2000);
+    }, 200);
+  }, // showHelp
 
   createButton(id, title, icon, action = null) {
     var i = document.createElement('i');

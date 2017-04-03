@@ -182,12 +182,10 @@ input.map-marker:checked + label {
 .drawing-manager-button {
 	width: 28px;
 	height: 27px;
-	overflow: hidden;
 }
 
 .drawing-manager-button-container {
 	direction: ltr;
-	overflow: hidden;
 	text-align: left;
 	position: relative;
 	color: rgb(86, 86, 86);
@@ -207,6 +205,79 @@ input.map-marker:checked + label {
 	background-color: rgb(235, 235, 235);
 }
 
+#line-tool,
+#done-drawing {
+	overflow: initial !important;
+}
+
+#line-tool.help:after,
+#line-tool:hover:after {
+    content: 'Use this to draw a shape';
+    position: absolute;
+    top: 40px;
+    left: -5px;
+    font-size: medium;
+    width: 175px;
+    padding: 20px;
+    color: white;
+    background-color: rgb(63,81,181);
+    border-radius: 10px;
+		animation-name: fallopen;
+		animation-duration: 250ms;
+}
+
+#line-tool.help:before,
+#line-tool:hover:before {
+    content: '';
+    position: absolute;
+    top: 30px;
+		left: 6px;
+    border-bottom: rgb(63,81,181) solid 10px;
+    border-left: transparent solid 10px;
+    border-right: transparent solid 10px;
+}
+
+#done-drawing.help:after,
+#done-drawing:hover:after {
+    content: 'When your shape is solid, finish here';
+    position: absolute;
+    top: 40px;
+    left: -5px;
+    font-size: medium;
+    width: 260px;
+    padding: 20px;
+    color: white;
+    background-color: rgb(63,81,181);
+    border-radius: 10px;
+		animation-name: fallopen;
+		animation-duration: 250ms;
+}
+
+#done-drawing.help:before,
+#done-drawing:hover:before {
+    content: '';
+    position: absolute;
+    top: 30px;
+		left: 6px;
+    border-bottom: rgb(63,81,181) solid 10px;
+    border-left: transparent solid 10px;
+    border-right: transparent solid 10px;
+}
+
+@keyframes fallopen {
+	from {
+		opacity: 0;
+		padding: 0px;
+	}
+	90% {
+		padding: 22px;
+	}
+	to {
+
+		opacity: 1;
+		padding:20px;
+	}
+}
 
 .region-panel__settings_button {
 	position: absolute;
