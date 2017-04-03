@@ -8,6 +8,10 @@ var regionPanel = {
     panToPromise(getLoc(region));
     history.replaceState('', region.regionName+' - Geovoice', getBaseUrl()+'/region/'+region._id);
     activeRegion.set(region);
+    console.log('animate', animate);
+    if (animate) {
+      $('#region-panel-container').html('');
+    }
     this.createHtml(region, animate);
   }, // open
 
@@ -74,11 +78,8 @@ var regionPanel = {
     sheetContainer.className = containerClasses;
 
     sheetContainer.appendChild(this.createTitle(region.regionName));
-    sheetContainer.appendChild(this.createGear(
-      () => {
-
+    sheetContainer.appendChild(this.createGear(() => {
         regionPanelSettings.constructor(region, sheetContainer);
-        //ui.createSnack('Yes, I will eventually do something cool');
       }));
     sheetContainer.appendChild(listContainer);
 
@@ -113,7 +114,7 @@ var regionPanel = {
   generateItem: function(item) {
     var audioControls = document.createElement('audio');
     audioControls.controls = true;
-    audioControls.src = item.media;
+    audioControls.src = '/'+item.media;
 
     var subTitle = document.createElement('span');
     subTitle.className = 'mdl-list__item-sub-title';

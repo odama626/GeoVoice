@@ -63,7 +63,9 @@ var markers = {
   }, // clear
 
   sort: function(a, b) {
-    if (a.date < b.date) {
+    var ad = new Date(a.date);
+    var bd = new Date(b.date);
+    if (ad < bd) {
       return 1;
     }
     return -1;

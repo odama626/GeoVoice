@@ -66,7 +66,7 @@ var ui = {
     if (marker.type == 'audio' || marker.type == 'sound') {
       media = document.createElement('audio');
       media.controls = true;
-      media.src = marker.media;
+      media.src = '/'+marker.media;
     } else if (marker.type == 'video') {
       media = document.createElement('a');
       media.className = 'mdl-navigation__link';

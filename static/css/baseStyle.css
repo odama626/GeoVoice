@@ -107,6 +107,11 @@ span > .mdl-navigation__link:hover {
 		transition-timing-function: ease-in-out;
 	}
 
+	.slide-in audio,
+	.slide-in video {
+		width: 100% !important;
+	}
+
 	.slide-in {
 		top: 75%;
 	}
@@ -217,7 +222,7 @@ input.map-marker:checked + label {
     top: 40px;
     left: -5px;
     font-size: medium;
-    width: 175px;
+    width: 180px;
     padding: 20px;
     color: white;
     background-color: rgb(63,81,181);
@@ -262,6 +267,24 @@ input.map-marker:checked + label {
     border-bottom: rgb(63,81,181) solid 10px;
     border-left: transparent solid 10px;
     border-right: transparent solid 10px;
+}
+
+@media (max-width: 700px) {
+	#done-drawing.help:after,
+	#done-drawing:hover:after {
+		left: -130px;
+	}
+	#line-tool.help:after,
+	#line-tool:hover:after {
+		left: -90px;
+	}
+}
+
+@media (max-width: 400px) {
+	#done-drawing.help:after,
+	#done-drawing:hover:after {
+		left: -170px;
+	}
 }
 
 @keyframes fallopen {
