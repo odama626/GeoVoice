@@ -1,0 +1,16 @@
+extends layout
+
+block cssLinks
+  
+block navBar  
+  
+block navMenu
+  if user.lvl == 'admin'
+    a.mdl-navigation__link(onClick="selfDestruct()") Self Destruct
+  
+block mainContent
+  if user.lvl == 'admin'
+  
+block jsLibs
+  if user.lvl == 'admin'
+    script(src="/js/admin.js")

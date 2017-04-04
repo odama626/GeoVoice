@@ -18,28 +18,26 @@ var user = {
       var label = document.getElementById('retype-password-error');
       label.textContent = 'passwords don\'t match';
       passVer.parentElement.classList.add('is-invalid');
-      passVer.onkeypress = this.validatePassword;
+      //passVer.onkeypress = this.validatePassword;
     }
   }, // validatePassword
 
   validateUsername: function() { // check if requested username is available
     var usernameField = document.getElementById('username');
     var data = new FormData();
-    data.append('username', usernameField.value);
-    console.log(usernameField.value);
+    data.append('query', usernameField.value);
 
     $.ajax({
       url: '/username_available',
-      type: 'GET',
+      type: 'POST',
       data: data,
       contentType: false,
       processData: false,
       success: function(e) {
-        console.log(e);
-        usernameField.classList.remove('is-invalid');
+        usernameField.parentElement.classList.remove('is-invalid');
         user.usernameAvailable = true;
       }, error: function(e) {
-        usernameField.classList.add('is-invalid');
+        usernameField.parentElement.classList.add('is-invalid');
         user.usernameAvailable = false;
       }
     });
@@ -97,13 +95,11 @@ var user = {
     })
     .then( (body) => {
       var points = [];
-      console.log(body);
       for (var r = 0; r < body.length; r++) {
         for (var m = 0; m < body[r].markers.length; m++) {
           points.push(body[r].markers[m]);
         }
       }
-      console.log(points);
       if (points.length > 0) {
         points.sort(markers.sort);
 

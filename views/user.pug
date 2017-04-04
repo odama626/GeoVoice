@@ -15,6 +15,9 @@ block mainContent
           img.user-pic.drop-zone(src='img/'+user.image, onload="user.picDropZone()", alt="user image")
           - var displayName = (user.name ? user.name : user.username)
           h2.mdl-card__title-text(style="margin: auto 0;") #{displayName}
+          if user.lvl = 'admin'
+            a.mdl-navigation__link.clickable.region-panel__settings_button(style="top:0px;",href="/admin")
+              i.material-icons.region-panel__settings_button settings_ethernet
         .mdl-card__portfolio-copy
           h3.mdl-cell.mdl-cell-12-col.mdl-typography--headline Your markers
           ul#user-markers.mdl-list

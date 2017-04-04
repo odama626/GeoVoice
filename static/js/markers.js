@@ -134,7 +134,7 @@ var markers = {
     if (marker.info.type == 'audio') {
       return '<audio controls><source type="audio/mpeg" src="/'+marker.info.media+'"></audio>';
     } else if (marker.info.type == 'video') {
-      return '<video controls type="video/webm" style="width:100%" src="/'+marker.info.media+'"></video>';
+      return '<video controls type="video/webm" style="width:100%; max-width: 468px" src="/'+marker.info.media+'"></video>';
     }
     return '<h3>Unknown media type</h3>';
   }, // getMediaElement

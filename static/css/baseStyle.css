@@ -74,7 +74,7 @@ span > .mdl-navigation__link:hover {
 
 .right-panel {
 	position: absolute;
-	right: -450px;
+	right: -100vw;
 	top: 0;
 	z-index: 1050;
 	/*height: 100%; */
@@ -85,35 +85,65 @@ span > .mdl-navigation__link:hover {
 	/*min-width: 200px; */
 	overflow-y: auto;
 	overflow-x: hidden;
+	transform-origin: bottom right;
 
-	transition-property: right;
-	transition-duration: 0.5s;
-	transition-timing-function: ease-in-out;
+	/* transition: all 500ms ease-in-out; */
 }
 
 .slide-in {
-	right: 0;
+	animation: slideIn;
+	animation-duration: 600ms;
+	right: 0px;
 }
 
-@media screen and (max-width:480px) {
-	.right-panel {
-		top: 100%;
-		right: auto;
-		margin: auto;
-		width:100%;
+@keyframes slideIn {
+	from {
+		right: -100vw;
+		opacity: 0;
+	}
+	80% { transform: rotateZ(0); }
+	90% {
+		right: 6px;
+		transform: rotateZ(-1deg);
+	}
+	to {
+		right: 0px;
+		opacity: 1;
+		transform: rotateZ(0deg);
+	}
+}
 
-		transition-property: top;
-		transition-duration: 0.5s;
-		transition-timing-function: ease-in-out;
+@media screen and (max-width:500px) {
+	.right-panel {
+		top: 100vh;
+		right: 0;
+		left: 0;
+	}
+
+	.slide-in {
+		animation: slideIn;
+		animation-duration: 250ms;
+		top: 85vh;
+	}
+
+	@keyframes slideIn {
+		from {
+			top: 100vh;
+			opacity: 0;
+		}
+		80% {
+			opacity: 1;
+			top: 83vh;
+		}
+		to {
+			top: 85vh;
+			opacity: 1;
+		}
 	}
 
 	.slide-in audio,
 	.slide-in video {
 		width: 100% !important;
-	}
-
-	.slide-in {
-		top: 75%;
 	}
 }
 

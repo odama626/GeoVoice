@@ -2,11 +2,6 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var passportLocalMongoose = require('passport-local-mongoose');
 
-var permissions = {
-	'user': 0,
-	'dbAdmin': 10
-};
-
 var Account = new Schema({
 	username: String,
 	name: String,
@@ -17,7 +12,7 @@ var Account = new Schema({
 	lastOnline: {type: Date, default: Date.now},
 	active: {type: Boolean, default: true}, // set false after lastOnline > 30 days
 	enabled: {type: Boolean, default: true}, // ability to deactivate account
-	permissionLevel: {type: Number, default: permissions['user']}
+	lvl: {type: String, default: 'user'}
 	// Possibly credit card info for paid features
 });
 

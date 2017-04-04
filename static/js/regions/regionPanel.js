@@ -4,26 +4,16 @@
 var regionPanel = {
 
   open: function(region, animate = true) {
-    //console.log(region);
     panToPromise(getLoc(region));
     history.replaceState('', region.regionName+' - Geovoice', getBaseUrl()+'/region/'+region._id);
     activeRegion.set(region);
-    if (animate) {
-      $('#region-panel-container').html('');
-    }
     this.createHtml(region, animate);
   }, // open
 
   close: function() {
     activeRegion.clear();
     history.replaceState('', 'Geovoice', getBaseUrl());
-    $('.right-panel').removeClass('slide-in');
-    $('body, html').animate({
-      scrollTop: 0
-    }, 500);
-    setTimeout(function() {
-      $('#region-panel-container').html('');
-    }, 1000);
+    document.querySelector('.right-panel').classList.remove('slide-in');
   }, // close
 
   createHtml: function(region, animate) {
@@ -64,28 +54,16 @@ var regionPanel = {
 
     listContainer.appendChild(div);
 
-    var containerClasses = 'right-panel';
-    if (!animate) {
-      containerClasses += ' slide-in';
-    }
+    var rightPanel = document.querySelector('.right-panel');
 
-    // Create the main container
-    var sheetContainer = document.createElement('div');
-    sheetContainer.className = containerClasses;
-
-    sheetContainer.appendChild(this.createTitle(region.regionName));
-    sheetContainer.appendChild(this.createGear(() => {
+    ui.clearContainer(rightPanel);
+    rightPanel.appendChild(this.createTitle(region.regionName));
+    rightPanel.appendChild(this.createGear(() => {
         regionPanelSettings.constructor(region, sheetContainer);
       }));
-    sheetContainer.appendChild(listContainer);
+    rightPanel.appendChild(listContainer);
 
-    document.getElementById('region-panel-container').appendChild(sheetContainer);
-
-    if (animate) {
-      setTimeout(function() {
-        $('.right-panel').addClass('slide-in');
-      }, 100);
-    }
+    rightPanel.classList.add('slide-in');
   }, // createHtml
 
   createTitle: function(title) {
@@ -106,28 +84,4 @@ var regionPanel = {
     a.appendChild(i);
     return a;
   }, // createGear
-
-  generateItem: function(item) {
-    var audioControls = document.createElement('audio');
-    audioControls.controls = true;
-    audioControls.src = '/'+item.media;
-
-    var subTitle = document.createElement('span');
-    subTitle.className = 'mdl-list__item-sub-title';
-    subTitle.appendChild(audioControls);
-
-    var dateContent = document.createElement('span');
-    dateContent.textContent = item.date;
-
-    var primaryContent = document.createElement('span');
-    primaryContent.className = 'mdl-list__item-primary-content';
-    primaryContent.appendChild(dateContent);
-    primaryContent.appendChild(subTitle);
-
-    var li = document.createElement('li');
-    li.className = 'mdl-list__item mdl-list__item--two-line';
-    li.append(primaryContent);
-
-    return li;
-  } // generateItem
 }; // regionPanel

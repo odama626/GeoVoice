@@ -30,7 +30,7 @@ block mainContent
             label.mdl-textfield__label(for="password") Password
             span.mdl-textfield__error Must be at least 8 characters long
           .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
-            input#retype-password.mdl-textfield__input(type="password", name="retype-password", onblur="user.validatePassword()")
+            input#retype-password.mdl-textfield__input(type="password", name="retype-password", onkeyup="user.validatePassword()")
             label.mdl-textfield__label(for="retype-password") Retype password
             span#retype-password-error.mdl-textfield__error
 
