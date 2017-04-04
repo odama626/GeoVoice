@@ -8,6 +8,7 @@
  - [ ] # Cross device compatibility
  - [ ] # CSS animations to give sublte hints on how to use siteData
    - [x] Classic region creation
+ - [x] Rework RegionPanel animations
  - [ ] # find out why some videos are choppy on playback
  - [ ] start working on api
    - [ ] banner-ad that expands
@@ -18,11 +19,15 @@
    - [x] allow deletion of markers
    - [ ] # reset password
    - [ ] # email validation on register
-   - [ ] use username instead of email on markers
+   - [x] use username instead of email on markers
    - [ ] private sharing of markers
    - [ ] treeview of markers based on region
    - [ ] ability to view other users' profile
  - [ ] implement admin features
+   - [x] admin page
+   - [x] destroy db
+   - [ ] pick other users to elevate
+   - [ ] tree view of all markers with delete option
  - [ ] Only send Marker information needed
  - [ ] add stylized login error page
  - [ ] add stylized 404 page
