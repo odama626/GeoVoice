@@ -95,6 +95,23 @@ var regions = {
     });
   }, // create
 
+  getTransporatableList: function(region) {
+    var markers = {};
+    region.markers.forEach( marker => {
+      markers.append({
+        creator: marker.creator,
+        date: marker.date,
+        lat: marker.lat,
+        lng: marker.lng,
+        media: marker.media,
+        region: marker.region,
+        tags: marker.tags,
+        type: marker.type,
+      });
+    });
+    return markers;
+  }, // getTransporatableList
+
   place: function(region) {  // ! this changes region.geofence from string to array
     if (region.regionName != null) {
       region.marker = new Marker({

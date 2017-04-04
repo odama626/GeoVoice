@@ -2,7 +2,7 @@
 
 var user = {
   passwordsMatch: false,
-  handleAvailable: false,
+  usernameAvailable: false,
 
   validatePassword: function() {
     var pass = document.getElementById('password');
@@ -16,22 +16,40 @@ var user = {
     } else {
       this.passwordsMatch = false;
       var label = document.getElementById('retype-password-error');
-      label.innerHTML = 'passwords don\'t match';
+      label.textContent = 'passwords don\'t match';
       passVer.parentElement.classList.add('is-invalid');
       passVer.onkeypress = this.validatePassword;
     }
   }, // validatePassword
 
-  validateHandle: function() { // check if requested username is available
-    // TODO IMPLEMENT
-    this.handleAvailable = true;
+  validateUsername: function() { // check if requested username is available
+    var usernameField = document.getElementById('username');
+    var data = new FormData();
+    data.append('username', usernameField.value);
+    console.log(usernameField.value);
+
+    $.ajax({
+      url: '/username_available',
+      type: 'GET',
+      data: data,
+      contentType: false,
+      processData: false,
+      success: function(e) {
+        console.log(e);
+        usernameField.classList.remove('is-invalid');
+        user.usernameAvailable = true;
+      }, error: function(e) {
+        usernameField.classList.add('is-invalid');
+        user.usernameAvailable = false;
+      }
+    });
     this.tryEnableSubmit();
   },
 
   tryEnableSubmit: function() {
     var submit = document.getElementById('sign-up');
 
-    if (this.passwordsMatch && this.handleAvailable) {
+    if (this.passwordsMatch && this.usernameAvailable) {
       submit.disabled = false;
     } else {
       submit.disabled = true;
@@ -94,8 +112,12 @@ var user = {
         points.forEach( (marker) => {
           var li = ui.createMarkerLi(marker);
           li.setAttribute('id', marker.media);
-          li.innerHTML += ('<i class="material-icons clickable" style="float:right;"'
-              +' onclick="user.delete(\''+marker.region+'\',\''+marker.media+'\')">delete</i>');
+          var i = document.createElement('i');
+          i.className = 'material-icons clickable';
+          i.style.float = 'right';
+          i.onclick = () => user.delete(marker.region, marker.media);
+          i.textContent = 'delete';
+          li.appendChild(i);
           container.append(li);
         });
       }

@@ -21,7 +21,7 @@ var regionPanelSettings = {
 
     var ul = document.createElement('ul');
     ul.className = 'mdl-list';
-    this.region.markers.forEach((item) => { ul.appendChild(ui.createMarkerLi(item)); });
+    this.region.markers.forEach((item) => { ul.appendChild(ui.createMarkerLi(item, { draggable: true })); });
     this.parent.appendChild(ul);
 
     var region = this.region; // TODO see if this is needed
@@ -34,7 +34,7 @@ var regionPanelSettings = {
   updateMarkerOrder: function() {
     var data = new FormData();
     data.append('regionId', this.region._id);
-    data.append('markers', JSON.stringify(this.region.markers));
+    data.append('markers', JSON.stringify(regions.getTransporatableList(this.region)));
 
     $.ajax({
       url : '/update_marker_order',

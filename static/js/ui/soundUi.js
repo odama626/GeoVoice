@@ -68,21 +68,22 @@ var soundUi = {
         player[0].load();
 
         if (!ENABLE_REGIONS) {
-          $('#marker-region-selection').remove();
-        }
+          document.getElementById('marker-region-selection').remove();
+        } else {
 
-        var regionsContainer = $('#regions');
+          var regionsContainer = $('#regions');
 
-        for (var place in regions.list) {
-          if (regions.list[place].type == 'sequence') {
-            regionsContainer.append('<option value="' + place + '">' + place + '</option>');
-          } else if (typeof regions.list[place].geofence !== 'undefined') {
-            if (getBounds(regions.list[place].geofence).contains(location)) {
+          for (var place in regions.list) {
+            console.log(place);
+            if (regions.list[place].type == 'sequence') {
               regionsContainer.append('<option value="' + place + '">' + place + '</option>');
+            } else if (typeof regions.list[place].geofence !== 'undefined') {
+              if (getBounds(regions.list[place].geofence).contains(location)) {
+                regionsContainer.append('<option value="' + place + '">' + place + '</option>');
+              }
             }
           }
         }
-
       },
       positive: {
         title: 'yes',

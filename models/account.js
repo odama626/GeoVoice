@@ -10,7 +10,7 @@ var permissions = {
 var Account = new Schema({
 	username: String,
 	name: String,
-	userHandle: String,
+	email: String,
 	password: String,
 	image: {type: String, default: 'default_profile_image.png'},
 	dateJoined: {type: Date, default: Date.now},
@@ -21,6 +21,10 @@ var Account = new Schema({
 	// Possibly credit card info for paid features
 });
 
-Account.plugin(passportLocalMongoose);
+Account.plugin(passportLocalMongoose, {
+		usernameField: 'email',
+		passwordField: 'password',
+		lastLoginField: 'lastOnline',
+});
 
 module.exports = mongoose.model('Account', Account);

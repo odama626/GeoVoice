@@ -18,12 +18,12 @@ block mainContent
             input#name.mdl-textfield__input(type="text", name="name")
             label.mdl-textfield__label(for="name") Full name
           .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
-            input#handle.mdl-textfield__input(type="text", name="handle", onkeypress="user.validateHandle()")
-            label.mdl-textfield__label(for="handle") Username
-            span#handle-error.mdl-textfield__error
+            input#username.mdl-textfield__input(type="text", name="username", onblur="user.validateUsername()")
+            label.mdl-textfield__label(for="username") Username
+            span#username-error.mdl-textfield__error That username is taken
           .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
-            input#username.mdl-textfield__input(type="text", name="username", pattern="^([\\w\\.]*)@([\\w\\.]*)\\.([\\w]*)")
-            label.mdl-textfield__label(for="username") Email address
+            input#email.mdl-textfield__input(type="text", name="email", pattern="^([\\w\\.]*)@([\\w\\.]*)\\.([\\w]*)")
+            label.mdl-textfield__label(for="email") Email address
             span.mdl-textfield__error Not a valid email address
           .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
             input#password.mdl-textfield__input(type="password", name="password", pattern="(.){8}.*")

@@ -52,7 +52,7 @@ var videoUi = {
     var time = 0.00;
     var timerInterval = setInterval(() => {
       time += 0.01;
-      document.getElementById('recording-timer').innerHTML = time.toFixed(2);
+      document.getElementById('recording-timer').textContent = time.toFixed(2);
     }, 1000);
 
     showDialog({
@@ -101,21 +101,18 @@ var videoUi = {
         document.querySelector('#recording-save').href = url;
 
         if (!ENABLE_REGIONS) {
-          document.querySelector('#marker-region-selection').remove();
-        }
+          document.getElementById('marker-region-selection').remove();
+        } else {
 
-        if (!ENABLE_REGIONS) {
-          $('#marker-region-selection').remove();
-        }
-
-        var regionsContainer = $('#regions');
-
-        for (var place in regions.list) {
-          if (regions.list[place].type == 'sequence') {
-            regionsContainer.append('<option value="' + place + '">' + place + '</option>');
-          } else if (typeof regions.list[place].geofence !== 'undefined') {
-            if (getBounds(regions.list[place].geofence).contains(location)) {
+          var regionsContainer = $('#regions');
+          for (var place in regions.list) {
+            console.log(place);
+            if (regions.list[place].type == 'sequence') {
               regionsContainer.append('<option value="' + place + '">' + place + '</option>');
+            } else if (typeof regions.list[place].geofence !== 'undefined') {
+              if (getBounds(regions.list[place].geofence).contains(location)) {
+                regionsContainer.append('<option value="' + place + '">' + place + '</option>');
+              }
             }
           }
         }

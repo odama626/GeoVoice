@@ -103,14 +103,14 @@ var markers = {
     $('dv audio').remove();
     var date = new Date(marker.info.date);
 
-    var imageUrl = 'img/'+marker.info.creator+'.png';
+    var imageUrl = '/img/'+marker.info.creator+'.png';
 
     fetch(imageUrl) // TODO come up with a nicer way of setting default user image, preferably getting user's image from DB
     .then((response) => {
       if (!response.ok) {
-        imageUrl = 'img/default_profile_image.png';
+        imageUrl = '/img/default_profile_image.png';
         var img = document.querySelector('.user-pic');
-        img.style['background-image'] = 'url("img/default_profile_image.png")';
+        img.style['background-image'] = 'url("/img/default_profile_image.png")';
       }
     });
 
@@ -132,9 +132,9 @@ var markers = {
 
   getMediaElement: function(marker) {
     if (marker.info.type == 'audio') {
-      return '<audio controls><source type="audio/mpeg" src="'+marker.info.media+'"></audio>';
+      return '<audio controls><source type="audio/mpeg" src="/'+marker.info.media+'"></audio>';
     } else if (marker.info.type == 'video') {
-      return '<video controls type="video/webm" style="width:100%" src="'+marker.info.media+'"></video>';
+      return '<video controls type="video/webm" style="width:100%" src="/'+marker.info.media+'"></video>';
     }
     return '<h3>Unknown media type</h3>';
   }, // getMediaElement

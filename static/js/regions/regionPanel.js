@@ -8,7 +8,6 @@ var regionPanel = {
     panToPromise(getLoc(region));
     history.replaceState('', region.regionName+' - Geovoice', getBaseUrl()+'/region/'+region._id);
     activeRegion.set(region);
-    console.log('animate', animate);
     if (animate) {
       $('#region-panel-container').html('');
     }
@@ -32,17 +31,14 @@ var regionPanel = {
     var listContainer = document.createElement('ul');
     listContainer.className = 'mdl-list';
 
-
-    if (region.type == 'sequence')
-      if (region.markers.length > 0) {
-        var sequence = new MarkerSequence(region);
-        listContainer.appendChild(sequence.getElement());
-      }
-      else if (region.type == 'classic') {
-        for (var i = 0; i < region.markers.length; i++) {
-          listContainer.appendChild(regionPanel.generateItem(region.markers[i]));
-        }
-      }
+    if (region.type == 'sequence' && region.markers.length > 0) {
+      var sequence = new MarkerSequence(region);
+      listContainer.appendChild(sequence.getElement());
+    } else if (region.type == 'classic') {
+      region.markers.forEach( (marker) => {
+        listContainer.appendChild(ui.createMarkerLi(marker));
+      });
+    }
 
     // Show no recording message if no markers exist
     if (listContainer.childElementCount == 0) {
@@ -59,11 +55,11 @@ var regionPanel = {
     // Create a close panel button
     var button = document.createElement('button');
     button.className = 'mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect right-panel__button';
-    button.setAttribute('onClick', 'regionPanel.close()');
+    button.onclick = regionPanel.close;
     button.textContent = 'Close';
 
     var div = document.createElement('div');
-    div.style = 'padding-left:15px;';
+    div.style['padding-left'] = '15px';
     div.appendChild(button);
 
     listContainer.appendChild(div);

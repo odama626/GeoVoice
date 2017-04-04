@@ -7,6 +7,7 @@
 ## Roadmap
  - [ ] # Cross device compatibility
  - [ ] # CSS animations to give sublte hints on how to use siteData
+   - [x] Classic region creation
  - [ ] # find out why some videos are choppy on playback
  - [ ] start working on api
    - [ ] banner-ad that expands
@@ -14,7 +15,7 @@
    - [ ] # create FAQ
    - [ ] # introduction page / video overview of features
  - [ ] # User page
-   - [ ] allow deletion of markers
+   - [x] allow deletion of markers
    - [ ] # reset password
    - [ ] # email validation on register
    - [ ] use username instead of email on markers

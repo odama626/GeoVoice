@@ -37,23 +37,23 @@ var ui = {
       if (file.type.startsWith(options.type)) {
         callback(file);
       } else {
-        dropZone.innerHTML = 'Only accepts '+options.type;
+        dropZone.textContent = 'Only accepts '+options.type;
       }
-    }
+    };
 
-    var dropZone = document.createElement('div')
-    dropZone.innerHTML = 'Drop '+options.type+' here';
+    var dropZone = document.createElement('div');
+    dropZone.textContent = 'Drop '+options.type+' here';
     dropZone.className = options.class+' clickable';
 
     if (options.enablePicker) {
       var input = document.createElement('input');
-      input.type = "file";
+      input.type = 'file';
       input.accept = options.type+'/*';
-      input.onchange = (e) => { handleFile(input.files[0]); };
-      dropZone.addEventListener('click', event => { input.click();});
+      input.onchange = () => { handleFile(input.files[0]); };
+      dropZone.addEventListener('click', () => { input.click();});
     }
 
-    dropZone.addEventListener('dragover', event => event.preventDefault(), false)
+    dropZone.addEventListener('dragover', event => event.preventDefault(), false);
     dropZone.addEventListener('drop', (event) => {
       event.preventDefault();
       handleFile(event.dataTransfer.files[0]);
@@ -61,7 +61,9 @@ var ui = {
     return dropZone;
   }, // createDropZone
 
-  createMarkerLi: function(marker) {
+  createMarkerLi: function(marker, options = {}) {
+    options.draggable = options.draggable || false;
+
     var media;
     if (marker.type == 'audio' || marker.type == 'sound') {
       media = document.createElement('audio');
@@ -69,10 +71,10 @@ var ui = {
       media.src = '/'+marker.media;
     } else if (marker.type == 'video') {
       media = document.createElement('a');
+      media.addEventListener('click', () => {ui.popoutVideo(marker.media); });
       media.className = 'mdl-navigation__link';
-      media.innerHTML = 'View video';
-      media.style = 'padding: 10px;';
-      media.onclick = () => this.popoutVideo(marker.media);
+      media.textContent = 'View video';
+      media.style.padding ='10px';
     }
 
     var subTitle = document.createElement('span');
@@ -87,16 +89,18 @@ var ui = {
     primaryContent.appendChild(dateContent);
     primaryContent.appendChild(subTitle);
 
-    var dragHandle = document.createElement('i');
-    dragHandle.className = 'drag_handle material-icons';
-    dragHandle.textContent= 'drag_handle';
-    dragHandle.style = 'padding-right: 10px; color:#757575;';
-
     var li = document.createElement('li');
     li.className = 'mdl-list__item mdl-list__item--two-line';
     li.style = 'border-top: 1px solid #ddd;';
 
-    li.appendChild(dragHandle);
+    if (options.draggable) {
+      var dragHandle = document.createElement('i');
+      dragHandle.className = 'drag_handle material-icons';
+      dragHandle.textContent= 'drag_handle';
+      dragHandle.style = 'padding-right: 10px; color:#757575;';
+      li.appendChild(dragHandle);
+    }
+
     li.appendChild(primaryContent);
 
     return li;
@@ -104,8 +108,8 @@ var ui = {
 
   popoutVideo: function(src) {
     showDialog({
-      text: '<video width="100%" type="video/webm" controls src='+src+'></vide>'
-    })
+      text: '<video width="100%" type="video/webm" controls src="/'+src+'"></vide>'
+    });
   }, // popoutVideo
 
   createCropModal: function(src, callback) {
@@ -180,22 +184,6 @@ var ui = {
     } // hide
 
   }, // loading
-
-  createDialog: function(p) {
-    p.title = p.title || '';
-    p.text = p.text || '';
-    p.positive.title = p.positive.title || 'Ok';
-    p.positive.onClick = p.positive.onClick || (() => alert('positive onclick not set'));
-    p.negative.title = p.negative.title || 'Cancel';
-    p.negative.onClick = p.negative.onClick || (() => alert('negative onclick not set'));
-    showDialog({
-      title: p.title,
-      text: p.text,
-      positive: p.positive,
-      negative: p.negative,
-      onLoaded: p.onLoaded
-    });
-  },
 
   pickPoint: function() {
     var location = null;

@@ -45,7 +45,7 @@ app.use(passport.session());
 
 // Setup Passport config
 var Account = require('./models/account');
-passport.use(new LocalStrategy(Account.authenticate()));
+passport.use(new LocalStrategy({ usernameField: 'email'}, Account.authenticate()));
 passport.serializeUser(Account.serializeUser());
 passport.deserializeUser(Account.deserializeUser());
 

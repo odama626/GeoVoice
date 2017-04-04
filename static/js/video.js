@@ -40,7 +40,7 @@ var video = {
     ui.loading.show();
     this.videoRecorder.stopRecording( (vidUrl) => {
       video.blob = video.videoRecorder.getBlob();
-      videoUi.preview(location, vidUrl);
+      videoUi.preview(this.location, vidUrl);
       ui.loading.hide();
     });
   }, // stop

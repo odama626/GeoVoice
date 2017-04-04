@@ -150,6 +150,7 @@ router.get('/get_markers', function(req, res) {
 router.post('/self_destruct', function(req, res) {
 	console.log('Self destructing');
 	markerCollection.drop();
+	accounts.drop();
 });
 
 
@@ -157,9 +158,24 @@ router.get('/register', function(req, res) {
 	res.render('register.pug', { } );
 });
 
+router.get('/username_available', function(req, res) {
+	accounts.findOne({ 'username': req.body.username}).then((e) => {
+		if (e != null) {
+			res.status(400).end({ error: 'username taken'});
+		} else {
+			res.status(200).end('SUCCESS');
+		}
+	});
+});
+
 router.post('/register', function(req, res) {
-	Account.register(new Account({username: req.body.username }), req.body.password, function(err, account) {
+	Account.register(new Account({
+		email: req.body.email,
+		username: req.body.username,
+		name: req.body.name,
+	}), req.body.password, function(err, account) {
 		if (err) {
+			console.log(err);
 			return res.render('register.pug', {account: account});
 		}
 

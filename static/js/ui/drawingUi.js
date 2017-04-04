@@ -37,6 +37,7 @@ var drawingUi = {
       google.maps.event.addListener(drawingUi.manager, 'overlaycomplete', drawingComplete);
     }, 200);
 
+
     // self destruct if user clicks anything else
     document.querySelectorAll('a').forEach( (a) => {
       a.addEventListener('click', () => {
