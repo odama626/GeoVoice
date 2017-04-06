@@ -12,15 +12,13 @@ var LocalStrategy = require('passport-local').Strategy;
 var GoogleStrategy = require('passport-google').Strategy;
 var pug = require('pug');
 
-
-
 var routes = require('./routes/index');
 var users = require('./routes/users');
-
 var app = express();
 
 app.use(compression());
 app.use(minify()); // enable minify on production
+
 var port = 5000;
 var database;
 var markerCollection;
@@ -28,9 +26,10 @@ var db;
 
 // setup HTTPS
 var httpsOptions = {
-	key: fs.readFileSync('ssl.key'),
-	cert: fs.readFileSync('ssl.crt'),
+        key: fs.readFileSync('ssl.key'),
+        cert: fs.readFileSync('ssl.crt'),
 };
+
 
 // Setup Session
 app.use(bodyParser.urlencoded({ extended: false }));

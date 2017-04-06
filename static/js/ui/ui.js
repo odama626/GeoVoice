@@ -61,6 +61,41 @@ var ui = {
     return dropZone;
   }, // createDropZone
 
+  createMarkerContent: function(marker) {
+    var container = document.createElement('div');
+    container.className = 'marker-content';
+
+    var pic = document.createElement('a');
+    pic.className = 'user-pic';
+    pic.setAttribute('href','/user/'+marker.info.creator);
+    container.appendChild(pic);
+
+    var meta = document.createElement('div');
+    meta.style.float = 'left';
+
+    var name = document.createElement('h5');
+    name.textContent = marker.info.creator;
+    meta.appendChild(name);
+
+    var date = new Date(marker.info.date);
+    var dateEl = document.createElement('h8');
+    dateEl.textContent = 'At '+date.toLocaleTimeString() + ' on ' + date.toLocaleDateString();
+    meta.appendChild(dateEl);
+    container.append(meta);
+    container.appendChild(document.createElement('br'));
+    container.innerHTML += markers.getMediaElement(marker);
+    container.appendChild(document.createElement('br'))
+
+    var tags = document.createElement('span');
+    tags.setAttribute('id', 'tag-container');
+    container.appendChild(tags);
+
+    geovoiceApi.getuser(
+      marker.info.creator == 'you - still pending' ? document.querySelector('a[href="user"]').textContent : marker.info.creator)
+      .then( (user) => { document.querySelector('.user-pic').style.backgroundImage = 'url("'+user.img+'")'});
+    return container;
+  },
+
   createMarkerLi: function(marker, options = {}) {
     options.draggable = options.draggable || false;
 

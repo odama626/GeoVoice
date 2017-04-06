@@ -101,31 +101,14 @@ var markers = {
     markers.closeInfoWindow();
     markers.pauseFetch();
     $('dv audio').remove();
-    var date = new Date(marker.info.date);
-
-    var imageUrl = '/img/'+marker.info.creator+'.png';
-
-    fetch(imageUrl) // TODO come up with a nicer way of setting default user image, preferably getting user's image from DB
-    .then((response) => {
-      if (!response.ok) {
-        imageUrl = '/img/default_profile_image.png';
-        var img = document.querySelector('.user-pic');
-        img.style['background-image'] = 'url("/img/default_profile_image.png")';
-      }
-    });
-
-    markers.infoWindow.setContent(`
-				<div class="user-pic" style="margin-top: 18px; margin-right: 5px; float:left; background-image: url(`+imageUrl+`)">
-        </div><div style="float:left"><h5>`+marker.info.creator+ `</h5>
-				<h8>At `+ date.toLocaleTimeString() +' on '+date.toLocaleDateString()+ `</h8></div> <br>
-				`+markers.getMediaElement(marker)+`
-
-				<br>
-				<span id="tag-container">
-				</span>
-				`);
-
-    markers.infoWindow.open(map, marker);
+    if (window.innerWidth <= 500) {
+      showDialog({
+        text: ui.createMarkerContent(marker).outerHTML
+      })
+    } else {
+      markers.infoWindow.setContent(ui.createMarkerContent(marker));
+      markers.infoWindow.open(map, marker);
+    }
     var tagContainer = $('#tag-container');
     new TagHandler(marker.info, tagContainer);
   }, // omsClickListener

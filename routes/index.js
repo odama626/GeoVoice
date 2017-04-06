@@ -10,7 +10,7 @@ var siteData = require('../site-data').siteData;
 // Setup marker database connection
 mongoClient.connect('mongodb://localhost:27017/geoVoice', function(err, database) {
 	if (err) { return console.dir(err); }
-	console.log('connected to DB');
+	console.log('connected to marker database');
 
 	db = database;
 	markerCollection = db.collection('markers');
@@ -20,7 +20,7 @@ mongoClient.connect('mongodb://localhost:27017/geoVoice', function(err, database
 
 mongoClient.connect('mongodb://localhost:27017/geoVoice_passport', function(err, database) {
 	if (err) { return console.dir(err); }
-	console.log('connected to DB');
+	console.log('connected to account database');
 
 	accounts = database.collection('accounts');
 
@@ -48,6 +48,44 @@ router.get('/dialogs/:filename', function (req, res) {
 			});
 	}
 });
+
+// get logged in user data
+router.get('/api/self', function (req, res) {
+	if (req.isAuthenticated()) {
+		res.json({
+			name: req.user.name,
+			username: req.user.username,
+			img: req.user.image
+		});
+	}	else {
+		res.json({ error: 'Unauthorized'});
+	}
+})
+
+// get info about user
+router.get('/api/user/:user', function (req, res) {
+//	if (req.isAuthenticated()) {
+		accounts.findOne( { 'username' : sanitize(req.params.user)}).then(user => {
+			res.json({
+				name: user.name,
+				username: user.username,
+				img: user.image
+			});
+		}).catch( e => { res.json({error: 'User not found'})});
+	//} else {
+	//	res.json({ error: 'Unauthorized'});
+	//}
+
+})
+
+router.get('/user/:user', function(req, res) {
+	accounts.findOne( {'username' : sanitize(req.params.user)})
+	.then( user => {
+		res.render('publicUser.pug', {user: user });
+	});
+})
+
+
 
 // Add a new sound marker
 router.post('/submit', function(req, res) {

@@ -11,6 +11,8 @@
  - [x] Rework RegionPanel animations
  - [ ] # find out why some videos are choppy on playback
  - [ ] start working on api
+   - [x] getuser
+   - [x] getself
    - [ ] banner-ad that expands
  - [ ] # expand About page
    - [ ] # create FAQ
@@ -19,6 +21,7 @@
    - [x] allow deletion of markers
    - [ ] # reset password
    - [ ] # email validation on register
+   - [x] public user page
    - [x] use username instead of email on markers
    - [ ] private sharing of markers
    - [ ] treeview of markers based on region
