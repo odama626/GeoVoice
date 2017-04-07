@@ -219,10 +219,11 @@ var regions = {
       if (this.list[region].type == 'sequence' && this.list[region].markers.length == 1) {
         this.list[region].marker.setPosition(getLoc(marker));
       }
-      activeRegion.clear();
+      //activeRegion.clear();
       regionPanel.open(this.list[region]);
+    } else {
+      activeRegion.set(regions.list[null]);
     }
-    activeRegion.set(regions.list[region]);
 
   }, // injectMarker
 

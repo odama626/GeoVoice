@@ -50,6 +50,7 @@ var activeRegion = { // methods and members for currently active region
   clear: function() {
     if (this.geofence != null) {
       this.geofence.setMap(null);
+      this.geofence = null;
     }
     this.set(regions.list[null]);
     markers.resumeFetch();

@@ -121,7 +121,6 @@ function getLocation() {
         resolve(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
       }, function(e) {
         ui.createSnack('The geolocation service failed');
-        console.log(e);
       });
     } else {
       // Browser doesn't support Geolocation
@@ -163,9 +162,8 @@ function setPrototypes() {
 } // setPrototypes
 
 function getBounds(arr) {
-  console.log(arr);
   var bounds = new google.maps.LatLngBounds();
-  arr.forEach(function(element) { console.log(element);bounds.extend(element); });
+  arr.forEach(function(element) { bounds.extend(element); });
   return bounds;
 } // getBounds
 

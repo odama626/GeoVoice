@@ -74,11 +74,9 @@ var soundUi = {
           var regionsContainer = $('#regions');
 
           for (var place in regions.list) {
-            console.log(place);
             if (regions.list[place].type == 'sequence') {
               regionsContainer.append('<option value="' + place + '">' + place + '</option>');
             } else if (regions.list[place].type == 'classic') {
-              console.log(sound.location);
               if (getBounds(regions.list[place].geofence).contains(sound.location)) {
                 regionsContainer.append('<option value="' + place + '">' + place + '</option>');
               }

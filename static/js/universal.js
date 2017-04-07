@@ -121,7 +121,6 @@ var user = {
   }, // fetchMarkers
 
   delete: function(region, media) {
-    console.log('deleting', media);
     markers.delete(region, media)
     .then((res) => {
       var el = document.getElementById(media);

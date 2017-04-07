@@ -106,7 +106,6 @@ var videoUi = {
 
           var regionsContainer = $('#regions');
           for (var place in regions.list) {
-            console.log(place);
             if (regions.list[place].type == 'sequence') {
               regionsContainer.append('<option value="' + place + '">' + place + '</option>');
             } else if (regions.list[place].type == 'classic') {
