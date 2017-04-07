@@ -13,6 +13,8 @@ var currently_logged_in = false;
 //"use strict"
 
 function initMap() {
+  document.getElementById('google-maps').remove();
+  map_icons_init()
   map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: -34.397, lng: 150.644},
     zoom: 15,
@@ -23,7 +25,7 @@ function initMap() {
   });
 
   //Check logged in status
-  currently_logged_in = $('a[href="login"]').length ==0;
+  currently_logged_in = !document.querySelector('a[href="login"]');
 
   setPrototypes();
   createUserDot();
@@ -50,30 +52,36 @@ function initMap() {
 
   getLocation().then((loc) => map.setCenter(loc));
 
-	// Close navigation drawer on <a> click
-  $('a').click( () => {
-    markers.closeInfoWindow();
-    regionPanel.close();
-    $( '.mdl-layout__drawer, .mdl-layout__obfuscator' ).removeClass( 'is-visible' );
-  });
-
   if (ENABLE_REGIONS == false) {
     disableRegions();
   }
 
-  $(document).ready(() => {
-    $('#search-bar').betterAutocomplete('init', searchHandler.tagList, {},
-      {
-        select: function(result, $input) {
-        //  $input.val(result.title);
-          searchHandler.addChip(result.title);
-          $input.val('');
-        }
+  document.querySelectorAll('a').forEach( a => {
+    var onclick = () => {
+      markers.closeInfoWindow();
+      regionPanel.close();
+      document.querySelector('.mdl-layout__drawer').classList.remove('is-visible');
+      document.querySelector('.mdl-layout__obfuscator').classList.remove('is-visible');
+    }
+    a.addEventListener('click', onclick);
+  })
 
-      }
-    );
-  });
+
 } // initMap
+
+window.onload = () => {
+  $('#search-bar').betterAutocomplete('init', searchHandler.tagList, {},
+    {
+      select: function(result, $input) {
+      //  $input.val(result.title);
+        searchHandler.addChip(result.title);
+        $input.val('');
+      }
+
+    }
+  );
+}
+
 
 function createUserDot() {
   var liveUserLocation = new google.maps.Marker({
@@ -155,8 +163,9 @@ function setPrototypes() {
 } // setPrototypes
 
 function getBounds(arr) {
+  console.log(arr);
   var bounds = new google.maps.LatLngBounds();
-  arr.forEach(function(element) { bounds.extend(element); });
+  arr.forEach(function(element) { console.log(element);bounds.extend(element); });
   return bounds;
 } // getBounds
 
@@ -179,6 +188,7 @@ function addPrecisePoint(event) {
           </button>
         </div>
     `);
+
   google.maps.event.addListenerOnce(markers.infoWindow, 'domready', () => {
     var soundRequest = document.getElementById('sound-request');
     var videoRequest = document.getElementById('video-request');
@@ -187,3 +197,10 @@ function addPrecisePoint(event) {
   });
   markers.infoWindow.open(map);
 } // addPrecisePoint
+
+function getResource(res) {
+  if (!res.startsWith('blob:')) {
+    res = '/'+res;
+  }
+  return res;
+}

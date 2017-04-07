@@ -112,15 +112,12 @@ span > .mdl-navigation__link:hover {
 		right: -100vw;
 		opacity: 0;
 	}
-	80% { transform: rotateZ(0); }
 	90% {
 		right: 6px;
-		transform: rotateZ(-1deg);
 	}
 	to {
 		right: 0px;
 		opacity: 1;
-		transform: rotateZ(0deg);
 	}
 }
 

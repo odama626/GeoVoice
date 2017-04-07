@@ -109,8 +109,8 @@ var videoUi = {
             console.log(place);
             if (regions.list[place].type == 'sequence') {
               regionsContainer.append('<option value="' + place + '">' + place + '</option>');
-            } else if (typeof regions.list[place].geofence !== 'undefined') {
-              if (getBounds(regions.list[place].geofence).contains(location)) {
+            } else if (regions.list[place].type == 'classic') {
+              if (getBounds(regions.list[place].geofence).contains(video.location)) {
                 regionsContainer.append('<option value="' + place + '">' + place + '</option>');
               }
             }

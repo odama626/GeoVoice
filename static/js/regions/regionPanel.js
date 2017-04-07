@@ -3,11 +3,11 @@
 
 var regionPanel = {
 
-  open: function(region, animate = true) {
+  open: function(region) {
     panToPromise(getLoc(region));
     history.replaceState('', region.regionName+' - Geovoice', getBaseUrl()+'/region/'+region._id);
     activeRegion.set(region);
-    this.createHtml(region, animate);
+    this.createHtml(region);
   }, // open
 
   close: function() {
@@ -16,7 +16,7 @@ var regionPanel = {
     document.querySelector('.right-panel').classList.remove('slide-in');
   }, // close
 
-  createHtml: function(region, animate) {
+  createHtml: function(region) {
 
     var listContainer = document.createElement('ul');
     listContainer.className = 'mdl-list';

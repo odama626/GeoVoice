@@ -146,9 +146,12 @@ var regions = {
 
 
       region.marker.addListener('click', function() {
-        activeRegion.clear();
-				//regionPanel.close();
-        regionPanel.open(region);
+        if (activeRegion.region != region) {
+          activeRegion.clear();
+  				regionPanel.close();
+          regionPanel.open(region);
+        }
+
       });
     }
 		//markers.list.push(marker);
@@ -212,9 +215,14 @@ var regions = {
 
     this.list[region].markers.push(marker);
     if (region !== null) {
-      regionPanel.open(this.list[region], false);
+      // if its the first marker in a sequence
+      if (this.list[region].type == 'sequence' && this.list[region].markers.length == 1) {
+        this.list[region].marker.setPosition(getLoc(marker));
+      }
+      activeRegion.clear();
+      regionPanel.open(this.list[region]);
     }
-    activeRegion.set(regions.list[null]);
+    activeRegion.set(regions.list[region]);
 
   }, // injectMarker
 

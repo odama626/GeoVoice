@@ -1,7 +1,6 @@
 extends layout.pug
 
 block cssLinks
-  link(rel="stylesheet", href="/css/audio.css")
   link(rel="stylesheet", href="/css/map-icons.css")
   link(rel="stylesheet", href="/css/spectrum.css")
   link(rel="stylesheet", href="/css/better-autocomplete.css")
@@ -48,35 +47,44 @@ block mainContent
       .mdl-snackbar__text
       button.mdl-snackbar__action(type="button")
 
-block jsLibs
-  script(src="/js/ext/jquery.better-autocomplete.js")
-  script(src="/js/ext/Sortable.min.js")
+block jsLibs 
+  
+  
+  // Keep this stuff in order!
+  script(defer src="/js/markers.js")
+  script(defer src="/js/ext/map-icons.js")
+  script(defer src="/js/regions/regions.js")
+  script(defer src="/map.js")
+  script(id="google-maps",defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBmAuADcJ-0QF2ShETkv-xcbuEXgIbfNnE&callback=initMap&libraries=drawing")
+  script(defer src="/js/ext/oms.min.js")
+  script(defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js")
+  script(defer src="/js/ext/jquery.better-autocomplete.js")
+  
 
-  script(src="/js/ui/ui.js")
-  script(src="/js/ui/soundUi.js")
-  script(src="/js/ui/regionUi.js")
-  script(src="/js/ui/drawingUi.js")
-  script(src="/js/ui/videoUi.js")
-  script(src="/js/searchHandler.js")
-  script(src="/js/tagHandler.js")
-  script(src="/js/markers.js")
-  script(src="/js/regions/regions.js")
-  script(src="/js/regions/activeRegion.js")
-  script(src="/js/regions/regionPanel.js")
-  script(src="/js/regions/regionPanelSettings.js")
-  script(src="/js/sound.js")
-  script(src="/js/video.js")
-  script(src="/map.js")
-  script(src="/js/markerSequence.js")
-  script(src="/js/api.js")
+  // This order doesn't matter
+  script(async src="/js/ext/Sortable.min.js")
+  script(async src="/js/ui/ui.js")
+  script(async src="/js/ui/soundUi.js")
+  script(async src="/js/ui/regionUi.js")
+  script(async src="/js/ui/drawingUi.js")
+  script(async src="/js/ui/videoUi.js")
+  script(async src="/js/searchHandler.js")
+  script(async src="/js/tagHandler.js")
+  
+  
+  script(async src="/js/regions/activeRegion.js")
+  script(async src="/js/regions/regionPanel.js")
+  script(async src="/js/regions/regionPanelSettings.js")
+  script(async src="/js/sound.js")
+  script(async src="/js/video.js")
+  script(async src="/js/markerSequence.js")
+  script(async src="/js/api.js")
 
-  // js Libraries
-  script( src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBmAuADcJ-0QF2ShETkv-xcbuEXgIbfNnE&callback=initMap&libraries=drawing")
+  
 
   // External js includes
-  script(src="/js/ext/ric-polyfill.js")
-  script(src="/js/ext/oms.min.js")
-  script(src="/js/ext/adapter.js")
-  script(src="https://cdn.WebRTC-Experiment.com/RecordRTC.js")
-  script(src="/js/ext/map-icons.js")
-  script(src="/js/ext/spectrum.js")
+  script(async src="/js/ext/ric-polyfill.js")
+  
+  script(async src="/js/ext/adapter.js")
+  script(async src="https://cdn.WebRTC-Experiment.com/RecordRTC.js")
+  script(defer src="/js/ext/spectrum.js")

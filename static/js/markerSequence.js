@@ -19,7 +19,7 @@ class MarkerSequence {
       this.mediaElement.style.width = '45vw';
     }
     this.mediaElement.controls = true;
-    this.mediaElement.src = "/"+this.region.markers[0].media;
+    this.mediaElement.src = getResource(this.region.markers[0].media);
 
     var subTitle = document.createElement('div');
     subTitle.appendChild(this.mediaElement);
@@ -93,7 +93,7 @@ class MarkerSequence {
     panToPromise(getLoc(this.region.markers[this.currentMarker])).then(() =>{
       this.mediaElement.pause();
       this.mediaElement.currentTime = 0.00;
-      this.mediaElement.src = '/'+this.region.markers[this.currentMarker].media;
+      this.mediaElement.src = getResource(this.region.markers[this.currentMarker].media);
       this.mediaElement.play();
     });
   }
