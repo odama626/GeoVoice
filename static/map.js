@@ -16,8 +16,8 @@ function initMap() {
   document.getElementById('google-maps').remove();
   map_icons_init()
   map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: -34.397, lng: 150.644},
-    zoom: 15,
+    center: {lat: 39, lng: -101},
+    zoom: 4,
     mapTypeControl: false,
     styles: [
 			{stylers: [{ visibility: 'simplified' }]},
@@ -66,7 +66,9 @@ function initMap() {
     a.addEventListener('click', onclick);
   })
 
-
+  document.getElementById('map').addEventListener('pageshow', () => {
+    google.maps.event.trigger(map, "resize");
+  });
 } // initMap
 
 window.onload = () => {
@@ -193,4 +195,8 @@ function addPrecisePoint(event) {
   markers.infoWindow.open(map);
 } // addPrecisePoint
 
-getLocation().then((loc) => { debugLog('fast geolocate'+map); map.setCenter(loc);})
+getLocation().then((loc) => {
+  debugLog('fast geolocate'+map);
+  map.setCenter(loc);
+  map.setZoom(12);
+});
