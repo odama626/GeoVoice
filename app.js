@@ -13,7 +13,6 @@ var GoogleStrategy = require('passport-google').Strategy;
 var pug = require('pug');
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
 var app = express();
 
 app.use(compression());
