@@ -47,6 +47,10 @@ block jsLibs
   
   
   // Keep this stuff in order!
+  script(async src="/js/regions/activeRegion.js")
+  script(async src="/js/regions/regionPanel.js")
+  script(async src="/js/regions/regionPanelSettings.js")
+  script(async src="/js/markerSequence.js")
   script(defer src="/js/markers.js")
   script(defer src="/js/ext/map-icons.js")
   script(defer src="/js/regions/regions.js")
@@ -68,12 +72,10 @@ block jsLibs
   script(async src="/js/tagHandler.js")
   
   
-  script(async src="/js/regions/activeRegion.js")
-  script(async src="/js/regions/regionPanel.js")
-  script(async src="/js/regions/regionPanelSettings.js")
+  
   script(async src="/js/sound.js")
   script(async src="/js/video.js")
-  script(async src="/js/markerSequence.js")  
+  
 
   // External js includes
   script(async src="/js/ext/ric-polyfill.js")
