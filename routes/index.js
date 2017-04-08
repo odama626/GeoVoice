@@ -31,6 +31,10 @@ router.get('/', function (req, res) {
 	res.render('index.pug', {user : req.user });
 });
 
+router.get('/about/uses', function (req, res) {
+	res.render('about_uses.pug', {user: req.user});
+});
+
 router.get('/about', function( req, res) {
 	res.render('about.pug', {user : req.user });
 });

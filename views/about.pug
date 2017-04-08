@@ -12,23 +12,48 @@ block mainContent
         .mdl-card__media
           img.article-image(src="/res/about-banner.png", border="0", alt="Interesting banner photo goes here")
         .mdl-card__supporting-text
-          strong Your voice
+          strong Your media
           span  Where you want it
         .mdl-grid.portfolio-copy
-          h3.mdl-cell.mdl-cell--12-col.mdl-typography--headline Introduction
+          h3.mdl-cell.mdl-cell--12-col.mdl-typography--headline What is it?
           .mdl-cell.mdl-cell--6-col.mdl-card__supporting-text.no-padding
-            p
-              | Starting out, we wanted to give people the ability
-              |  to present sound snippets to the world,
-              |  when and where they wanted.  We envisioned everything from people
-              | making curated audio tours of museums, or even simply walking to
-              | to parks and making points simply with the idea of being heard.
+            p.
+              Pathgrab allows you to pin audio and video to physical locations.
+              Use it to promote future events.
+              Use it to broadcast something that is currently happening, or use it to create dynamic and interactive media.
+              Pathgrab is an application allows for realtime documentation.
+              You can work alone, or in groups to produce segmented and serialized content that is mapped with globally positioned markers.
+              Ideas and use cases can be found <a href="/about/uses">here</a>
+          .mdl-cell.mdl-cell--6-col
+            img.article-image(src="/res/about-intro-filler.png", border="0", alt="")
+        .mdl-grid.portfolio-copy
+          h3.mdl-cell.mdl-cell--12-col.mdl-typography--headline How it works
+          .mdl-cell.mdl-cell--6-col.mdl-card__supporting-text.no-padding
+            p.
+              You can pin media to GPS locations.
+              You can create playlists of this media that work in tandem with the map display 
+              You can work in groups to collaborate on production 
+          .mdl-cell.mdl-cell--6-col
+            img.article-image(src="/res/about-intro-filler.png", border="0", alt="")
+        .mdl-grid.portfolio-copy
+          h3.mdl-cell.mdl-cell--12-col.mdl-typography--headline How to get started
+          .mdl-cell.mdl-cell--6-col.mdl-card__supporting-text.no-padding
+            p.
+              Create a user account 
+              Start by either recording/uploading audio/video or creating a new region.
+              Add media to your map 
+              Add playlists to your map 
+              Share your maps with your friends.
+              Collaborate on media production by creating groups 
           .mdl-cell.mdl-cell--6-col
             img.article-image(src="/res/about-intro-filler.png", border="0", alt="")
     footer.mdl-mini-footer
       .mdl-mini-footer__left-section
-        .mdl-logo GeoVoice
+        ul.mdl-mini-footer__link-list
+          li: a(href="/").mdl-logo PathGrab
       .mdl-mini-footer__right-section
         ul.mdl-mini-footer__link-list
+          li: a(href="/about") About
+          li: a(href="/about/uses") Uses
           li: a(href="#") Help
           li: a(href="#") Privacy &amp; Terms
