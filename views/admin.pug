@@ -13,4 +13,6 @@ block mainContent
   
 block jsLibs
   if user.lvl == 'admin'
-    script(src="/js/admin.js")
+    script(async src="/js/admin.js")
+    
+  script(async src="js/ui/ui.js")

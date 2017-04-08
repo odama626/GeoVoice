@@ -16,10 +16,6 @@ block mainContent
           - var displayName = (user.name ? user.name : user.username)
           h2.mdl-card__title-text(style="margin: auto 0;") #{displayName}
         .mdl-card__portfolio-copy
-                
-  .mdl-snackbar.mdl-js-snackbar(aria-live="assertive", aria-atomic="true", aria-relevant="text")
-    .mdl-snackbar__text
-    button.mdl-snackbar__action(type="button")
 
 block jsLibs
   script(src='/js/ui/ui.js')
