@@ -141,3 +141,5 @@ var user = {
     });
   }
 };
+
+window.onload = () => user.fetchMarkers();

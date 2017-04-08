@@ -39,7 +39,7 @@ class MarkerSequence {
     this.mediaElement.onplay = () => this.started();
     this.element.append(primaryContent);
 
-  //  map.panTo(getLoc(this.region.markers[0]));
+  //  map.panTo(geovoiceApi.parseLocation(this.region.markers[0]));
     map.panTo(this.region.marker.getPosition());
   }
 
@@ -90,7 +90,7 @@ class MarkerSequence {
       this.temporaryMarker = this.region.markers[this.currentMarker];
     markers.place(this.temporaryMarker);
 
-    panToPromise(getLoc(this.region.markers[this.currentMarker])).then(() =>{
+    panToPromise(geovoiceApi.parseLocation(this.region.markers[this.currentMarker])).then(() =>{
       this.mediaElement.pause();
       this.mediaElement.currentTime = 0.00;
       this.mediaElement.src = getResource(this.region.markers[this.currentMarker].media);

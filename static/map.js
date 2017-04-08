@@ -5,7 +5,7 @@
 //Global Variables
 var map;
 var drawingManager;
-var _debug = false;
+var _debug = true;
 var ENABLE_REGIONS = true;
 var currently_logged_in = false;
 
@@ -50,7 +50,7 @@ function initMap() {
   });
   google.maps.event.addListener(map, 'dragstart',  (e) => { global_mouseup = true; });
 
-  getLocation().then((loc) => map.setCenter(loc));
+//  getLocation().then((loc) => {console.log('slow set'); map.setCenter(loc)});
 
   if (ENABLE_REGIONS == false) {
     disableRegions();
@@ -86,10 +86,11 @@ window.onload = () => {
 function createUserDot() {
   var liveUserLocation = new google.maps.Marker({
     clickable: false,
-    icon: new google.maps.MarkerImage('//maps.gstatic.com/mapfiles/mobile/mobileimgs2.png',
-                                      new google.maps.Size(22, 22),
-                                      new google.maps.Point(0, 18),
-                                      new google.maps.Point(11,11)),
+    icon: new google.maps.MarkerImage(
+      '//maps.gstatic.com/mapfiles/mobile/mobileimgs2.png',
+      new google.maps.Size(22, 22),
+      new google.maps.Point(0, 18),
+      new google.maps.Point(11,11)),
     shadow: null,
     zIndex: 999,
     map: map
@@ -110,7 +111,7 @@ function disableRegions() {
 
 function debugLog(text) {
   if (_debug) {
-    console.log(text);
+    console.debug(text);
 	}
 } // debugLog
 
@@ -135,10 +136,6 @@ function panToPromise(location) {
     google.maps.event.addListenerOnce(map, 'idle', resolve);
   });
 } // panToPromise
-
-function getLoc(m) {
-  return { lat: parseFloat(m.lat), lng: parseFloat(m.lng)};
-}
 
 function getBaseUrl() {
     var re = new RegExp(/^.*\/\/[^\/]+/);
@@ -196,9 +193,4 @@ function addPrecisePoint(event) {
   markers.infoWindow.open(map);
 } // addPrecisePoint
 
-function getResource(res) {
-  if (!res.startsWith('blob:')) {
-    res = '/'+res;
-  }
-  return res;
-}
+getLocation().then((loc) => { debugLog('fast geolocate'+map); map.setCenter(loc);})

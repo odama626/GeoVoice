@@ -26,5 +26,16 @@ var geovoiceApi = {
           }
       }).catch(reject);
     });
+  },
+
+  parseLocation: (m) => {
+    return { lat: parseFloat(m.lat), lng: parseFloat(m.lng)};
   }
+}
+
+function getResource(res) {
+  if (!res.startsWith('blob:')) {
+    res = '/'+res;
+  }
+  return res;
 }

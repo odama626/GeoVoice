@@ -217,7 +217,7 @@ var regions = {
     if (region !== null) {
       // if its the first marker in a sequence
       if (this.list[region].type == 'sequence' && this.list[region].markers.length == 1) {
-        this.list[region].marker.setPosition(getLoc(marker));
+        this.list[region].marker.setPosition(geovoiceApi.parseLocation(marker));
       }
       //activeRegion.clear();
       regionPanel.open(this.list[region]);

@@ -13,7 +13,11 @@ var markers = {
     var marker = new google.maps.Marker({
       position: { lat: parseFloat(info.lat), lng: parseFloat(info.lng)},
       map:map,
-      label: info.date.substring(0,3)
+      label: {
+        fontFamily: 'Material Icons',
+        text: (info.type == 'audio' ? 'mic' : 'videocam') //info.date.substring(0,3)
+      },
+      color: 'blue'
     });
 
     marker.info = info;

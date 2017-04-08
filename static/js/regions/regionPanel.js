@@ -4,7 +4,7 @@
 var regionPanel = {
 
   open: function(region) {
-    panToPromise(getLoc(region));
+    panToPromise(geovoiceApi.parseLocation(region));
     history.replaceState('', region.regionName+' - Geovoice', getBaseUrl()+'/region/'+region._id);
     activeRegion.set(region);
     this.createHtml(region);
