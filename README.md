@@ -34,6 +34,26 @@
  - [ ] Only send Marker information needed
  - [ ] add stylized login error page
  - [ ] add stylized 404 page
+ - [ ] Groups
+```
+  person {
+     groups: [
+       {
+         name: <group name>
+         access: owner or can edit or can view
+       }
+     ]
+   }
+
+   region {
+     ingroup: <group name>
+     description: asfas fads fasdf
+     access: public or private
+
+   }
+
+   group url: /group/groupname
+ ```
 
 ## Known Working
  - Linux
