@@ -192,12 +192,16 @@ router.get('/get_markers', function(req, res) {
 	console.log('Sending markers');
 });
 
-// Wipe database (Temporary)
+// Wipe database (admin only)
 router.post('/self_destruct', function(req, res) {
 	if (req.isAuthenticated() && req.user.lvl == 'admin') {
 		console.log('Self destructing');
 		markerCollection.drop();
 		//accounts.drop();
+		res.json({status: 'SUCCESS'});
+	} else {
+		res.status(500);
+		res.json({status: 'error'});
 	}
 });
 
