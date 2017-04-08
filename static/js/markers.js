@@ -105,7 +105,7 @@ var markers = {
     markers.closeInfoWindow();
     markers.pauseFetch();
     $('dv audio').remove();
-    if (window.innerWidth <= 500) {
+    if (window.innerWidth <= 500) { // use dialog instead on mobile
       showDialog({
         text: ui.createMarkerContent(marker).outerHTML
       })

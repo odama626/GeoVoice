@@ -14,6 +14,14 @@ var regionPanel = {
     activeRegion.clear();
     history.replaceState('', 'Geovoice', getBaseUrl());
     document.querySelector('.right-panel').classList.remove('slide-in');
+    if (window.innerWidth <= 500) { // scroll down to show panel on mobile
+      var el = document.querySelector('.map-container');
+      if (navigator.userAgent.indexOf('Firefox')) {
+        el.scrollIntoView({behavior: 'smooth'});
+      } else {
+        el.scrollIntoViewIfNeeded({behavior: 'smooth'})
+      }
+    }
   }, // close
 
   createHtml: function(region) {
