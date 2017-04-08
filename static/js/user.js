@@ -28,7 +28,7 @@ var user = {
     data.append('query', usernameField.value);
 
     $.ajax({
-      url: '/user/name_available',
+      url: '/username_available',
       type: 'POST',
       data: data,
       contentType: false,
