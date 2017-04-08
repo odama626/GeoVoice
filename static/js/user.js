@@ -28,7 +28,7 @@ var user = {
     data.append('query', usernameField.value);
 
     $.ajax({
-      url: '/username_available',
+      url: '/user/name_available',
       type: 'POST',
       data: data,
       contentType: false,
@@ -141,5 +141,3 @@ var user = {
     });
   }
 };
-
-window.onload = () => user.fetchMarkers();
