@@ -103,6 +103,7 @@ var ui = {
     if (marker.type == 'audio' || marker.type == 'sound') {
       media = document.createElement('audio');
       media.controls = true;
+      media.type = 'audio/wav'
       media.src = getResource(marker.media);
     } else if (marker.type == 'video') {
       media = document.createElement('a');

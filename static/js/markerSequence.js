@@ -12,7 +12,7 @@ class MarkerSequence {
   initializeElement() {
     if (this.region.markers[0].type == 'audio') {
       this.mediaElement = document.createElement('audio');
-      this.mediaElement.type='audio/mpeg';
+      this.mediaElement.type='audio/wav';
     } else if (this.region.markers[0].type == 'video') {
       this.mediaElement = document.createElement('video');
       this.mediaElement.type='video/webm';
