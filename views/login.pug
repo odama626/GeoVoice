@@ -13,14 +13,14 @@ block mainContent
       .mdl-card__title
         h2.mdl-card__title-text Sign in
       .mdl-card__supporting-text
-        form#login-form(action="/login", method="post")
+        form#login-form(action="/user/login", method="post")
           .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
             input#email.mdl-textfield__input(type="text", name="email")
             label.mdl-textfield__label(for="email") Email address
           .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
             input#password.mdl-textfield__input(type="password", name="password")
             label.mdl-textfield__label(for="password") Password
-          a#register.mdl-button.mdl-js-button.mdl-js-ripple-effect(href="register") Register
+          a#register.mdl-button.mdl-js-button.mdl-js-ripple-effect(href="/user/register") Register
           button#sign-in.mdl-button.mdl-js-button.mdl-js-ripple-effect.mdl-button.primary(type="submit") Sign in
 
 block jsLibs

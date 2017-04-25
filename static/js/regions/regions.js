@@ -14,41 +14,35 @@ var regions = {
     if (!markers.fetchActive) {
       return;
     }
-    $.ajax({
-      url: '/get_markers',
-      type: 'GET',
-      success: function(data) {
-        var regionList = JSON.parse(data);
-        regions.clear();
-        if (regionList.length == 0) {
-          regions.createTempList();
-        } else {
-          for (var d = 0; d < regionList.length; d++) {
-            if (regionList[d].regionName == 'null') {
-              regionList[d].regionName = null;
-            }
-            regions.place(regionList[d]);
+
+    fetch('/fetch'+url.getQueryParams())
+    .then(geovoiceApi.fetchOk)
+    .then(data => {
+      debugLog(data);
+      regions.clear();
+      if (data.length == 0) { regions.createTempList(); }
+      else {
+        for (let i=0; i < data.length; i++) {
+          if (data[i].name == 'null') {
+            data[i].name = null;
           }
+          regions.place(data[i]);
         }
-
-        regions.updateActiveRegion(regionList);
-
-      },
-      error: function(e) {
-        ui.createSnack('Error retrieving markers: ' + e.toString());
       }
-    });
+      regions.updateActiveRegion(data);
+    }).catch( e => {console.log(e); ui.createSnack(`Error retrieving markers" ${e}`)});
   }, // fetch
+
 
   updateActiveRegion: function(regionList) {
     if (typeof activeRegion.region === 'undefined') {
       var rP = location.href.indexOf('region');
-      var regionName = null;
+      var name = null;
       if (rP > -1) {
         var id = location.href.slice(rP+'region/'.length);
         regionList.some( (region) => {
           if (region._id == id) {
-            regionPanel.open(regions.list[region.regionName]);
+            regionPanel.open(regions.list[region.name]);
             return true;
           }
         });
@@ -71,7 +65,7 @@ var regions = {
     var geoJson = region.geofence == null ? null : JSON.stringify(region.geofence);
 
     var data = new FormData();
-    data.append('regionName', region.regionName);
+    data.append('name', region.name);
     data.append('lat', region.lat);
     data.append('lng', region.lng);
     data.append('color', region.color);
@@ -95,10 +89,12 @@ var regions = {
     });
   }, // create
 
+  // Remove Circular link
+  // gmapsMarker.info -> marker.marker -> gmapsMarker
   getTransporatableList: function(region) {
-    var markers = {};
+    var points = [];
     region.markers.forEach( marker => {
-      markers.append({
+      points.push({
         creator: marker.creator,
         date: marker.date,
         lat: marker.lat,
@@ -109,11 +105,11 @@ var regions = {
         type: marker.type,
       });
     });
-    return markers;
+    return points;
   }, // getTransporatableList
 
   place: function(region) {  // ! this changes region.geofence from string to array
-    if (region.regionName != null) {
+    if (region.name != null) {
       region.marker = new Marker({
         map: map,
         position: {
@@ -155,7 +151,7 @@ var regions = {
       });
     }
 		//markers.list.push(marker);
-    this.list[region.regionName] = region;
+    this.list[region.name] = region;
 
   }, // place
 
@@ -229,14 +225,14 @@ var regions = {
 
   createTempList: function() { // create Temporary region if DB is empty
     this.list[null] = {
-      regionName: null,
+      name: null,
       markers: []
     };
   }, // createTempList
 
   clear: function() {
     for (var region in regions.list) {
-      if (typeof regions.list[region].marker != 'undefined') {
+      if (regions.list[region].marker && typeof regions.list[region].marker != 'undefined') {
         regions.list[region].marker.setMap(null);
         regions.list[region].marker = null;
       }

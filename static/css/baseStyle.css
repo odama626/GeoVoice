@@ -4,6 +4,19 @@ html, body {
 	padding: 0;
 }
 
+::-webkit-scrollbar {
+  width: 8px;
+
+}
+
+::-webkit-scrollbar-track {
+  opacity: 0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #bbb;
+}
+
 .map-container {
 	height: 100%;
 	width: 100%;
@@ -15,6 +28,7 @@ a {
 }
 
 #map {
+	position: absolute;
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
@@ -67,6 +81,17 @@ a {
 	border-radius: 10px;
 }
 
+.user-page-card {
+	min-height: 0 !important;
+}
+
+.flex-box {
+	display: inline-flex;
+	float: right;
+	flex-direction: row-reverse;
+	margin: 8px 15px;
+}
+
 .mdl-card__center {
 	margin: auto;
 }
@@ -108,6 +133,7 @@ span > .mdl-navigation__link:hover {
 	/*min-width: 200px; */
 	overflow-y: auto;
 	overflow-x: hidden;
+  max-width: 500px;
 	transform-origin: bottom right;
 
 	/* transition: all 500ms ease-in-out; */
@@ -165,6 +191,36 @@ span > .mdl-navigation__link:hover {
 	.slide-in video {
 		width: 100% !important;
 	}
+}
+
+.tap-animation {
+	position: absolute;
+	width: 0px;
+	height: 0px;
+	background-color: rgb(63,81,181);
+	/*pointer-events: none;*/
+	z-index: 5;
+	opacity: 0;
+	border-radius: 50%;
+	transform: translate(-50%, -50%);
+	animation-name: tapAnimation;
+	animation-duration: 350ms;
+}
+
+@keyframes tapAnimation {
+	from {
+		width: 0px;
+		height: 0px;
+		opacity: 1;
+	}
+	to {
+		width: 125px;
+		height: 125px;
+	}
+}
+
+video {
+	max-height: 60vh;
 }
 
 .right-panel__title {
@@ -348,15 +404,43 @@ input.map-marker:checked + label {
 }
 
 .region-panel__settings_button {
-	position: absolute;
-	right: 0;
+	float: right;
+	right: 0px;
 	font-size: xx-large;
 	color: #757575;
 	padding: 7px;
+}
+
+.admin-button {
+	top: 87px;
+	left: 65px;
+	position: absolute;
+	right: 0px;
+	font-size: xx-large;
+	color: #757575;
+	padding: 7px;
+}
+
+#region-color > span {
+	margin-right: 10px;
 }
 
 .marker-content > .user-pic {
 	margin-top: 18px;
 	margin-right: 5px;
 	float:left;
+}
+
+.drag_handle {
+	cursor: -webkit-grab;
+	cursor: -moz-grab;
+	cursor: grab;
+}
+
+.back-button {
+	float: left;
+	font-size: xx-large;
+	color: #757575;
+	padding: 7px;
+	cursor: pointer;
 }

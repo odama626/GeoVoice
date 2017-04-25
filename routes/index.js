@@ -1,42 +1,14 @@
 var express = require('express');
-var passport = require('passport');
-var Account = require('../models/account');
-var	mongoClient = require('mongodb').MongoClient;
+var Group = require('../models/group');
+var	ObjectId = require('mongodb').ObjectID;
+//var mongoose = require('mongoose');
 var sanitize = require('mongo-sanitize');
 var router = express.Router();
 
 var siteData = require('../site-data').siteData;
 
-// Setup marker database connection
-mongoClient.connect('mongodb://localhost:27017/geoVoice', function(err, database) {
-	if (err) { return console.dir(err); }
-	console.log('connected to marker database');
-
-	db = database;
-	markerCollection = db.collection('markers');
-
-//	markerCollection.drop();
-});
-
-mongoClient.connect('mongodb://localhost:27017/geoVoice_passport', function(err, database) {
-	if (err) { return console.dir(err); }
-	console.log('connected to account database');
-
-	accounts = database.collection('accounts');
-
-//	markerCollection.drop();
-});
-
 router.get('/', function (req, res) {
 	res.render('index.pug', {user : req.user });
-});
-
-router.get('/about/uses', function (req, res) {
-	res.render('about_uses.pug', {user: req.user});
-});
-
-router.get('/about', function( req, res) {
-	res.render('about.pug', {user : req.user });
 });
 
 router.get('/region/:regionid', function( req, res) {
@@ -53,44 +25,6 @@ router.get('/dialogs/:filename', function (req, res) {
 	}
 });
 
-// get logged in user data
-router.get('/api/self', function (req, res) {
-	if (req.isAuthenticated()) {
-		res.json({
-			name: req.user.name,
-			username: req.user.username,
-			img: req.user.image
-		});
-	}	else {
-		res.json({ error: 'Unauthorized'});
-	}
-})
-
-// get info about user
-router.get('/api/user/:user', function (req, res) {
-//	if (req.isAuthenticated()) {
-		accounts.findOne( { 'username' : sanitize(req.params.user)}).then(user => {
-			res.json({
-				name: user.name,
-				username: user.username,
-				img: user.image
-			});
-		}).catch( e => { res.json({error: 'User not found'})});
-	//} else {
-	//	res.json({ error: 'Unauthorized'});
-	//}
-
-})
-
-router.get('/user/:user', function(req, res) {
-	accounts.findOne( {'username' : sanitize(req.params.user)})
-	.then( user => {
-		res.render('publicUser.pug', {user: user });
-	});
-})
-
-
-
 // Add a new sound marker
 router.post('/submit', function(req, res) {
 	if (req.isAuthenticated()) {
@@ -104,8 +38,8 @@ router.post('/submit', function(req, res) {
 			'creator': req.user.username,
 			'tags': []
 		};
-		markerCollection.update(
-			{ regionName: sanitize(req.body.region)},
+		req.app.locals.db.markers.update(
+			{ name: sanitize(req.body.region)},
 			{
 				$push: { markers: doc }
 			},
@@ -116,18 +50,11 @@ router.post('/submit', function(req, res) {
 	}
 });
 
-router.post('/user', function(req, res) {
-	if (req.isAuthenticated()) {
-		accounts.update({ _id: sanitize(req.user._id)}, { $set: {image: sanitize(req.files[0].filename)}});
-		res.end('SUCCESS');
-	};
-});
-
 router.post('/update_tags', function (req, res) {
 	if (req.isAuthenticated()) {
 		var tags = JSON.parse(req.body.tags);
-		markerCollection.update(
-			{ 'regionName': sanitize(req.body.region),
+		req.app.locals.db.markers.update(
+			{ 'name': sanitize(req.body.region),
 				'markers.media': sanitize(req.body.media) },
 			{
 				$set: { 'markers.$.tags': tags}
@@ -140,8 +67,8 @@ router.post('/update_tags', function (req, res) {
 
 router.post('/delete_marker', function (req, res) {
 	if (req.isAuthenticated()) {
-		markerCollection.update(
-			{ 'regionName': sanitize(req.body.region),
+		req.app.locals.db.markers.update(
+			{ 'name': sanitize(req.body.region),
 				'markers.media': sanitize(req.body.media),
 			 	'markers.creator': sanitize(req.user.username) },
 			{
@@ -158,12 +85,31 @@ router.post('/delete_marker', function (req, res) {
 
 router.post('/update_marker_order', function(req, res) {
 	if (req.isAuthenticated()) {
-		console.log(markerCollection.update(
-			{ '_id': sanitize(req.body.regionId) },
+		req.app.locals.db.markers.update(
+			{ '_id': ObjectId(sanitize(req.body.regionId)) },
 			{
-				$set: {'markers' : JSON.parse(sanitize(req.body.markers))}
-			}
-		));
+				$set: {
+					description: sanitize(req.body.description),
+					markers : JSON.parse(sanitize(req.body.markers))
+				}
+			}//, { multi: true }
+		)
+		if (req.body.group) {
+			req.app.locals.db.markers.update(
+				{ '_id': ObjectId(sanitize(req.body.regionId)) },
+				{
+					$set: {
+						group: sanitize(req.body.group)
+					}
+				}//, { multi: true }
+			);
+			req.app.locals.db.groups.update(
+				{ 'name': sanitize(req.body.group) },
+				{
+					$addToSet: { regions: sanitize(req.body.regionId)}
+				}
+			)
+		}
 		res.end('SUCCESS');
 	}
 });
@@ -172,7 +118,7 @@ router.post('/update_marker_order', function(req, res) {
 router.post('/submit_region', function(req, res) {
 	if (req.isAuthenticated()) {
 		var region = {
-			'regionName': sanitize(req.body.regionName),
+			'name': sanitize(req.body.name),
 			'lat': sanitize(req.body.lat),
 			'lng': sanitize(req.body.lng),
 			'color': sanitize(req.body.color),
@@ -182,95 +128,120 @@ router.post('/submit_region', function(req, res) {
 			'geofence': sanitize(req.body.geofence),
 			'type': sanitize(req.body.type)
 		};
-		markerCollection.insert(region);
+		req.app.locals.db.markers.insert(region);
 		res.end('SUCCESS');
 		console.log('Added new region');
 	}
 });
 
-// retrieve markers
-router.get('/get_markers', function(req, res) {
-	markerCollection.find().toArray( function(err, items) {
-		res.send(JSON.stringify(items));
-	});
-	console.log('Sending markers');
-});
-
-// Wipe database (admin only)
-router.post('/self_destruct', function(req, res) {
-	if (req.isAuthenticated() && req.user.lvl == 'admin') {
-		console.log('Self destructing');
-		markerCollection.drop();
-		//accounts.drop();
-		res.json({status: 'SUCCESS'});
-	} else {
-		res.status(500);
-		res.json({status: 'error'});
+router.post('/submit_group', function(req, res) {
+	if (req.isAuthenticated()) {
+		var group = {
+			'owner': sanitize(req.user.username),
+			'name': sanitize(req.body.name),
+			'regions': [],
+			'access': sanitize(req.body.visibility)
+		};
+		var userGroup = {
+			'name': sanitize(req.body.name),
+			'access': 'owner'
+		}
+		req.app.locals.db.groups.insert(group);
+		req.app.locals.db.accounts.update(
+			{ username: sanitize(req.user.username)},
+			{
+				$push: { groups: userGroup}
+			},
+			{ upsert: true }
+		);
+		res.end('SUCCESS');
+		console.log(`Added new Group ${req.body.name}, ${req.body.visibility}`);
 	}
 });
 
-router.get('/admin', function (req, res) {
-	if (req.isAuthenticated() && req.user.lvl == 'admin') {
-		res.render('admin.pug', { user: req.user});
+router.get('/fetch', function(req, res) {
+	if (req.query.g) { // send group
+		req.app.locals.db.groups.findOne( {'name': sanitize(req.query.g)})
+		.then( group => {
+			var arr = [];
+			console.log(group);
+			group.regions.forEach( region => {arr.push(ObjectId(region))});
+			console.log(arr);
+			req.app.locals.db.markers.find({ '_id': { $in: arr } })
+			.toArray( (err, items) => res.json(items));
+		})
+	} else if (req.query.r) { // send region
+		req.app.locals.db.markers.findOne( {'name': sanitize(req.query.r) })
+		.then(region => {res.json([region])});
+	} else { // send all
+		req.app.locals.db.markers.find().toArray( function(err, items) {
+			res.json(items);
+		});
+	}
+});
+
+router.post('/check_name_availability', (req, res) => {
+	var available = (e) => res.json({available: (e == null)});
+	var query = sanitize(req.body.query)
+	if (req.query.t == 'user') {
+		req.app.locals.db.accounts.findOne({ 'username': query}).then(available);
+	} else if (req.query.t == 'region') {
+		req.app.locals.db.markers.findOne({ 'name': query}).then(available);
+	} else if (req.query.t == 'group') {
+		req.app.locals.db.groups.findOne({ 'name': query}).then(available);
+	}
+});
+
+function userInGroup(user, groupName) {
+	var inGroup = false;
+	for (var i = 0; i < user.groups.length; i++) {
+		if (user.groups[i].name == groupName) {
+			return true;
+		}
+	}
+	return false;
+}
+
+router.post('/get', (req, res) => {
+	var query = sanitize(req.body.query);
+	var error = { error: true, message: 'not found'};
+	if (req.isAuthenticated()) {
+		if (req.query.t == 'region') {
+			req.app.locals.db.markers.findOne({ 'name': query})
+			.then( region => {
+				if (region.group) {
+					req.app.locals.db.groups.findOne({ 'name': region.group})
+					.then( group => {
+						if ((group.access == 'private' && userInGroup(req.user, group.name))
+							|| group.access == 'public') {
+							res.json(region);
+						} else {
+							res.json(error);
+						}
+					})
+				} else {
+					res.json(region);
+				}
+			})
+		} else if (req.query.t == 'group') {
+			req.app.locals.db.groups.findOne({ 'name': query})
+			.then( group => {
+				if ((group.access == 'private' && userInGroup(req.user, group.name))
+					|| group.access == 'public') {
+					res.json(group);
+				} else {
+					res.json(error);
+				}
+			})
+		}
+	} else {
+		res.json({error: true, message: 'User not authenticated'});
 	}
 })
 
-router.get('/register', function(req, res) {
-	res.render('register.pug', { } );
-});
-
-router.post('/username_available', function(req, res) {
-	accounts.findOne( { 'username': sanitize(req.body.query) }).then((e) => {
-		if (e != null) {
-			res.status(401).end('ERROR');
-		} else {
-			res.status(200).end('SUCCESS');
-		}
-	});
-});
-
-router.post('/register', function(req, res) {
-	var userLvl = 'user';
-	if (req.body.username == 'admin') {
-		userLvl = 'admin';
-	}
-	Account.register(new Account({
-		email: sanitize(req.body.email),
-		username: sanitize(req.body.username),
-		name: sanitize(req.body.name),
-		lvl: userLvl
-	}), req.body.password, function(err, account) {
-		if (err) {
-			console.log(err);
-			return res.render('register.pug', {account: account});
-		}
-
-		passport.authenticate('local')(req, res, function() {
-			res.redirect('/');
-		});
-	});
-});
-
-router.get('/login', function(req, res) {
-	res.render('login.pug', {user: req.user });
-});
-
-router.post('/login', passport.authenticate('local', {
-	successRedirect: '/',
-	failureRedirect: '/login'
-}));
-
-router.get('/user', function(req, res) {
-	if (req.isAuthenticated()) {
-		res.render('user.pug', {user: req.user });
-	} else {
-		res.redirect('/login');
-	}
-});
-
 router.get('/get_user_markers', function(req, res) {
 	if (req.isAuthenticated()) {
-		markerCollection.aggregate([
+		req.app.locals.db.markers.aggregate([
 				{
 					$project: {
 						markers: {
@@ -286,13 +257,8 @@ router.get('/get_user_markers', function(req, res) {
 				res.send(JSON.stringify(items));
 		});
 	} else {
-		res.redirect('/login');
+		res.redirect('/');
 	}
-});
-
-router.get('/logout', function(req, res) {
-	req.logout();
-	res.redirect('/');
 });
 
 module.exports = router;

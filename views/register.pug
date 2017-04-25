@@ -13,7 +13,7 @@ block mainContent
         h2.mdl-card__title-text Sign up
       .mdl-card__supporting-text
 
-        form(action="register", method="post", role="form")
+        form(action="/user/register", method="post", role="form")
           .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
             input#name.mdl-textfield__input(type="text", name="name")
             label.mdl-textfield__label(for="name") Full name

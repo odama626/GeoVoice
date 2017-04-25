@@ -15,7 +15,7 @@ var markers = {
       map:map,
       label: {
         fontFamily: 'Material Icons',
-        text: (info.type == 'audio' ? 'mic' : 'videocam') //info.date.substring(0,3)
+        text: geovoice._markers.getIcon(info.type)
       },
       color: 'blue'
     });
@@ -30,7 +30,8 @@ var markers = {
 
       google.maps.event.addListener(this.infoWindow, 'closeclick', markers.closeInfoWindow);
 
-      this.oms.addListener('click', markers.omsClickListener);
+      //this.oms.addListener('click', markers.omsClickListener);
+      this.oms.addListener('click', geovoice._markers.click);
     }
 
     markers.list.push(marker);
@@ -100,31 +101,6 @@ var markers = {
     }
     markers.resumeFetch();
   }, // closeInfoWindow
-
-  omsClickListener: function(marker) {
-    markers.closeInfoWindow();
-    markers.pauseFetch();
-    $('dv audio').remove();
-    if (window.innerWidth <= 500) { // use dialog instead on mobile
-      showDialog({
-        text: ui.createMarkerContent(marker).outerHTML
-      })
-    } else {
-      markers.infoWindow.setContent(ui.createMarkerContent(marker));
-      markers.infoWindow.open(map, marker);
-    }
-    var tagContainer = $('#tag-container');
-    new TagHandler(marker.info, tagContainer);
-  }, // omsClickListener
-
-  getMediaElement: function(marker) {
-    if (marker.info.type == 'audio') {
-      return '<audio controls><source type="audio/wav" src="'+getResource(marker.info.media)+'"></audio>';
-    } else if (marker.info.type == 'video') {
-      return '<video controls type="video/webm" style="width:100%; max-width: 468px" src="'+getResource(marker.info.media)+'"></video>';
-    }
-    return '<h3>Unknown media type</h3>';
-  }, // getMediaElement
 
   update: function(marker) {
 		//var filename = new Date().toISOString() + '.mp3';

@@ -5,7 +5,7 @@ var regionPanel = {
 
   open: function(region) {
     panToPromise(geovoiceApi.parseLocation(region));
-    history.replaceState('', region.regionName+' - Geovoice', getBaseUrl()+'/region/'+region._id);
+    history.replaceState('', region.name+' - Geovoice', getBaseUrl()+'?r='+region.name);
     activeRegion.set(region);
     this.createHtml(region);
   }, // open
@@ -50,25 +50,44 @@ var regionPanel = {
       listContainer.appendChild(divNo);
     }
 
-    // Create a close panel button
-    var button = document.createElement('button');
-    button.className = 'mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect right-panel__button';
-    button.onclick = regionPanel.close;
-    button.textContent = 'Close';
-
-    var div = document.createElement('div');
-    div.style['padding-left'] = '15px';
-    div.appendChild(button);
-
-    listContainer.appendChild(div);
-
     var rightPanel = document.querySelector('.right-panel');
 
     ui.clearContainer(rightPanel);
-    rightPanel.appendChild(this.createTitle(region.regionName));
+    rightPanel.appendChild(this.createTitle(region.name));
     rightPanel.appendChild(this.createGear(() => {
-        regionPanelSettings.constructor(region, sheetContainer);
+        regionPanelSettings.constructor(region, rightPanel);
       }));
+
+    if (region.group) {
+      var currentGroup = document.createElement('div');
+      currentGroup.classList.add('group-display')
+      var groupIcon = document.createElement('i');
+      var groupText = document.createElement('span');
+      groupText.textContent = region.group;
+      groupIcon.classList.add('material-icons');
+      groupIcon.textContent = 'autorenew';
+      currentGroup.appendChild(groupIcon);
+      currentGroup.appendChild(groupText);
+      rightPanel.appendChild(currentGroup);
+      geovoiceApi.get('group', region.group)
+      .then(group => {
+        console.log(group);
+        groupIcon.textContent = group.access == 'public' ? 'public' : 'lock';
+      });
+    }
+
+    var viewerOps = {
+      markdown: region.description || '###### There isn\'t a description',
+      button: {
+        text: 'Show more',
+        onclick: (content) => {
+          content.viewer.classList.toggle('expand');
+        }
+      }
+    }
+
+    rightPanel.appendChild(ui.markdownViewer(viewerOps));
+
     rightPanel.appendChild(listContainer);
 
     rightPanel.classList.add('slide-in');

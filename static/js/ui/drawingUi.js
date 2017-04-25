@@ -5,7 +5,7 @@ var drawingUi = {
   manager: null,
 
   init: function() {
-    this.manager = new google.maps.drawing.DrawingManager({
+    drawingUi.manager = new google.maps.drawing.DrawingManager({
       drawingMode: google.maps.drawing.OverlayType.MARKER,
       drawingControl: true,
       drawingControlOptions: {
@@ -19,8 +19,8 @@ var drawingUi = {
         zIndex: 1
       }
     });
-    this.manager.setMap(map);
-    this.manager.setDrawingMode(null);
+    drawingUi.manager.setMap(map);
+    drawingUi.manager.setDrawingMode(null);
     setTimeout(function() {
       drawingUi.fixIcons();
       var drawingComplete = function(event) {
@@ -35,7 +35,7 @@ var drawingUi = {
         });
       };
       google.maps.event.addListener(drawingUi.manager, 'overlaycomplete', drawingComplete);
-    }, 200);
+    }, 400);
 
 
     // self destruct if user clicks anything else

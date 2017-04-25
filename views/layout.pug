@@ -13,6 +13,9 @@ html
     link(rel="stylesheet", href="/css/baseStyle.css")
     link(rel="shortcut icon", href="/res/favicon.ico", type="image/x-icon")
     link(rel="icon", href="/res/favicon.ico", type="image/x-icon")
+    // TODO build in scss compiling, only include styles.min.css
+    link(rel="stylesheet", href="/css/styles.min.css")
+    link(rel="stylesheet", href="/css/region.min.css")
     block cssLinks
     .mdl-layout.mdl-js-layout
       header.mdl-layout__header
@@ -37,7 +40,12 @@ html
     
     
     script(async src="/js/api.js")
-    script(async src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js")
+    script(defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js")
     script(async src="/js/ext/material-1.3.0.min.js")
     script(async src="/js/ext/mdl-jquery-modal-dialog.js")
+    script(async src="http://localhost:35729/livereload.js")
+    
+    script(src="/marker_type_registration.js")
+    script(async src="/markerTypes/defaults.js")
+    script(defer src="/regionTypes/defaults.js")
     block jsLibs

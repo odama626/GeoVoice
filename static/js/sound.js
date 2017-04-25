@@ -11,14 +11,11 @@ var sound = {
   request: function(location = null) {
     ui.loading.show();
     this.location = location;
-    if (location == null) {
-      getLocation().then( loc => sound.location = loc);
-    }
 
     navigator.mediaDevices.getUserMedia({ audio: true })
     .then( stream => {
-      this.recorder = RecordRTC(stream, { type: 'audio' });
-      this.stream = stream;
+      sound.recorder = RecordRTC(stream, { type: 'audio', mimeType: 'audio/wav' });
+      sound.stream = stream;
       ui.loading.hide();
       soundUi.request();
     }).catch(e => ui.createSnack('Error initializing mic: '+e.toString()));
@@ -64,7 +61,7 @@ var sound = {
         if (currently_logged_in) {
           ui.createSnack('Error sending sound: '+e.toString());
         }	else {
-          ui.createSnack('You need to be logged in to do that', 'Login', () => location.href='login');
+          ui.createSnack('You need to be logged in to do that', 'Login', () => location.href='/user/login');
         }
       }
     });

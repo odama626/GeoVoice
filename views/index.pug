@@ -4,39 +4,42 @@ block cssLinks
   link(rel="stylesheet", href="/css/map-icons.css")
   link(rel="stylesheet", href="/css/spectrum.css")
   link(rel="stylesheet", href="/css/better-autocomplete.css")
+  link(rel="stylesheet", href="/css/markdown.min.css")
 
 block navBar
   if user
-    a.mdl-navigation__link(onClick="sound.request()")
-      i.material-icons mic
-    a.mdl-navigation__link(onClick="video.request()")
-      i.material-icons videocam
     a.mdl-navigation__link(href="user") #{user.username}
+    button#marker-menu.mdl-button.mdl-js-button.mdl-button--icon
+      i.material-icons pin_drop
+    ul.mdl-menu.mdl-menu--buttom-right.mdl-js-menu.mdl-js-ripple-effect(for="marker-menu")
+    button#region-menu.mdl-button.mdl-js-button.mdl-button--icon
+      i.material-icons group_work
+    ul.mdl-menu.mdl-menu--buttom-right.mdl-js-menu.mdl-js-ripple-effect(for="region-menu")
   else
-    a.mdl-navigation__link(href="login") Login
-    a.mdl-navigation__link(href="register") Register
+    a.mdl-navigation__link(href="/user/login") Login
+    a.mdl-navigation__link(href="/user/register") Register
 
-  #search-bar-container
-    .mdl-textfield.mdl-textfield--floating-label
-      input#search-bar.mdl-textfield__input(type="text", name="search-bar", placeholder="Search")
+  #search-bar-container(style="margin-left: 15px")
+    .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+      input#search-bar.mdl-textfield__input(type="text", name="search-bar")
+      label.mdl-textfield__label(for="search-bar", style="color:inherit") Search
 
 block navMenu
   if user
-    a.mdl-navigation__link(onClick="sound.request()")
-      i.material-icons mic
-      |  Record Audio
-    a.mdl-navigation__link(onClick="video.request()")
-      i.material-icons  videocam
-      |  Record Video
-    a#add-region-button.mdl-navigation__link(onClick="regions.add()")
+    button#marker-nav-menu.mdl-navigation__link
+      i.material-icons pin_drop
+      | Add a Marker
+    ul.mdl-menu.mdl-menu--buttom-right.mdl-js-menu.mdl-js-ripple-effect(for="marker-nav-menu")
+    button#region-nav-menu.mdl-navigation__link
       i.material-icons group_work
-      |  Add Region
-    a.mdl-navigation__link(href="logout")
+      | Add a Region
+    ul.mdl-menu.mdl-menu--buttom-right.mdl-js-menu.mdl-js-ripple-effect(for="region-nav-menu")
+    a.mdl-navigation__link(href="/user/logout")
       i.material-icons exit_to_app
       |  Logout
   else
-    a.mdl-navigation__link(href="login") login
-    a.mdl-navigation__link(href="register") Register
+    a.mdl-navigation__link(href="/user/login") login
+    a.mdl-navigation__link(href="/user/register") Register
 
 block mainContent
   .map-container
@@ -58,6 +61,9 @@ block jsLibs
   script(id="google-maps",defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBmAuADcJ-0QF2ShETkv-xcbuEXgIbfNnE&callback=initMap&libraries=drawing")
   script(defer src="/js/ext/oms.min.js")
   script(defer src="/js/ext/jquery.better-autocomplete.js")
+  
+  // 2.0
+  script(async src="js/ext/marked.min.js")
   
 
   // This order doesn't matter

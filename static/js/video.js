@@ -12,7 +12,7 @@ var video = {
     ui.loading.show();
     this.location = location;
     if (this.location == null) {
-      getLocation().then( loc => video.location = loc);
+      geovoice._util.geolocate().then( loc => video.location = loc);
     }
 
     var options = {
@@ -69,7 +69,7 @@ var video = {
         if (currently_logged_in) {
           ui.createSnack('Error sending video: '+e.toString());
         } else {
-          ui.createSnack('You need to be logged in to do that', 'Login', () => location.href='login');
+          ui.createSnack('You need to be logged in to do that', 'Login', () => location.href='/user/login');
         }
       }
     });

@@ -44,7 +44,7 @@ class TagHandler {
     var closeTagAction = this.closeTagAction;
 
     $('#tag-entry').keyup(function(event) {
-      debugLog(event);
+      //debugLog(event);
       if (event.keyCode == 13) {
         var tag = $(this).val();
         container.prepend(createTag(tag,$(this).parent()));

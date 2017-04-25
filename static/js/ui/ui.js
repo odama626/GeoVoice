@@ -67,7 +67,7 @@ var ui = {
 
     var pic = document.createElement('a');
     pic.className = 'user-pic';
-    pic.setAttribute('href','/user/'+marker.info.creator);
+    pic.setAttribute('href','/user/e/'+marker.info.creator);
     container.appendChild(pic);
 
     var meta = document.createElement('div');
@@ -83,7 +83,7 @@ var ui = {
     meta.appendChild(dateEl);
     container.append(meta);
     container.appendChild(document.createElement('br'));
-    container.innerHTML += markers.getMediaElement(marker);
+    container.innerHTML += geovoice._markers.getItemView(marker.info);
     container.appendChild(document.createElement('br'))
 
     var tags = document.createElement('span');
@@ -96,22 +96,30 @@ var ui = {
     return container;
   },
 
+  createGroupLi: function(group) {
+    /*var subTitle = document.createElement('span');
+    subTitle.className = 'mdl-list__item-sub-title';
+    subTitle.appendChild(media);
+*/
+    var name = document.createElement('span');
+    name.textContent = group.name;
+
+    var primaryContent = document.createElement('span');
+    primaryContent.className = 'mdl-list__item-primary-content';
+    primaryContent.appendChild(name);
+    //primaryContent.appendChild(subTitle);
+
+    var li = document.createElement('li');
+    li.className = 'mdl-list__item mdl-list__item--two-line';
+    li.style = 'border-top: 1px solid #ddd;';
+    li.appendChild(primaryContent);
+    return li;
+  }, // createGroupLi
+
   createMarkerLi: function(marker, options = {}) {
     options.draggable = options.draggable || false;
 
-    var media;
-    if (marker.type == 'audio' || marker.type == 'sound') {
-      media = document.createElement('audio');
-      media.controls = true;
-      media.type = 'audio/wav'
-      media.src = getResource(marker.media);
-    } else if (marker.type == 'video') {
-      media = document.createElement('a');
-      media.addEventListener('click', () => {ui.popoutVideo(marker.media); });
-      media.className = 'mdl-navigation__link';
-      media.textContent = 'View video';
-      media.style.padding ='10px';
-    }
+    var media = geovoice._markers.getPanelView(marker);
 
     var subTitle = document.createElement('span');
     subTitle.className = 'mdl-list__item-sub-title';
@@ -141,6 +149,89 @@ var ui = {
 
     return li;
   }, // createMarkerLi
+
+  dialog: (opts = {}) => {
+    return new Promise((resolve, reject) => {
+      showDialog({
+        title: opts.title,
+        text: opts.text,
+        onLoaded: opts.onLoaded,
+        positive: {
+          id: 'dialog-ok',
+          title: 'ok',
+          onClick: (e) => resolve(e)
+        },
+        negative: {
+          id: 'dialog-cancel',
+          title: 'cancel',
+          onClick: (e) => reject(e)
+        }
+      })
+    })
+  }, // dialog
+
+  markdownViewer: (ops) => {
+    var container = document.createElement('div');
+    container.classList.add('markdown-view-container');
+
+    var description = document.createElement('div');
+    description = document.createElement('div');
+    description.classList.add('markdown-view');
+    description.innerHTML = ui.markdownFormatter(ops.markdown);
+    container.appendChild(description);
+
+    var button = document.createElement('div');
+    button.textContent = ops.button.text;
+    button.classList.add('button');
+    container.appendChild(button);
+
+    var content = {
+      viewer: description,
+      update: (text) => description.innerHTML = ui.markdownFormatter(text),
+    }
+
+    button.onclick = _=>ops.button.onclick(content)
+
+    return container;
+  }, // markdownViewer
+
+  markdownFormatter: (text) => {
+    a = marked(text, {break: true});
+    a = a.replace(/<a/g, '<a target="_blank"')
+         .replace(/<li>\[\s\]/g, '<li class="check-box"><input onclick="return false" type="checkbox">')
+         .replace(/<li>\[x\]/g, '<li class="check-box"><input checked onclick="return false" type="checkbox">');
+    return a;
+  }, // markdownFormatter
+
+  markdownInputDialog: (initialText) => {
+    var srcText = initialText;
+    var opts = {
+      text: `<div class="markdown-input">
+              <div class="markdown-view"></div>
+              <textarea class="input"></textarea>
+              <p class="info">Uses <a target="_blank" href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet">Markdown</a><p>
+            </div>`,
+      onLoaded: () => {
+        var src = document.querySelector('.markdown-input > textarea');
+        var dest = document.querySelector('.markdown-input > .markdown-view');
+        src.value = srcText;
+        dest.innerHTML = ui.markdownFormatter(srcText);
+        var userHasScrolledDest = false;
+        dest.addEventListener('scroll',  _=> {
+          userHasScrolledDest = !(dest.scrollHeight - dest.clientHeight <= dest.scrollTop +1)
+          console.log(userHasScrolledDest);
+        });
+        var parse = () => {
+          srcText = src.value;//.replace(/-\s\[\s\]/g, '- **\u2610**').replace(/-\s\[x\]/g, '- **\u2611**');
+          dest.innerHTML = ui.markdownFormatter(srcText);
+          if (!userHasScrolledDest) { dest.scrollTop = dest.scrollHeight}
+          src.scrollIntoView();
+        }
+        src.onkeyup = parse;
+      }
+    }
+    return ui.dialog(opts).then(_=>{return srcText;});
+  }, // markdownInputDialog
 
   popoutVideo: function(src) {
     showDialog({

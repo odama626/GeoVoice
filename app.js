@@ -5,6 +5,7 @@ var	fs = require('fs');
 var	https = require('https');
 var	multer = require('multer');
 var mongoose = require('mongoose');
+var mongoClient = require('mongodb').MongoClient;
 var passport = require('passport');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
@@ -13,15 +14,17 @@ var GoogleStrategy = require('passport-google').Strategy;
 var pug = require('pug');
 
 var routes = require('./routes/index');
+var apiRoute = require('./routes/api');
+var userRoute = require('./routes/user')
+var adminRoute = require('./routes/admin');
+var aboutRoute = require('./routes/about');
+
 var app = express();
 
 app.use(compression());
 app.use(minify()); // enable minify on production
 
 var port = 5000;
-var database;
-var markerCollection;
-var db;
 
 // setup HTTPS
 var httpsOptions = {
@@ -48,9 +51,23 @@ passport.serializeUser(Account.serializeUser());
 passport.deserializeUser(Account.deserializeUser());
 
 // mongoose
-mongoose.connect('mongodb://localhost:27017/geoVoice_passport');
+mongoose.connect('mongodb://localhost:27017/geoVoice');
 
-// setup parsing of requests
+mongoClient.connect('mongodb://localhost:27017/geoVoice', function(err, database) {
+	if (err) { return console.dir(err); }
+	console.log('connected to database');
+
+	var db = database;
+  app.locals.db = {
+    markers: db.collection('markers'),
+    accounts: db.collection('accounts'),
+  	groups: db.collection('groups')
+  }
+});
+
+
+
+// setup parsing of file uploads
 var storage = multer.diskStorage({
 	destination: function(req, file, cb) {
 		if (file.originalname.endsWith('.png')) {
@@ -82,9 +99,16 @@ app.use(multer({ storage: storage }).any());
 app.use(express.static('static'));
 app.use(express.static('uploads'));
 
+// 2.0
+app.use(express.static('static-2.0'));
+
 app.set('view engine', 'pug');
 
 app.use('/', routes);
+app.use('/api', apiRoute);
+app.use('/user', userRoute);
+app.use('/admin', adminRoute);
+app.use('/about', aboutRoute);
 
 var server = https.createServer(httpsOptions, app).listen(port, function() {
 	console.log("Express server listening on port "+ port);

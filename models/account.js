@@ -12,7 +12,11 @@ var Account = new Schema({
 	lastOnline: {type: Date, default: Date.now},
 	active: {type: Boolean, default: true}, // set false after lastOnline > 30 days
 	enabled: {type: Boolean, default: true}, // ability to deactivate account
-	lvl: {type: String, default: 'user'}
+	lvl: {type: String, default: 'user'},
+	groups: [{
+		name: String,
+		access: String
+	}]
 	// Possibly credit card info for paid features
 });
 

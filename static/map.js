@@ -25,7 +25,7 @@ function initMap() {
   });
 
   //Check logged in status
-  currently_logged_in = !document.querySelector('a[href="login"]');
+  currently_logged_in = !document.querySelector('a[href="/user/login"]');
 
   setPrototypes();
   createUserDot();
@@ -33,45 +33,38 @@ function initMap() {
   google.maps.event.addListener(map, 'idle', regions.fetch);
   map.addListener('click', () => { regionPanel.close(); markers.closeInfoWindow(); });
 
-  google.maps.event.addListener(map, 'rightclick', addPrecisePoint);
+  if (geovoice._util.getdevicetype() == 'pc') {
+    google.maps.event.addListener(map, 'rightclick', addPrecisePoint);
+  } else { // add long press functionality
+    google.maps.event.addListener(map, 'mousedown', (e) => {
+      global_mouseup = false;
+      setTimeout(() => {
+        if (global_mouseup == false) {
+          global_mouseup = true;
+          addPrecisePoint(e);
+        }
+      }, 500);
+    });
+    google.maps.event.addListener(map, 'mouseup', (e) => {
+      global_mouseup = true;
+    });
+    google.maps.event.addListener(map, 'dragstart',  (e) => { global_mouseup = true; });
+  }
 
-
-  google.maps.event.addListener(map, 'mousedown', (e) => {
-    global_mouseup = false;
-    setTimeout(() => {
-      if (global_mouseup == false) {
-        global_mouseup = true;
-        addPrecisePoint(e);
-      }
-    }, 500);
-  });
-  google.maps.event.addListener(map, 'mouseup', (e) => {
-    global_mouseup = true;
-  });
-  google.maps.event.addListener(map, 'dragstart',  (e) => { global_mouseup = true; });
-
-//  getLocation().then((loc) => {console.log('slow set'); map.setCenter(loc)});
+//  geovoice._util.geolocate().then((loc) => {console.log('slow set'); map.setCenter(loc)});
 
   if (ENABLE_REGIONS == false) {
     disableRegions();
   }
 
-  document.querySelectorAll('a').forEach( a => {
-    var onclick = () => {
-      markers.closeInfoWindow();
-      regionPanel.close();
-      document.querySelector('.mdl-layout__drawer').classList.remove('is-visible');
-      document.querySelector('.mdl-layout__obfuscator').classList.remove('is-visible');
-    }
-    a.addEventListener('click', onclick);
-  })
+
 
   document.getElementById('map').addEventListener('pageshow', () => {
     google.maps.event.trigger(map, "resize");
   });
 } // initMap
 
-window.onload = () => {
+window.addEventListener('load',() => {
   $('#search-bar').betterAutocomplete('init', searchHandler.tagList, {},
     {
       select: function(result, $input) {
@@ -79,10 +72,18 @@ window.onload = () => {
         searchHandler.addChip(result.title);
         $input.val('');
       }
-
     }
   );
-}
+
+  var onclick = () => {
+    markers.closeInfoWindow();
+    regionPanel.close();
+    document.querySelector('.mdl-layout__drawer').classList.remove('is-visible');
+    document.querySelector('.mdl-layout__obfuscator').classList.remove('is-visible');
+  }
+
+  document.querySelectorAll('a').forEach( a => a.addEventListener('click', onclick));
+});
 
 
 function createUserDot() {
@@ -98,7 +99,7 @@ function createUserDot() {
     map: map
   });
   setTimeout(function updateLiveLocation() {
-    getLocation().then((loc) => {
+    geovoice._util.geolocate().then((loc) => {
       liveUserLocation.setPosition(loc);
       debugLog('Updating user location');
       setTimeout(updateLiveLocation, 30000);
@@ -116,21 +117,23 @@ function debugLog(text) {
     console.debug(text);
 	}
 } // debugLog
-
-function getLocation() {
-  return new Promise( function(resolve) {
+/*
+function geovoice._util.geolocate() {
+  return new Promise(function(resolve) {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function(position) {
         resolve(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
       }, function(e) {
         ui.createSnack('The geolocation service failed');
+        reject(e);
       });
     } else {
-      // Browser doesn't support Geolocation
+      reject('no support');
       ui.createSnack('You browser doesn\'t support geolocation.');
     }
   });
 } // getLocation
+*/
 
 function panToPromise(location) {
   return new Promise( function (resolve) {
@@ -168,34 +171,47 @@ function getBounds(arr) {
 
 function addPrecisePoint(event) {
   if (!currently_logged_in) {
-    ui.createSnack('You need to be logged in to do that', 'Login', () => location.href='login');
+    ui.createSnack('You need to be logged in to do that', 'Login', () => location.href='/user/login');
     return;
   }
-  markers.closeInfoWindow();
-  markers.placeInfoWindow(event.latLng,
-    `
-      <h5 style="padding-bottom:8px;">Add a point here?</h5>
-      sneaky
-        <div class="infowindow-button-container">
-          <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab infowindow-button" id="sound-request">
-            <i class="material-icons">mic</i>
-          </button>
-          <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab infowindow-button" id="video-request">
-            <i class="material-icons">videocam</i>
-          </button>
-        </div>
-    `);
+  var showWindow = () => {
+    markers.closeInfoWindow();
+    markers.placeInfoWindow(event.latLng,
+      `
+        <h5 style="padding-bottom:8px;">Add a point here?</h5>
+        sneaky
+          <div class="infowindow-button-container">
+            <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab infowindow-button" id="sound-request">
+              <i class="material-icons">mic</i>
+            </button>
+            <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab infowindow-button" id="video-request">
+              <i class="material-icons">videocam</i>
+            </button>
+          </div>
+      `);
+    google.maps.event.addListenerOnce(markers.infoWindow, 'domready', () => {
+      var soundRequest = document.getElementById('sound-request');
+      var videoRequest = document.getElementById('video-request');
+      soundRequest.onclick = () => { markers.infoWindow.close(); sound.request(event.latLng);};
+      videoRequest.onclick = () => { markers.infoWindow.close(); video.request(event.latLng);};
+    });
+    setTimeout(()=>markers.infoWindow.open(map), 240);
+  };
+  //showWindow();
+  var acknowledgeHold = document.createElement('div');
+  acknowledgeHold.classList.add('tap-animation');
+  acknowledgeHold.style.left = event.pixel.x+'px';
+  acknowledgeHold.style.top = event.pixel.y+'px';
+  document.getElementById('map').appendChild(acknowledgeHold);
+  if (geovoice._util.getdevicetype() == 'pc') {
+    showWindow();
+  } else {
+    google.maps.event.addListenerOnce(map, 'mouseup',() => {console.log('mouseup');showWindow()});
+  }
 
-  google.maps.event.addListenerOnce(markers.infoWindow, 'domready', () => {
-    var soundRequest = document.getElementById('sound-request');
-    var videoRequest = document.getElementById('video-request');
-    soundRequest.onclick = () => { markers.infoWindow.close(); sound.request(event.latLng);};
-    videoRequest.onclick = () => { markers.infoWindow.close(); video.request(event.latLng);};
-  });
-  markers.infoWindow.open(map);
 } // addPrecisePoint
 
-getLocation().then((loc) => {
+geovoice._util.geolocate().then((loc) => {
   debugLog('fast geolocate'+map);
   map.setCenter(loc);
   map.setZoom(12);
