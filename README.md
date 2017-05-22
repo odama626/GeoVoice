@@ -6,7 +6,7 @@
 
 ## Roadmap
  - [ ] # Cross device compatibility
- - [ ] # CSS animations to give sublte hints on how to use siteData
+ - [x] # CSS animations to give sublte hints on how to use siteData
    - [x] Classic region creation
  - [x] Rework RegionPanel animations
  - [ ] # find out why some videos are choppy on playback
@@ -14,18 +14,18 @@
    - [x] getuser
    - [x] getself
    - [ ] banner-ad that expands
- - [ ] # expand About page
-   - [ ] # create FAQ
-   - [ ] # introduction page / video overview of features
+ - [x] # expand About page
+   - [x] # create FAQ
+   - [x] # introduction page / video overview of features
  - [ ] # User page
    - [x] allow deletion of markers
    - [ ] # reset password
    - [ ] # email validation on register
    - [x] public user page
    - [x] use username instead of email on markers
-   - [ ] private sharing of markers
+   - [x] private sharing of markers
    - [ ] treeview of markers based on region
-   - [ ] ability to view other users' profile
+   - [x] ability to view other users' profile
  - [ ] implement admin features
    - [x] admin page
    - [x] destroy db
@@ -34,7 +34,7 @@
  - [ ] Only send Marker information needed
  - [ ] add stylized login error page
  - [ ] add stylized 404 page
- - [ ] Groups
+ - [x] Groups
 ```
   person {
      groups: [
@@ -52,7 +52,7 @@
 
    }
 
-   group url: /group/groupname
+   group url: /?g=groupname
  ```
 
 ## Known Working
