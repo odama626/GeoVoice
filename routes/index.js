@@ -1,147 +1,299 @@
 var express = require('express');
-var passport = require('passport');
-var Account = require('../models/account');
-var	mongoClient = require('mongodb').MongoClient;
+var Group = require('../models/group');
+var	ObjectId = require('mongodb').ObjectID;
+//var mongoose = require('mongoose');
+var sanitize = require('mongo-sanitize');
 var router = express.Router();
 
 var siteData = require('../site-data').siteData;
-
-// Setup marker database connection
-mongoClient.connect("mongodb://localhost:27017/geoVoice", function(err, database) {
-	if (err) { return console.dir(err); }
-	console.log("connected to DB");
-
-	db = database;
-	markerCollection = db.collection('markers');
-
-//	markerCollection.drop();
-});
 
 router.get('/', function (req, res) {
 	res.render('index.pug', {user : req.user });
 });
 
-router.get('/about', function( req, res) {
-	res.render('about.pug', {user : req.user });
+router.get('/region/:regionid', function( req, res) {
+	res.render('index.pug', {user: req.user, region: req.params.regionid});
 });
 
 // Retrieve dialog
 router.get('/dialogs/:filename', function (req, res) {
-	res.render(req.originalUrl.substr(1), {
-		regionIcons: siteData.dialog.regionIcons,
-		regionMarkers: siteData.dialog.regionMarkerShapes
-		});
+	if (req.isAuthenticated()) {
+		res.render(req.originalUrl.substr(1), {
+			regionIcons: siteData.dialog.regionIcons,
+			regionMarkers: siteData.dialog.regionMarkerShapes
+			});
+	}
 });
 
 // Add a new sound marker
 router.post('/submit', function(req, res) {
-	var doc = {
-		"lat": req.body.lat,
-		"lng": req.body.lng,
-		"region": req.body.region,
-		"date": req.body.date,
-		"type": req.body.type,
-		"media": req.files[0].filename,
-		"creator": req.user.username,
-		"tags": []
-	};
-	markerCollection.update(
-		{ regionName: req.body.region},
-		{
-			$push: { markers: doc }
-		},
-		{ upsert: true }
-	);
-	console.log("Added new marker");
-	res.end('SUCCESS');
+	if (req.isAuthenticated()) {
+		var doc = {
+			'lat': req.body.lat,
+			'lng': req.body.lng,
+			'region': req.body.region,
+			'date': req.body.date,
+			'type': req.body.type,
+			'media': req.files[0].filename,
+			'creator': req.user.username,
+			'tags': []
+		};
+		req.app.locals.db.markers.update(
+			{ name: sanitize(req.body.region)},
+			{
+				$push: { markers: doc }
+			},
+			{ upsert: true }
+		);
+		console.log('Added new marker');
+		res.end('SUCCESS');
+	}
 });
 
 router.post('/update_tags', function (req, res) {
-	var tags = JSON.parse(req.body.tags);
-	console.log(req.body.tags);
-	markerCollection.update(
-		{ 'regionName': req.body.region,
-			'markers.media': req.body.media },
-		{
-			$set: { 'markers.$.tags': tags}
-		}
-	);
-	res.end('SUCCESS');
-	console.log('updated tags on '+req.body.media);
+	if (req.isAuthenticated()) {
+		var tags = JSON.parse(req.body.tags);
+		req.app.locals.db.markers.update(
+			{ 'name': sanitize(req.body.region),
+				'markers.media': sanitize(req.body.media) },
+			{
+				$set: { 'markers.$.tags': tags}
+			}
+		);
+		res.end('SUCCESS');
+		console.log('updated tags on '+req.body.media);
+	}
+});
+
+router.post('/delete_marker', function (req, res) {
+	if (req.isAuthenticated()) {
+		req.app.locals.db.markers.update(
+			{ 'name': sanitize(req.body.region),
+				'markers.media': sanitize(req.body.media),
+			 	'markers.creator': sanitize(req.user.username) },
+			{
+				$pull: { 'markers': { media: sanitize(req.body.media)}}
+			}
+		);
+		res.end('SUCCESS');
+		console.log('deleted marker'+req.body.media);
+	} else {
+		res.end(403);
+		console.log('refused to delete marker'+req.body.media);
+	}
 });
 
 router.post('/update_marker_order', function(req, res) {
-	console.log(JSON.parse(req.body.markers));
-	console.log(markerCollection.update(
-		{ '_id': req.body.regionId },
-		{
-			$set: {'markers' : JSON.parse(req.body.markers)}
+	if (req.isAuthenticated()) {
+		req.app.locals.db.markers.update(
+			{ '_id': ObjectId(sanitize(req.body.regionId)) },
+			{
+				$set: {
+					description: sanitize(req.body.description),
+					markers : JSON.parse(sanitize(req.body.markers))
+				}
+			}//, { multi: true }
+		)
+		if (req.body.group) {
+			req.app.locals.db.markers.update(
+				{ '_id': ObjectId(sanitize(req.body.regionId)) },
+				{
+					$set: {
+						group: sanitize(req.body.group)
+					}
+				}//, { multi: true }
+			);
+			new Promise( (resolve, reject) => {
+				req.apps.local.db.groups.update(
+					{ regions: { $elemMatch: sanitize(req.body.regionId) } },
+					{
+						$pull: { regions: sanitize(req.body.regionId)}
+					}, { multi: true}, (err, r) => resolve(err, r))
+			}).then( _ => {
+				req.app.locals.db.groups.update(
+					{ 'name': sanitize(req.body.group) },
+					{
+						$addToSet: { regions: sanitize(req.body.regionId)}
+					}
+				)
+			});
 		}
-	));
-	res.end('SUCCESS');
+		res.end('SUCCESS');
+	}
 });
 
 // Add a new sound region
 router.post('/submit_region', function(req, res) {
-	var region = {
-		"regionName": req.body.regionName,
-		"lat": req.body.lat,
-		"lng": req.body.lng,
-		"color": req.body.color,
-		"icon": req.body.icon,
-		"shape": req.body.shape,
-		"markers": [],
-		"geofence": req.body.geofence,
-		"type": req.body.type
-	};
-	markerCollection.insert(region);
-	res.end('SUCCESS');
-	console.log("Added new region");
+	if (req.isAuthenticated()) {
+		var region = {
+			'name': sanitize(req.body.name),
+			'lat': sanitize(req.body.lat),
+			'lng': sanitize(req.body.lng),
+			'color': sanitize(req.body.color),
+			'icon': sanitize(req.body.icon),
+			'shape': sanitize(req.body.shape),
+			'markers': [],
+			'geofence': sanitize(req.body.geofence),
+			'type': sanitize(req.body.type)
+		};
+		req.app.locals.db.markers.insert(region);
+		res.end('SUCCESS');
+		console.log('Added new region');
+	}
 });
 
-// retrieve markers
-router.get('/get_markers', function(req, res) {
-	markerCollection.find().toArray( function(err, items) {
-		res.send(JSON.stringify(items));
-	});
-
-	console.log("Sending markers");
+router.post('/group/add_user', function(req, res) {
+	console.log('adding user to group');
+	var groupName = sanitize(req.body.group);
+	var username = sanitize(req.body.user);
+	var access = sanitize(req.body.access);
+	if (req.isAuthenticated()) {
+		req.app.locals.db.groups.findOne( { owner: sanitize(req.user.username), name: groupName})
+		.then( group => {
+			req.app.locals.db.accounts.update(
+				{ username: username},
+				{
+					$addToSet: { groups: { name: groupName, access: access} }
+				}
+			);
+			res.json({error: false, message: 'added user to group'});
+		}).catch( err => res.json({error: true, message: 'failed to find group with name, and owner'}))
+	}
 });
 
-// Wipe database (Temporary)
-router.post('/self_destruct', function(req, res) {
-	console.log('Self destructing');
-	markerCollection.drop();
+router.post('/submit_group', function(req, res) {
+	if (req.isAuthenticated()) {
+		var group = {
+			'owner': sanitize(req.user.username),
+			'name': sanitize(req.body.name),
+			'regions': [],
+			'access': sanitize(req.body.visibility)
+		};
+		req.app.locals.db.groups.insert(group);
+		req.app.locals.db.accounts.update(
+			{ username: sanitize(req.user.username)},
+			{
+				$push: { groups: group}
+			},
+			{ upsert: true }
+		);
+		res.end('SUCCESS');
+		console.log(`Added new Group ${req.body.name}, ${req.body.visibility}`);
+	}
 });
 
-
-router.get('/register', function(req, res) {
-	res.render('register.pug', { } );
-});
-
-router.post('/register', function(req, res) {
-	Account.register(new Account({username: req.body.username }), req.body.password, function(err, account) {
-		if (err) {
-			return res.render('register.pug', {account: account});
+function userInGroup(user, groupName) {
+	var inGroup = false;
+	for (var i = 0; i < user.groups.length; i++) {
+		if (user.groups[i].name == groupName) {
+			return true;
 		}
+	}
+	return false;
+}
 
-		passport.authenticate('local')(req, res, function() {
-			res.redirect('/');
+function fetchVisible(req, res) {
+	var userGroups = [];
+	if (req.user) {
+		userGroups = req.user.groups.map( group => { return group.name});
+	}
+	new Promise( (resolve, reject) => {
+		req.app.locals.db.groups.find({ access: 'public'})
+	.toArray((err, items) => resolve(userGroups.concat(items.map(item => item.name))))
+	})
+	.then( groups => {
+		console.log(groups);
+		req.app.locals.db.markers.find({$or: [{ group: {$in: groups}}, {group: null}]})
+		.toArray((err, items) => res.json(items));
+	});
+}
+
+router.get('/fetch', function(req, res) {
+	if (req.query.g) { // send group
+		req.app.locals.db.markers.find({ group: sanitize(req.query.g)})
+		.toArray( (err, items) => res.json(items));
+	} else if (req.query.r) { // send region
+		req.app.locals.db.markers.findOne( {'name': sanitize(req.query.r) })
+		.then(region => {res.json([region])});
+	} else { // send all
+		fetchVisible(req, res);
+	}
+});
+
+router.post('/check_name_availability', (req, res) => {
+	var available = (e) => res.json({available: (e == null)});
+	var query = sanitize(req.body.query)
+	if (req.query.t == 'user') {
+		req.app.locals.db.accounts.findOne({ 'username': query}).then(available);
+	} else if (req.query.t == 'region') {
+		req.app.locals.db.markers.findOne({ 'name': query}).then(available);
+	} else if (req.query.t == 'group') {
+		req.app.locals.db.groups.findOne({ 'name': query}).then(available);
+	}
+});
+
+function fetchGroup(group, req, res) {
+	new Promise( (resolve, reject) => {
+		req.app.locals.db.accounts.find({ groups: { $elemMatch: { name: group }}})
+		.toArray((err, items) => resolve(items.map(account => account.username)));
+	}).then( usernames => {
+		req.app.locals.db.groups.findOne({ 'name': group})
+		.then( group => {
+			group.users = usernames;
+			res.json(group);
 		});
 	});
-});
+}
 
-router.get('/login', function(req, res) {
-	res.render('login.pug', {user: req.user });
-});
+router.post('/get', (req, res) => {
+	var query = sanitize(req.body.query);
+	var error = { error: true, message: 'not found'};
+	if (req.isAuthenticated()) {
+		if (req.query.t == 'region') {
+			req.app.locals.db.markers.findOne({ 'name': query})
+			.then( region => {
+				if (region.group) {
+					req.app.locals.db.groups.findOne({ 'name': region.group})
+					.then( group => {
+						if ((group.access == 'private' && userInGroup(req.user, group.name))
+							|| group.access == 'public') {
+							res.json(region);
+						} else {
+							res.json(error);
+						}
+					})
+				} else {
+					res.json(region);
+				}
+			})
+		} else if (req.query.t == 'group') {
+			fetchGroup(query, req, res);
+		}
+	} else {
+		res.json({error: true, message: 'User not authenticated'});
+	}
+})
 
-router.post('/login', passport.authenticate('local'), function(req, res) {
-	res.redirect('/');
-});
-
-router.get('/logout', function(req, res) {
-	req.logout();
-	res.redirect('/');
+router.get('/get_user_markers', function(req, res) {
+	if (req.isAuthenticated()) {
+		req.app.locals.db.markers.aggregate([
+				{
+					$project: {
+						markers: {
+							$filter: {
+								input: "$markers",
+								as: "marker",
+								cond: { $eq: ["$$marker.creator", sanitize(req.user.username)]}
+							}
+						}
+					}
+				}
+		]).toArray( function(err, items) {
+				res.send(JSON.stringify(items));
+		});
+	} else {
+		res.redirect('/');
+	}
 });
 
 module.exports = router;

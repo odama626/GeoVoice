@@ -13,7 +13,11 @@ var markers = {
     var marker = new google.maps.Marker({
       position: { lat: parseFloat(info.lat), lng: parseFloat(info.lng)},
       map:map,
-      label: info.date.substring(0,3)
+      label: {
+        fontFamily: 'Material Icons',
+        text: geovoice._markers.getIcon(info.type)
+      },
+      color: 'blue'
     });
 
     marker.info = info;
@@ -26,7 +30,8 @@ var markers = {
 
       google.maps.event.addListener(this.infoWindow, 'closeclick', markers.closeInfoWindow);
 
-      this.oms.addListener('click', markers.omsClickListener);
+      //this.oms.addListener('click', markers.omsClickListener);
+      this.oms.addListener('click', geovoice._markers.click);
     }
 
     markers.list.push(marker);
@@ -62,6 +67,33 @@ var markers = {
     markers.list = [];
   }, // clear
 
+  sort: function(a, b) {
+    var ad = new Date(a.date);
+    var bd = new Date(b.date);
+    if (ad < bd) {
+      return 1;
+    }
+    return -1;
+  }, // sort
+
+  delete: function(region, media) {
+    return new Promise( (resolve, reject) => {
+      var data = new FormData();
+      data.append('media', media);
+      data.append('region', region);
+
+      $.ajax({
+        url : '/delete_marker',
+        type: 'POST',
+        data: data,
+        contentType: false,
+        processData: false,
+        success: resolve,
+        error: reject
+      });
+    });
+  }, // delete
+
   closeInfoWindow: function() {
     if (this.infoWindow !== null && typeof this.infoWindow !== 'undefined') {
       this.infoWindow.setMap(null);
@@ -69,37 +101,6 @@ var markers = {
     }
     markers.resumeFetch();
   }, // closeInfoWindow
-
-  omsClickListener: function(marker) {
-    markers.closeInfoWindow();
-    markers.pauseFetch();
-    $('dv audio').remove();
-    var date = new Date(marker.info.date);
-
-    markers.infoWindow.setContent(`
-				<h5>Created by `+marker.info.creator+ `</h5>
-				<h8>At `+ date.toLocaleTimeString() +' on '+date.toLocaleDateString()+ `</h8> <br>
-				`+markers.getMediaElement(marker)+`
-
-				<br>
-				<span id="tag-container">
-				</span>
-				`);
-
-    markers.infoWindow.open(map, marker);
-    var tagContainer = $('#tag-container');
-    new TagHandler(marker.info, tagContainer);
-
-  }, // omsClickListener
-
-  getMediaElement: function(marker) {
-    if (marker.info.type == 'sound') {
-      return '<audio controls><source type="audio/mpeg" src="'+marker.info.media+'"></audio>';
-    } else if (marker.info.type == 'video') {
-      return '<video controls type="video/webm" style="width:100%" src="'+marker.info.media+'"></video>';
-    }
-    return '<h3>Unknown media type</h3>';
-  }, // getMediaElement
 
   update: function(marker) {
 		//var filename = new Date().toISOString() + '.mp3';
@@ -109,7 +110,7 @@ var markers = {
     data.append('region', marker.region);
 
     $.ajax({
-      url : 'update_tags',
+      url : '/update_tags',
       type: 'POST',
       data: data,
       contentType: false,

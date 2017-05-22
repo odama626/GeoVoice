@@ -4,6 +4,77 @@
 
 - You can add media and mark it on the map
 
+## Roadmap
+ - [ ] # Cross device compatibility
+ - [ ] # CSS animations to give sublte hints on how to use siteData
+   - [x] Classic region creation
+ - [x] Rework RegionPanel animations
+ - [ ] # find out why some videos are choppy on playback
+ - [ ] start working on api
+   - [x] getuser
+   - [x] getself
+   - [ ] banner-ad that expands
+ - [ ] # expand About page
+   - [ ] # create FAQ
+   - [ ] # introduction page / video overview of features
+ - [ ] # User page
+   - [x] allow deletion of markers
+   - [ ] # reset password
+   - [ ] # email validation on register
+   - [x] public user page
+   - [x] use username instead of email on markers
+   - [ ] private sharing of markers
+   - [ ] treeview of markers based on region
+   - [ ] ability to view other users' profile
+ - [ ] implement admin features
+   - [x] admin page
+   - [x] destroy db
+   - [ ] pick other users to elevate
+   - [ ] tree view of all markers with delete option
+ - [ ] Only send Marker information needed
+ - [ ] add stylized login error page
+ - [ ] add stylized 404 page
+ - [ ] Groups
+```
+  person {
+     groups: [
+       {
+         name: <group name>
+         access: owner or can edit or can view
+       }
+     ]
+   }
+
+   region {
+     ingroup: <group name>
+     description: asfas fads fasdf
+     access: public or private
+
+   }
+
+   group url: /group/groupname
+ ```
+
+## Known Working
+ - Linux
+  - [x] Chrome
+  - [x] Firefox
+ - Android
+  - [x] Chrome
+  - [x] Firefox (laggy after sound upload)
+ - Windows
+  - [x] Chrome
+  - [ ] Safari (too old of a version)
+  - [x] Firefox
+
+
+## Interesting use cases
+ - Farmer's marker
+ - open house
+ - university
+ - group meetups
+ - landmarks
+
 ## How to get started:
 1. Fork or download repo
 2. To install dependencies
@@ -28,23 +99,3 @@
   - Replace {server_ip} with the ip address of your server
   - If running locally, use 127.0.0.1
 7. Profit.
-
-## Moving forward
- - [ ] add Admin boolean for users
- - [ ] Only send Marker information needed
- - [ ] add stylized login error page
- - [ ] add stylized 404 page
- - [ ] Add live irc style message panel for logged in users? :|
- - [ ] expand About page
-
-## Known Working
-  - Linux
-   - [x] Chrome
-   - [x] Firefox
-  - Android
-   - [x] Chrome
-   - [x] Firefox (laggy after sound upload)
-  - Windows
-   - [x] Chrome
-   - [ ] Safari (too old of a version)
-   - [x] Firefox

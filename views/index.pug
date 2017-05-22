@@ -1,83 +1,90 @@
 extends layout.pug
 
 block cssLinks
-  link(rel="stylesheet", href="css/audio.css")
-  link(rel="stylesheet", href="css/map-icons.css")
-  link(rel="stylesheet", href="css/spectrum.css")
-  link(rel="stylesheet", href="css/better-autocomplete.css")
+  link(rel="stylesheet", href="/css/map-icons.css")
+  link(rel="stylesheet", href="/css/spectrum.css")
+  link(rel="stylesheet", href="/css/better-autocomplete.css")
+  link(rel="stylesheet", href="/css/markdown.min.css")
 
 block navBar
   if user
-    a.mdl-navigation__link(onClick="sound.request()")
-      i.material-icons mic
-    a.mdl-navigation__link(onClick="video.request()")
-      i.material-icons videocam
-    a.mdl-navigation__link #{user.username}
+    a.mdl-navigation__link(href="user") #{user.username}
+    button#marker-menu.mdl-button.mdl-js-button.mdl-button--icon
+      i.material-icons pin_drop
+    ul.mdl-menu.mdl-menu--buttom-right.mdl-js-menu.mdl-js-ripple-effect(for="marker-menu")
+    button#region-menu.mdl-button.mdl-js-button.mdl-button--icon
+      i.material-icons group_work
+    ul.mdl-menu.mdl-menu--buttom-right.mdl-js-menu.mdl-js-ripple-effect(for="region-menu")
   else
-    a.mdl-navigation__link(href="login") Login
-    a.mdl-navigation__link(href="register") Register
+    a.mdl-navigation__link(href="/user/login") Login
+    a.mdl-navigation__link(href="/user/register") Register
 
-  #search-bar-container
-    .mdl-textfield.mdl-textfield--floating-label
-      input#search-bar.mdl-textfield__input(type="text", name="search-bar", placeholder="Search")
+  #search-bar-container(style="margin-left: 15px")
+    .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+      input#search-bar.mdl-textfield__input(type="text", name="search-bar")
+      label.mdl-textfield__label(for="search-bar", style="color:inherit") Search
 
 block navMenu
   if user
-    a.mdl-navigation__link(onClick="sound.request()")
-      i.material-icons mic
-      |  Record Audio
-    a.mdl-navigation__link(onClick="video.request()")
-      i.material-icons  videocam
-      |  Record Video
-    a#add-region-button.mdl-navigation__link(onClick="regions.add()")
+    button#marker-nav-menu.mdl-navigation__link
+      i.material-icons pin_drop
+      | Add a Marker
+    ul.mdl-menu.mdl-menu--buttom-right.mdl-js-menu.mdl-js-ripple-effect(for="marker-nav-menu")
+    button#region-nav-menu.mdl-navigation__link
       i.material-icons group_work
-      |  Add Region
-    a.mdl-navigation__link(href="logout")
+      | Add a Region
+    ul.mdl-menu.mdl-menu--buttom-right.mdl-js-menu.mdl-js-ripple-effect(for="region-nav-menu")
+    a.mdl-navigation__link(href="/user/logout")
       i.material-icons exit_to_app
       |  Logout
   else
-    a.mdl-navigation__link(href="login") login
-    a.mdl-navigation__link(href="register") Register
-
-  a.mdl-navigation__link(onClick="selfDestruct()") Self Destruct
+    a.mdl-navigation__link(href="/user/login") login
+    a.mdl-navigation__link(href="/user/register") Register
 
 block mainContent
   .map-container
-    #region-panel-container.region-panel-container
+    .right-panel
     #map
 
-    .mdl-snackbar.mdl-js-snackbar(aria-live="assertive", aria-atomic="true", aria-relevant="text")
-      .mdl-snackbar__text
-      button.mdl-snackbar__action(type="button")
+block jsLibs 
+  
+  
+  // Keep this stuff in order!
+  script(async src="/js/regions/activeRegion.js")
+  script(async src="/js/regions/regionPanel.js")
+  script(async src="/js/regions/regionPanelSettings.js")
+  script(async src="/js/markerSequence.js")
+  script(defer src="/js/markers.js")
+  script(defer src="/js/ext/map-icons.js")
+  script(defer src="/js/regions/regions.js")
+  script(defer src="/map.js")
+  script(id="google-maps",defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBmAuADcJ-0QF2ShETkv-xcbuEXgIbfNnE&callback=initMap&libraries=drawing")
+  script(defer src="/js/ext/oms.min.js")
+  script(defer src="/js/ext/jquery.better-autocomplete.js")
+  
+  // 2.0
+  script(async src="js/ext/marked.min.js")
+  
 
-block jsLibs
-  script(src="js/ext/jquery.better-autocomplete.js")
-  script(src="js/ext/Sortable.min.js")
-
-  script(src="js/ui/ui.js")
-  script(src="js/ui/soundUi.js")
-  script(src="js/ui/regionUi.js")
-  script(src="js/ui/drawingUi.js")
-  script(src="js/ui/videoUi.js")
-  script(src="js/searchHandler.js")
-  script(src="js/tagHandler.js")
-  script(src="js/markers.js")
-  script(src="js/regions/regions.js")
-  script(src="js/regions/activeRegion.js")
-  script(src="js/regions/regionPanel.js")
-  script(src="js/regions/regionPanelSettings.js")
-  script(src="js/sound.js")
-  script(src="js/video.js")
-  script(src="map.js")
-  script(src="js/markerSequence.js")
-
-  // js Libraries
-  script( src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBmAuADcJ-0QF2ShETkv-xcbuEXgIbfNnE&callback=initMap&libraries=drawing")
+  // This order doesn't matter
+  script(async src="/js/ext/Sortable.min.js")
+  script(async src="/js/ui/ui.js")
+  script(async src="/js/ui/soundUi.js")
+  script(async src="/js/ui/regionUi.js")
+  script(async src="/js/ui/drawingUi.js")
+  script(async src="/js/ui/videoUi.js")
+  script(async src="/js/searchHandler.js")
+  script(async src="/js/tagHandler.js")
+  
+  
+  
+  script(async src="/js/sound.js")
+  script(async src="/js/video.js")
+  
 
   // External js includes
-  script(src="js/ext/ric-polyfill.js")
-  script(src="js/ext/oms.min.js")
-  script(src="js/ext/adapter.js")
-  script(src="https://cdn.WebRTC-Experiment.com/RecordRTC.js")
-  script(src="js/ext/map-icons.js")
-  script(src="js/ext/spectrum.js")
+  script(async src="/js/ext/ric-polyfill.js")
+  
+  script(async src="/js/ext/adapter.js")
+  script(async src="https://cdn.WebRTC-Experiment.com/RecordRTC.js")
+  script(defer src="/js/ext/spectrum.js")

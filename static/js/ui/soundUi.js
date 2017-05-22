@@ -30,13 +30,12 @@ var soundUi = {
       onLoaded: () => {
         var container = document.getElementById('dropContainer');
         var dropZone = ui.createDropZone( (file) => {
-          //var reader = new FileReader();
           sound.blob = file;
           ui.loading.show();
           soundUi.preview(sound.location, URL.createObjectURL(file));
           ui.loading.hide();
 
-        }, 'audio');
+        }, { type: 'audio' });
         container.append(dropZone);
       },
       negative: {
@@ -45,7 +44,7 @@ var soundUi = {
     });
   }, // requestUpload
 
-  preview: function(location, url) {
+  preview: function(gps, url) {
     showDialog({ // class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
       title: 'Sound Good?',
       text: `
@@ -69,21 +68,21 @@ var soundUi = {
         player[0].load();
 
         if (!ENABLE_REGIONS) {
-          $('#marker-region-selection').remove();
-        }
+          document.getElementById('marker-region-selection').remove();
+        } else {
 
-        var regionsContainer = $('#regions');
+          var regionsContainer = $('#regions');
 
-        for (var place in regions.list) {
-          if (regions.list[place].type == 'sequence') {
-            regionsContainer.append('<option value="' + place + '">' + place + '</option>');
-          } else if (typeof regions.list[place].geofence !== 'undefined') {
-            if (getBounds(regions.list[place].geofence).contains(location)) {
+          for (var place in regions.list) {
+            if (regions.list[place].type == 'sequence') {
               regionsContainer.append('<option value="' + place + '">' + place + '</option>');
+            } else if (regions.list[place].type == 'classic') {
+              if (getBounds(regions.list[place].geofence).contains(sound.location)) {
+                regionsContainer.append('<option value="' + place + '">' + place + '</option>');
+              }
             }
           }
         }
-
       },
       positive: {
         title: 'yes',

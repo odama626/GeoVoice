@@ -1,38 +1,51 @@
 doctype html
 html
   head
-    title Geolocation
+    title PathGrab
     meta(name="viewport", content="initial-scale=1.0, user-scalable=no")
+    meta(name="format-detection", content="telephone=no")
     meta(charset="utf-8")
+  body
     link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700", type="text/css")
     link(rel="stylesheet", href="https://fonts.googleapis.com/icon?family=Material+Icons")
-    link(rel="stylesheet", href="https://code.getmdl.io/1.2.1/material.indigo-pink.min.css")
-    link(rel="stylesheet", href="css/mdl-jquery-modal-dialog.css")
-    link(rel="stylesheet", href="css/baseStyle.css")
-    link(rel="shortcut icon", href="res/favicon.ico", type="image/x-icon")
-    link(rel="icon", href="res/favicon.ico", type="image/x-icon")
+    link(rel="stylesheet", href="/css/material.indigo-pink-1.3.0.min.css")
+    link(rel="stylesheet", href="/css/mdl-jquery-modal-dialog.css")
+    link(rel="stylesheet", href="/css/baseStyle.css")
+    link(rel="shortcut icon", href="/res/favicon.ico", type="image/x-icon")
+    link(rel="icon", href="/res/favicon.ico", type="image/x-icon")
+    // TODO build in scss compiling, only include styles.min.css
+    link(rel="stylesheet", href="/css/styles.min.css")
+    link(rel="stylesheet", href="/css/region.min.css")
     block cssLinks
-  body
     .mdl-layout.mdl-js-layout
       header.mdl-layout__header
         .mdl-layout-icon
         .mdl-layout__header-row
-          span.mdl-layout__title(onClick="location='/'") GeoVoice
+          span.mdl-layout__title.clickable(onClick="location='/'") PathGrab
           .mdl-layout-spacer
           nav.mdl-navigation
             block navBar
       #layout-drawer.mdl-layout__drawer
         if user
-          span.mdl-layout__title(onClick="location='/'") #{user.username}
+          span.mdl-layout__title.clickable(onClick="location='user'") #{user.username}
         else
-          span.mdl-layout__title(onClick="location='/'") GeoVoice
+          span.mdl-layout__title.clickable(onClick="location='/'") PathGrab
         nav.mdl-navigation
           block navMenu
           a.mdl-navigation__link(href="/about") About
       block mainContent
-
-    script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js")
-    script(src="https://code.getmdl.io/1.2.0/material.min.js")
-    script(src="js/ext/mdl-jquery-modal-dialog.js")
-    script(src="js/universal.js")
+      .mdl-snackbar.mdl-js-snackbar(aria-live="assertive", aria-atomic="true", aria-relevant="text")
+        .mdl-snackbar__text
+        button.mdl-snackbar__action(type="button")
+    
+    
+    script(async src="/js/api.js")
+    script(defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js")
+    script(async src="/js/ext/material-1.3.0.min.js")
+    script(async src="/js/ext/mdl-jquery-modal-dialog.js")
+    script(async src="http://localhost:35729/livereload.js")
+    
+    script(src="/marker_type_registration.js")
+    script(async src="/markerTypes/defaults.js")
+    script(defer src="/regionTypes/defaults.js")
     block jsLibs

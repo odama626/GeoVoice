@@ -5,7 +5,7 @@
 //Global Variables
 var map;
 var drawingManager;
-var _debug = false;
+var _debug = true;
 var ENABLE_REGIONS = true;
 var currently_logged_in = false;
 
@@ -13,9 +13,11 @@ var currently_logged_in = false;
 //"use strict"
 
 function initMap() {
+  document.getElementById('google-maps').remove();
+  map_icons_init()
   map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: -34.397, lng: 150.644},
-    zoom: 15,
+    center: {lat: 39, lng: -101},
+    zoom: 4,
     mapTypeControl: false,
     styles: [
 			{stylers: [{ visibility: 'simplified' }]},
@@ -23,7 +25,7 @@ function initMap() {
   });
 
   //Check logged in status
-  currently_logged_in = $('a[href="login"]').length ==0;
+  currently_logged_in = !document.querySelector('a[href="/user/login"]');
 
   setPrototypes();
   createUserDot();
@@ -31,48 +33,73 @@ function initMap() {
   google.maps.event.addListener(map, 'idle', regions.fetch);
   map.addListener('click', () => { regionPanel.close(); markers.closeInfoWindow(); });
 
-  google.maps.event.addListener(map, 'rightclick', addPrecisePoint);
+  if (geovoice._util.getdevicetype() == 'pc') {
+    google.maps.event.addListener(map, 'rightclick', addPrecisePoint);
+  } else { // add long press functionality
+    google.maps.event.addListener(map, 'mousedown', (e) => {
+      global_mouseup = false;
+      setTimeout(() => {
+        if (global_mouseup == false) {
+          global_mouseup = true;
+          addPrecisePoint(e);
+        }
+      }, 500);
+    });
+    google.maps.event.addListener(map, 'mouseup', (e) => {
+      global_mouseup = true;
+    });
+    google.maps.event.addListener(map, 'dragstart',  (e) => { global_mouseup = true; });
+  }
 
-  getLocation().then((loc) => map.setCenter(loc));
+//  geovoice._util.geolocate().then((loc) => {console.log('slow set'); map.setCenter(loc)});
 
-	// Close navigation drawer on <a> click
-  $('a').click( () => {
-    markers.closeInfoWindow();
-    regionPanel.close();
-    $( '.mdl-layout__drawer, .mdl-layout__obfuscator' ).removeClass( 'is-visible' );
-  });
-
-  if (ENABLE_REGIONS == false) {
+  if (!ENABLE_REGIONS) {
     disableRegions();
   }
 
-  $(document).ready(() => {
-    $('#search-bar').betterAutocomplete('init', searchHandler.tagList, {},
-      {
-        select: function(result, $input) {
-        //  $input.val(result.title);
-          searchHandler.addChip(result.title);
-          $input.val('');
-        }
 
-      }
-    );
+
+  document.getElementById('map').addEventListener('pageshow', () => {
+    google.maps.event.trigger(map, "resize");
   });
 } // initMap
+
+window.addEventListener('load',() => {
+  $('#search-bar').betterAutocomplete('init', searchHandler.tagList, {},
+    {
+      select: function(result, $input) {
+      //  $input.val(result.title);
+        searchHandler.addChip(result.title);
+        $input.val('');
+      }
+    }
+  );
+
+  var onclick = () => {
+    markers.closeInfoWindow();
+    regionPanel.close();
+    document.querySelector('.mdl-layout__drawer').classList.remove('is-visible');
+    document.querySelector('.mdl-layout__obfuscator').classList.remove('is-visible');
+  }
+
+  document.querySelectorAll('a').forEach( a => a.addEventListener('click', onclick));
+});
+
 
 function createUserDot() {
   var liveUserLocation = new google.maps.Marker({
     clickable: false,
-    icon: new google.maps.MarkerImage('//maps.gstatic.com/mapfiles/mobile/mobileimgs2.png',
-                                      new google.maps.Size(22, 22),
-                                      new google.maps.Point(0, 18),
-                                      new google.maps.Point(11,11)),
+    icon: new google.maps.MarkerImage(
+      '//maps.gstatic.com/mapfiles/mobile/mobileimgs2.png',
+      new google.maps.Size(22, 22),
+      new google.maps.Point(0, 18),
+      new google.maps.Point(11,11)),
     shadow: null,
     zIndex: 999,
     map: map
   });
   setTimeout(function updateLiveLocation() {
-    getLocation().then((loc) => {
+    geovoice._util.geolocate().then((loc) => {
       liveUserLocation.setPosition(loc);
       debugLog('Updating user location');
       setTimeout(updateLiveLocation, 30000);
@@ -87,25 +114,26 @@ function disableRegions() {
 
 function debugLog(text) {
   if (_debug) {
-    console.log(text);
+    console.debug(text);
 	}
 } // debugLog
-
-function getLocation() {
-  return new Promise( function(resolve) {
+/*
+function geovoice._util.geolocate() {
+  return new Promise(function(resolve) {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function(position) {
         resolve(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
       }, function(e) {
         ui.createSnack('The geolocation service failed');
-        console.log(e);
+        reject(e);
       });
     } else {
-      // Browser doesn't support Geolocation
+      reject('no support');
       ui.createSnack('You browser doesn\'t support geolocation.');
     }
   });
 } // getLocation
+*/
 
 function panToPromise(location) {
   return new Promise( function (resolve) {
@@ -114,8 +142,9 @@ function panToPromise(location) {
   });
 } // panToPromise
 
-function getLoc(m) {
-  return { lat: parseFloat(m.lat), lng: parseFloat(m.lng)};
+function getBaseUrl() {
+    var re = new RegExp(/^.*\/\/[^\/]+/);
+    return re.exec(window.location.href);
 }
 
 function setPrototypes() {
@@ -142,43 +171,52 @@ function getBounds(arr) {
 
 function addPrecisePoint(event) {
   if (!currently_logged_in) {
-    ui.createSnack('You need to be logged in to do that', 'Login', () => location.href='login');
+    ui.createSnack('You need to be logged in to do that', 'Login', () => location.href='/user/login');
     return;
   }
-  markers.closeInfoWindow();
-  markers.placeInfoWindow(event.latLng,
-    `
-      <h5 style="padding-bottom:8px;">Add a point here?</h5>
-      sneaky
-        <div class="infowindow-button-container">
-          <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab infowindow-button" id="sound-request">
-            <i class="material-icons">mic</i>
-          </button>
-          <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab infowindow-button" id="video-request">
-            <i class="material-icons">videocam</i>
-          </button>
-        </div>
-    `);
-  google.maps.event.addListenerOnce(markers.infoWindow, 'domready', () => {
-    var soundRequest = document.getElementById('sound-request');
-    var videoRequest = document.getElementById('video-request');
-    soundRequest.onclick = () => {sound.request(event.latLng);};
-    videoRequest.onclick = () => {video.request(event.latLng);};
-  });
-  markers.infoWindow.open(map);
+  var showWindow = () => {
+    markers.closeInfoWindow();
+    markers.placeInfoWindow(event.latLng,
+      `
+        <h5 style="padding-bottom:8px;">Add a point here?</h5>
+        sneaky
+          <div class="infowindow-button-container">
+            <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab infowindow-button" id="sound-request">
+              <i class="material-icons">mic</i>
+            </button>
+            <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab infowindow-button" id="video-request">
+              <i class="material-icons">videocam</i>
+            </button>
+          </div>
+      `);
+    google.maps.event.addListenerOnce(markers.infoWindow, 'domready', () => {
+      var soundRequest = document.getElementById('sound-request');
+      var videoRequest = document.getElementById('video-request');
+      soundRequest.onclick = () => { markers.infoWindow.close(); sound.request(event.latLng);};
+      videoRequest.onclick = () => { markers.infoWindow.close(); video.request(event.latLng);};
+    });
+    setTimeout(()=>markers.infoWindow.open(map), 240);
+  };
+  //showWindow();
+  var acknowledgeHold = document.createElement('div');
+  acknowledgeHold.classList.add('tap-animation');
+  acknowledgeHold.style.left = event.pixel.x+'px';
+  acknowledgeHold.style.top = event.pixel.y+'px';
+  document.getElementById('map').appendChild(acknowledgeHold);
+  if (geovoice._util.getdevicetype() == 'pc') {
+    showWindow();
+  } else {
+    google.maps.event.addListenerOnce(map, 'mouseup',() => {console.log('mouseup');showWindow()});
+  }
+
 } // addPrecisePoint
 
-function selfDestruct() {
-  $.ajax({
-    url: 'self_destruct',
-    type: 'POST',
-    contentType: false,
-    processData: false,
-    success: function() {
-      ui.createSnack('Successfully added');
-    },
-    error: function(e) {
-      ui.createSnack('Error while adding: '+e.toString());
-    }
-  });
-} // selfDestruct
+geovoice._util.geolocate().then((loc) => {
+  debugLog('fast geolocate'+map);
+  var params = url.getQueryParams();
+  if (params.indexOf('?r=') == 0 || params.indexOf('?g=') == 0) {
+  } else {
+    map.setCenter(loc);
+  }
+  map.setZoom(12);
+});

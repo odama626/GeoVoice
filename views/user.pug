@@ -1,0 +1,50 @@
+extends layout.pug
+
+block cssLinks
+  link(rel="stylesheet", href="/css/styles.css")
+  link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.4.1/croppie.min.css")
+    
+block navMenu
+  a.mdl-navigation__link(href="/") Geovoice
+
+block mainContent
+  main.mdl-layout__content.login-background
+    .mdl-grid.portfolio-max-width
+      .mdl-cell.mdl-cell--12-col.mdl-card.mdl-shadow--4dp.user-page-card
+        .mdl-card__title
+          img.user-pic.drop-zone(src='/img/'+user.image, alt="user image")
+          - var displayName = (user.name ? user.name : user.username)
+          h2.mdl-card__title-text(style="margin: auto 0;") #{displayName}
+          if (user.lvl == 'admin')
+            a.mdl-navigation__link.clickable.admin-button(href="/admin")
+              i.material-icons.region-panel__settings_button settings_ethernet
+        .mdl-card__portfolio-copy
+          h3.mdl-cell.mdl-cell-12-col.mdl-typography--headline(style="display: inline-block;") Groups you're in
+          .flex-box
+            button.mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect(onclick="user.createGroup()") Create Group
+          br
+          ul#user-groups.mdl-list
+            li.mdl-list__item
+              span.mdl-list__item-primary-content
+                | Nothing to show, Create some groups!
+    .mdl-grid.portfolio-max-width
+      .mdl-cell.mdl-cell--12-col.mdl-card.mdl-shadow--4dp.user-page-card
+        .mdl-card__portfolio-copy
+          h3.mdl-cell.mdl-cell-12-col.mdl-typography--headline Your markers
+          ul#user-markers.mdl-list
+            li.mdl-list__item
+              span.mdl-list__item-primary-content
+                | Nothing to show, go add some markers!
+        
+block jsLibs
+  script(src='/js/ui/ui.js')
+  script(src='/js/markers.js')
+  script(src="/js/user.js")
+  script(async src='https://cdnjs.cloudflare.com/ajax/libs/croppie/2.4.1/croppie.js')
+  script.
+    window.onload = _ => {
+      user.picDropZone();
+      user.fetchMarkers();
+      user.fetchGroups();
+    }
+    

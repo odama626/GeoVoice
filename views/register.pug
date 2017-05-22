@@ -13,24 +13,30 @@ block mainContent
         h2.mdl-card__title-text Sign up
       .mdl-card__supporting-text
 
-        form(action="register", method="post", role="form")
+        form(action="/user/register", method="post", role="form")
           .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
-            input#username.mdl-textfield__input(type="text", name="username", pattern="^([\\w\\.]*)@([\\w\\.]*)\\.([\\w]*)")
-            label.mdl-textfield__label(for="username") Email address
+            input#name.mdl-textfield__input(type="text", name="name")
+            label.mdl-textfield__label(for="name") Full name
+          .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+            input#username.mdl-textfield__input(type="text", name="username", onblur="user.validateUsername()")
+            label.mdl-textfield__label(for="username") Username
+            span#username-error.mdl-textfield__error That username is taken
+          .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+            input#email.mdl-textfield__input(type="text", name="email", pattern="^([\\w\\.]*)@([\\w\\.]*)\\.([\\w]*)")
+            label.mdl-textfield__label(for="email") Email address
             span.mdl-textfield__error Not a valid email address
           .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
             input#password.mdl-textfield__input(type="password", name="password", pattern="(.){8}.*")
             label.mdl-textfield__label(for="password") Password
             span.mdl-textfield__error Must be at least 8 characters long
           .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
-            input#retype-password.mdl-textfield__input(type="password", name="retype-password", onblur="validatePassword()")
-            label#retype-password-label.mdl-textfield__label(for="retype-password") Retype password
+            input#retype-password.mdl-textfield__input(type="password", name="retype-password", onkeyup="user.validatePassword()")
+            label.mdl-textfield__label(for="retype-password") Retype password
             span#retype-password-error.mdl-textfield__error
 
           .mdl-card__actions
             a#cancel.mdl-button.mdl-js-button.mdl-js-ripple-effect(href="/") Cancel
             button#sign-up.mdl-button.mdl-js-button.mdl-js-ripple-effect.mdl-button--primary(type="submit",disabled) Sign up
 
-  .mdl-snackbar.mdl-js-snackbar(aria-live="assertive", aria-atomic="true", aria-relevant="text")
-    .mdl-snackbar__text
-      button.mdl-snackbar__action(type="button")
+block jsLibs
+  script(src="/js/user.js")

@@ -67,10 +67,26 @@ var regionUi = {
       this.showCreateDialog(region);
     }, // classic
 
+    nameAvailable: function() {
+      var name = document.getElementById('region-name');
+      var showAvailable = (available) => {
+        if (available) {
+          name.parentElement.classList.remove('is-invalid');
+          document.getElementById('okay-button').disabled = false;
+        } else {
+          document.getElementById('okay-button').disabled = true;
+          name.onkeyup = regionUi.add.nameAvailable;
+          name.parentElement.classList.add('is-invalid');
+
+        }
+      }
+      geovoiceApi.checkNameAvailability('region',name.value)
+      .then(_=>showAvailable(true)).catch(_=>showAvailable(false));
+    }, // nameAvailable
 
     showCreateDialog: function(region) {
       $.ajax({
-        url: 'dialogs/addRegion.pug',
+        url: '/dialogs/addRegion.pug',
         type: 'GET',
         contentType: false,
         processData: false,
@@ -79,7 +95,7 @@ var regionUi = {
             title: 'Add Region',
             text: data,
             onLoaded: function() {
-
+              document.getElementById('okay-button').disabled = true;
               // accordian animation
               $('.accordian-expand').click(
                 () => $(event.target).next('.accordian-content').toggleClass('open'));
@@ -140,6 +156,7 @@ var regionUi = {
 
             },
             positive: {
+              id: 'okay-button',
               title: 'okay',
               onClick: function() {
                 var color = $('#region-color').data('color');
@@ -151,7 +168,7 @@ var regionUi = {
                 region.icon = icon;
                 region.shape = shape.substring('map-icon-'.length);
                 region.color = color;
-                region.regionName = name;
+                region.name = name;
                 regions.create(region);
               }
             }

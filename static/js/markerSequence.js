@@ -1,3 +1,6 @@
+/* global getLoc: false */
+/* exported MarkerSequence */
+
 class MarkerSequence {
   constructor(region) {
     this.region = region;
@@ -7,15 +10,16 @@ class MarkerSequence {
   }
 
   initializeElement() {
-    if (this.region.markers[0].type == 'sound') {
+    if (this.region.markers[0].type == 'audio') {
       this.mediaElement = document.createElement('audio');
-      this.mediaElement.type='audio/mpeg';
+      this.mediaElement.type='audio/wav';
     } else if (this.region.markers[0].type == 'video') {
       this.mediaElement = document.createElement('video');
       this.mediaElement.type='video/webm';
+      this.mediaElement.style.width = '45vw';
     }
     this.mediaElement.controls = true;
-    this.mediaElement.src = this.region.markers[0].media;
+    this.mediaElement.src = url.rootIfNeeded(this.region.markers[0].media);
 
     var subTitle = document.createElement('div');
     subTitle.appendChild(this.mediaElement);
@@ -35,7 +39,7 @@ class MarkerSequence {
     this.mediaElement.onplay = () => this.started();
     this.element.append(primaryContent);
 
-  //  map.panTo(getLoc(this.region.markers[0]));
+  //  map.panTo(geovoiceApi.parseLocation(this.region.markers[0]));
     map.panTo(this.region.marker.getPosition());
   }
 
@@ -51,12 +55,12 @@ class MarkerSequence {
       return; // current and next markers are same type, nothing to do
     }
     var mediaElement;
-    if (this.region.markers[this.currentMarker].type == 'sound') {
+    if (this.region.markers[this.currentMarker].type == 'audio') {
       mediaElement = document.createElement('audio');
       mediaElement.type='audio/mpeg';
     } else if (this.region.markers[this.currentMarker].type == 'video') {
       mediaElement = document.createElement('video');
-      mediaElement.style.heoght='100%';
+      mediaElement.style.width='45vw';
       mediaElement.type='video/webm';
     }
 
@@ -78,8 +82,6 @@ class MarkerSequence {
       return;
     }
 
-
-
     this.currentMarker = this.currentMarker+1;
     this.getNewElement();
 
@@ -88,16 +90,10 @@ class MarkerSequence {
       this.temporaryMarker = this.region.markers[this.currentMarker];
     markers.place(this.temporaryMarker);
 
-    // move marker to next sound location
-    /*this.region.marker.position = new google.maps.LatLng({
-      lat : parseFloat(this.region.markers[this.currentMarker].lat),
-      lng : parseFloat(this.region.markers[this.currentMarker].lng)
-    });*/
-
-    panToPromise(getLoc(this.region.markers[this.currentMarker])).then(() =>{
+    panToPromise(geovoiceApi.parseLocation(this.region.markers[this.currentMarker])).then(() =>{
       this.mediaElement.pause();
       this.mediaElement.currentTime = 0.00;
-      this.mediaElement.src = this.region.markers[this.currentMarker].media;
+      this.mediaElement.src = url.rootIfNeeded(this.region.markers[this.currentMarker].media);
       this.mediaElement.play();
     });
   }

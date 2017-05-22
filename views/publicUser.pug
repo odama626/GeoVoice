@@ -1,0 +1,22 @@
+extends layout.pug
+
+block cssLinks
+  link(rel="stylesheet", href="/css/styles.css")
+  link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.4.1/croppie.min.css")
+    
+block navMenu
+  a.mdl-navigation__link(href="/") Geovoice
+
+block mainContent
+  main.mdl-layout__content.login-background
+    .mdl-grid.portfolio-max-width
+      .mdl-cell.mdl-cell--12-col.mdl-card.mdl-shadow--4dp
+        .mdl-card__title
+          img.user-pic(src='/img/'+user.image, alt="user image")
+          - var displayName = (user.name ? user.name : user.username)
+          h2.mdl-card__title-text(style="margin: auto 0;") #{displayName}
+        .mdl-card__portfolio-copy
+
+block jsLibs
+  script(src='/js/ui/ui.js')
+  script(src='/js/markers.js')

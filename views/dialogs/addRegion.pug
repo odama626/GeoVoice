@@ -1,9 +1,12 @@
 form
   .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
-    input#region-name.mdl-textfield__input(type="text")
-    label.mdl-textfield__label(for="location") Name Place
+    input#region-name.mdl-textfield__input(type="text",onblur='regionUi.add.nameAvailable()')
+    label.mdl-textfield__label(for="location") Region Name
+    span#region-name-error.mdl-textfield__error That region name is taken
+    
 
-#region-color(data-color="#1998F7") Pick a color
+#region-color(data-color="#1998F7")
+  span Pick a color
   input#region-palette(type="text")
 
 .accordian

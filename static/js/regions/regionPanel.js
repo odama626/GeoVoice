@@ -3,38 +3,40 @@
 
 var regionPanel = {
 
-  open: function(region, animate = true) {
+  open: function(region) {
+    panToPromise(geovoiceApi.parseLocation(region));
+    history.replaceState('', region.name+' - Geovoice', getBaseUrl()+'?r='+region.name);
     activeRegion.set(region);
-    this.createHtml(region, animate);
+    this.createHtml(region);
   }, // open
 
   close: function() {
     activeRegion.clear();
-    $('.right-panel').removeClass('slide-in');
-    $('body, html').animate({
-      scrollTop: 0
-    }, 500);
-    setTimeout(function() {
-      $('#region-panel-container').html('');
-    }, 1000);
+    history.replaceState('', 'Geovoice', getBaseUrl());
+    document.querySelector('.right-panel').classList.remove('slide-in');
+    if (window.innerWidth <= 500) { // scroll down to show panel on mobile
+      var el = document.querySelector('.map-container');
+      if (navigator.userAgent.indexOf('Firefox')) {
+        el.scrollIntoView({behavior: 'smooth'});
+      } else {
+        el.scrollIntoViewIfNeeded({behavior: 'smooth'})
+      }
+    }
   }, // close
 
-  createHtml: function(region, animate) {
+  createHtml: function(region) {
 
     var listContainer = document.createElement('ul');
     listContainer.className = 'mdl-list';
 
-
-    if (region.type == 'sequence')
-      if (region.markers.length > 0) {
-        var sequence = new MarkerSequence(region);
-        listContainer.appendChild(sequence.getElement());
-      }
-      else if (region.type == 'classic') {
-        for (var i = 0; i < region.markers.length; i++) {
-          listContainer.appendChild(regionPanel.generateItem(region.markers[i]));
-        }
-      }
+    if (region.type == 'sequence' && region.markers.length > 0) {
+      var sequence = new MarkerSequence(region);
+      listContainer.appendChild(sequence.getElement());
+    } else if (region.type == 'classic') {
+      region.markers.forEach( (marker) => {
+        listContainer.appendChild(ui.createMarkerLi(marker));
+      });
+    }
 
     // Show no recording message if no markers exist
     if (listContainer.childElementCount == 0) {
@@ -48,43 +50,47 @@ var regionPanel = {
       listContainer.appendChild(divNo);
     }
 
-    // Create a close panel button
-    var button = document.createElement('button');
-    button.className = 'mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect right-panel__button';
-    button.setAttribute('onClick', 'regionPanel.close()');
-    button.textContent = 'Close';
+    var rightPanel = document.querySelector('.right-panel');
 
-    var div = document.createElement('div');
-    div.style = 'padding-left:15px;';
-    div.appendChild(button);
-
-    listContainer.appendChild(div);
-
-    var containerClasses = 'right-panel';
-    if (!animate) {
-      containerClasses += ' slide-in';
-    }
-
-    // Create the main container
-    var sheetContainer = document.createElement('div');
-    sheetContainer.className = containerClasses;
-
-    sheetContainer.appendChild(this.createTitle(region.regionName));
-    sheetContainer.appendChild(this.createGear(
-      () => {
-
-        regionPanelSettings.constructor(region, sheetContainer);
-        //ui.createSnack('Yes, I will eventually do something cool');
+    ui.clearContainer(rightPanel);
+    rightPanel.appendChild(this.createTitle(region.name));
+    rightPanel.appendChild(this.createGear(() => {
+        regionPanelSettings.constructor(region, rightPanel);
       }));
-    sheetContainer.appendChild(listContainer);
 
-    document.getElementById('region-panel-container').appendChild(sheetContainer);
-
-    if (animate) {
-      setTimeout(function() {
-        $('.right-panel').addClass('slide-in');
-      }, 100);
+    if (region.group) {
+      var currentGroup = document.createElement('div');
+      currentGroup.classList.add('group-display')
+      var groupIcon = document.createElement('i');
+      var groupText = document.createElement('span');
+      groupText.textContent = region.group;
+      groupIcon.classList.add('material-icons');
+      groupIcon.textContent = 'autorenew';
+      currentGroup.appendChild(groupIcon);
+      currentGroup.appendChild(groupText);
+      rightPanel.appendChild(currentGroup);
+      geovoiceApi.get('group', region.group)
+      .then(group => {
+        console.log(group);
+        groupIcon.textContent = group.access == 'public' ? 'public' : 'lock';
+      });
     }
+
+    var viewerOps = {
+      markdown: region.description || '###### There isn\'t a description',
+      button: {
+        text: 'Show more',
+        onclick: (content) => {
+          content.viewer.classList.toggle('expand');
+        }
+      }
+    }
+
+    rightPanel.appendChild(ui.markdownViewer(viewerOps));
+
+    rightPanel.appendChild(listContainer);
+
+    rightPanel.classList.add('slide-in');
   }, // createHtml
 
   createTitle: function(title) {
@@ -105,28 +111,4 @@ var regionPanel = {
     a.appendChild(i);
     return a;
   }, // createGear
-
-  generateItem: function(item) {
-    var audioControls = document.createElement('audio');
-    audioControls.controls = true;
-    audioControls.src = item.media;
-
-    var subTitle = document.createElement('span');
-    subTitle.className = 'mdl-list__item-sub-title';
-    subTitle.appendChild(audioControls);
-
-    var dateContent = document.createElement('span');
-    dateContent.textContent = item.date;
-
-    var primaryContent = document.createElement('span');
-    primaryContent.className = 'mdl-list__item-primary-content';
-    primaryContent.appendChild(dateContent);
-    primaryContent.appendChild(subTitle);
-
-    var li = document.createElement('li');
-    li.className = 'mdl-list__item mdl-list__item--two-line';
-    li.append(primaryContent);
-
-    return li;
-  } // generateItem
 }; // regionPanel
