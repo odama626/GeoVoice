@@ -103,12 +103,20 @@ router.post('/update_marker_order', function(req, res) {
 					}
 				}//, { multi: true }
 			);
-			req.app.locals.db.groups.update(
-				{ 'name': sanitize(req.body.group) },
-				{
-					$addToSet: { regions: sanitize(req.body.regionId)}
-				}
-			)
+			new Promise( (resolve, reject) => {
+				req.apps.local.db.groups.update(
+					{ regions: { $elemMatch: sanitize(req.body.regionId) } },
+					{
+						$pull: { regions: sanitize(req.body.regionId)}
+					}, { multi: true}, (err, r) => resolve(err, r))
+			}).then( _ => {
+				req.app.locals.db.groups.update(
+					{ 'name': sanitize(req.body.group) },
+					{
+						$addToSet: { regions: sanitize(req.body.regionId)}
+					}
+				)
+			});
 		}
 		res.end('SUCCESS');
 	}
@@ -134,6 +142,25 @@ router.post('/submit_region', function(req, res) {
 	}
 });
 
+router.post('/group/add_user', function(req, res) {
+	console.log('adding user to group');
+	var groupName = sanitize(req.body.group);
+	var username = sanitize(req.body.user);
+	var access = sanitize(req.body.access);
+	if (req.isAuthenticated()) {
+		req.app.locals.db.groups.findOne( { owner: sanitize(req.user.username), name: groupName})
+		.then( group => {
+			req.app.locals.db.accounts.update(
+				{ username: username},
+				{
+					$addToSet: { groups: { name: groupName, access: access} }
+				}
+			);
+			res.json({error: false, message: 'added user to group'});
+		}).catch( err => res.json({error: true, message: 'failed to find group with name, and owner'}))
+	}
+});
+
 router.post('/submit_group', function(req, res) {
 	if (req.isAuthenticated()) {
 		var group = {
@@ -142,15 +169,11 @@ router.post('/submit_group', function(req, res) {
 			'regions': [],
 			'access': sanitize(req.body.visibility)
 		};
-		var userGroup = {
-			'name': sanitize(req.body.name),
-			'access': 'owner'
-		}
 		req.app.locals.db.groups.insert(group);
 		req.app.locals.db.accounts.update(
 			{ username: sanitize(req.user.username)},
 			{
-				$push: { groups: userGroup}
+				$push: { groups: group}
 			},
 			{ upsert: true }
 		);
@@ -159,24 +182,41 @@ router.post('/submit_group', function(req, res) {
 	}
 });
 
+function userInGroup(user, groupName) {
+	var inGroup = false;
+	for (var i = 0; i < user.groups.length; i++) {
+		if (user.groups[i].name == groupName) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function fetchVisible(req, res) {
+	var userGroups = [];
+	if (req.user) {
+		userGroups = req.user.groups.map( group => { return group.name});
+	}
+	new Promise( (resolve, reject) => {
+		req.app.locals.db.groups.find({ access: 'public'})
+	.toArray((err, items) => resolve(userGroups.concat(items.map(item => item.name))))
+	})
+	.then( groups => {
+		console.log(groups);
+		req.app.locals.db.markers.find({$or: [{ group: {$in: groups}}, {group: null}]})
+		.toArray((err, items) => res.json(items));
+	});
+}
+
 router.get('/fetch', function(req, res) {
 	if (req.query.g) { // send group
-		req.app.locals.db.groups.findOne( {'name': sanitize(req.query.g)})
-		.then( group => {
-			var arr = [];
-			console.log(group);
-			group.regions.forEach( region => {arr.push(ObjectId(region))});
-			console.log(arr);
-			req.app.locals.db.markers.find({ '_id': { $in: arr } })
-			.toArray( (err, items) => res.json(items));
-		})
+		req.app.locals.db.markers.find({ group: sanitize(req.query.g)})
+		.toArray( (err, items) => res.json(items));
 	} else if (req.query.r) { // send region
 		req.app.locals.db.markers.findOne( {'name': sanitize(req.query.r) })
 		.then(region => {res.json([region])});
 	} else { // send all
-		req.app.locals.db.markers.find().toArray( function(err, items) {
-			res.json(items);
-		});
+		fetchVisible(req, res);
 	}
 });
 
@@ -192,14 +232,17 @@ router.post('/check_name_availability', (req, res) => {
 	}
 });
 
-function userInGroup(user, groupName) {
-	var inGroup = false;
-	for (var i = 0; i < user.groups.length; i++) {
-		if (user.groups[i].name == groupName) {
-			return true;
-		}
-	}
-	return false;
+function fetchGroup(group, req, res) {
+	new Promise( (resolve, reject) => {
+		req.app.locals.db.accounts.find({ groups: { $elemMatch: { name: group }}})
+		.toArray((err, items) => resolve(items.map(account => account.username)));
+	}).then( usernames => {
+		req.app.locals.db.groups.findOne({ 'name': group})
+		.then( group => {
+			group.users = usernames;
+			res.json(group);
+		});
+	});
 }
 
 router.post('/get', (req, res) => {
@@ -224,15 +267,7 @@ router.post('/get', (req, res) => {
 				}
 			})
 		} else if (req.query.t == 'group') {
-			req.app.locals.db.groups.findOne({ 'name': query})
-			.then( group => {
-				if ((group.access == 'private' && userInGroup(req.user, group.name))
-					|| group.access == 'public') {
-					res.json(group);
-				} else {
-					res.json(error);
-				}
-			})
+			fetchGroup(query, req, res);
 		}
 	} else {
 		res.json({error: true, message: 'User not authenticated'});

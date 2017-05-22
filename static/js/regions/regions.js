@@ -2,7 +2,7 @@
 /* exported regions */
 
 var regions = {
-
+  firstFetch: true,
   list: [],
 
   fetch: function() {
@@ -15,7 +15,7 @@ var regions = {
       return;
     }
 
-    fetch('/fetch'+url.getQueryParams())
+    fetch('/fetch'+url.getQueryParams(), {credentials: 'include'})
     .then(geovoiceApi.fetchOk)
     .then(data => {
       debugLog(data);
@@ -27,6 +27,19 @@ var regions = {
             data[i].name = null;
           }
           regions.place(data[i]);
+        }
+
+      }
+      if (regions.firstFetch) {
+        regions.firstFetch = false;
+        var params = url.getQueryParams();
+        if (params.indexOf('?r=') == 0) {
+          var r = regions.list[decodeURIComponent(params.slice(3))];
+          if (r) {
+            map.setCenter(geovoiceApi.parseLocation(r));
+          }
+        } else if (params.indexOf('?g=') == 0) {
+          map.fitBounds(getBounds(data.map(region => geovoiceApi.parseLocation(region))));
         }
       }
       regions.updateActiveRegion(data);

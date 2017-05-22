@@ -55,7 +55,7 @@ class MarkerSequence {
       return; // current and next markers are same type, nothing to do
     }
     var mediaElement;
-    if (this.region.markers[this.currentMarker].type == 'sound') {
+    if (this.region.markers[this.currentMarker].type == 'audio') {
       mediaElement = document.createElement('audio');
       mediaElement.type='audio/mpeg';
     } else if (this.region.markers[this.currentMarker].type == 'video') {

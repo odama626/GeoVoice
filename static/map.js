@@ -53,7 +53,7 @@ function initMap() {
 
 //  geovoice._util.geolocate().then((loc) => {console.log('slow set'); map.setCenter(loc)});
 
-  if (ENABLE_REGIONS == false) {
+  if (!ENABLE_REGIONS) {
     disableRegions();
   }
 
@@ -213,6 +213,10 @@ function addPrecisePoint(event) {
 
 geovoice._util.geolocate().then((loc) => {
   debugLog('fast geolocate'+map);
-  map.setCenter(loc);
+  var params = url.getQueryParams();
+  if (params.indexOf('?r=') == 0 || params.indexOf('?g=') == 0) {
+  } else {
+    map.setCenter(loc);
+  }
   map.setZoom(12);
 });

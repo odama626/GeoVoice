@@ -87,6 +87,8 @@ var ui = {
     container.appendChild(document.createElement('br'))
 
     var tags = document.createElement('span');
+    tags.style.display = 'flex';
+    tags.style['flex-wrap'] = 'wrap';
     tags.setAttribute('id', 'tag-container');
     container.appendChild(tags);
 
@@ -101,18 +103,30 @@ var ui = {
     subTitle.className = 'mdl-list__item-sub-title';
     subTitle.appendChild(media);
 */
+
+    console.log(group);
     var name = document.createElement('span');
     name.textContent = group.name;
+
+    var secondaryContent = document.createElement('span');
+    secondaryContent.className = 'mdl-list__item-sub-title user-list';
+    secondaryContent.textContent = `Owner: ${group.owner}`;
 
     var primaryContent = document.createElement('span');
     primaryContent.className = 'mdl-list__item-primary-content';
     primaryContent.appendChild(name);
-    //primaryContent.appendChild(subTitle);
+    primaryContent.appendChild(secondaryContent);
 
     var li = document.createElement('li');
     li.className = 'mdl-list__item mdl-list__item--two-line';
     li.style = 'border-top: 1px solid #ddd;';
     li.appendChild(primaryContent);
+
+    geovoiceApi.get('group', group.name)
+    .then( group => {
+      secondaryContent.innerHTML = `Owner: ${group.owner} &emsp; Users: ${group.users.toString()}`
+    })
+
     return li;
   }, // createGroupLi
 
@@ -196,7 +210,7 @@ var ui = {
   }, // markdownViewer
 
   markdownFormatter: (text) => {
-    a = marked(text, {break: true});
+    var a = marked(text, {break: true});
     a = a.replace(/<a/g, '<a target="_blank"')
          .replace(/<li>\[\s\]/g, '<li class="check-box"><input onclick="return false" type="checkbox">')
          .replace(/<li>\[x\]/g, '<li class="check-box"><input checked onclick="return false" type="checkbox">');

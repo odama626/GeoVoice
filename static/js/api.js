@@ -60,6 +60,20 @@ var geovoiceApi = {
     }).then(geovoiceApi.fetchOk)
     .then( e => { if (e.error) { throw e;} return e;})
     return chain;
+  },
+
+  addUserToGroup: (username, groupName, access) => {
+    var data = new FormData();
+    data.append('user', username);
+    data.append('group', groupName);
+    data.append('access', access);
+    var chain = fetch('/group/add_user', {
+      credentials: 'include',
+      method: 'POST',
+      body: data
+    }).then(geovoiceApi.fetchOk)
+    .then( e => { if (e.error) {throw e;} return e;});
+    return chain;
   }
 }
 

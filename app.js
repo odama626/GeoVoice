@@ -65,8 +65,6 @@ mongoClient.connect('mongodb://localhost:27017/geoVoice', function(err, database
   }
 });
 
-
-
 // setup parsing of file uploads
 var storage = multer.diskStorage({
 	destination: function(req, file, cb) {

@@ -138,6 +138,31 @@ var user = {
     }).catch(_=>_);
   }, // createGroup
 
+  groupDialog: function(group) {
+    //geovoiceApi.get('group', group.name)
+    //.then(group => console.log(group));
+    showDialog({
+      title: 'Add user to group',
+      text: `
+        <div class='group-edit-dialog-container'>
+          <div class="mdl-textfield">
+            <label for='user-entry'>${group.name}</label>
+            <input id='user-entry' class='mdl-textfield__input' type='text' placeholder='Enter username'>
+          </div>
+        </div>
+        `,
+      positive: {
+        title: 'Add',
+        onClick: (e) => {
+          let addButton = document.getElementById('add-user-button');
+          let username = document.getElementById('user-entry').value;
+          geovoiceApi.addUserToGroup(username, group.name, 'edit')
+          .then(e => console.log(e));
+        }
+      }
+    })
+  },
+
   fetchGroups: function() {
     var container = document.getElementById('user-groups');
     geovoiceApi.getself()
@@ -146,9 +171,12 @@ var user = {
         ui.clearContainer(container);
       }
       user.groups.forEach(group => {
-        console.log(group);
         var li = ui.createGroupLi(group);
         li.setAttribute('id', `group-${group.name}`);
+
+        li.addEventListener('click', _ => {
+          this.groupDialog(group);
+        });
         if (group.access == 'owner') {
           var i = document.createElement('i');
           i.className = 'material-icons clickable';

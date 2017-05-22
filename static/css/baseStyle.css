@@ -191,6 +191,10 @@ span > .mdl-navigation__link:hover {
 	.slide-in video {
 		width: 100% !important;
 	}
+
+	.marker-content {
+		max-width: 90vw;
+	}
 }
 
 .tap-animation {
