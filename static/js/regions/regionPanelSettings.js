@@ -110,7 +110,7 @@ var regionPanelSettings = {
         select.appendChild(option);
       })
       select.value = region.group || 'none';
-      if (!user.groups.includes(region.group)) {
+      if (typeof region.group !== 'undefined' && !user.groups.includes(region.group)) {
         select.disabled = true;
       }
 

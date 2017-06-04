@@ -56,15 +56,17 @@ var regionPanel = {
     rightPanel.appendChild(this.createTitle(region.name));
     
     if (region.group) {
-      geovoiceApi.getself()
-      .then( user => {
-        if (user.groups.includes(region.group)) {
-          rightPanel.appendChild(this.createGear(() => {
-            regionPanelSettings.constructor(region, rightPanel);
-          }));    
-        }
-      })
-    } else {
+      if (currently_logged_in) {
+        geovoiceApi.getself()
+        .then( user => {
+          if (user.groups.includes(region.group)) {
+            rightPanel.appendChild(this.createGear(() => {
+              regionPanelSettings.constructor(region, rightPanel);
+            }));    
+          }
+        });
+      }
+    } else if (currently_logged_in) {
       rightPanel.appendChild(this.createGear(() => {
         regionPanelSettings.constructor(region, rightPanel);
       }));
@@ -83,11 +85,15 @@ var regionPanel = {
       currentGroup.appendChild(groupIcon);
       currentGroup.appendChild(groupText);
       rightPanel.appendChild(currentGroup);
-      geovoiceApi.get('group', region.group)
-      .then(group => {
-        console.log(group);
-        groupIcon.textContent = group.access == 'public' ? 'public' : 'lock';
-      });
+      if (!currently_logged_in) {
+        groupIcon.textContent = 'public';
+      } else {
+        geovoiceApi.get('group', region.group)
+        .then(group => {
+          console.log(group);
+          groupIcon.textContent = group.access == 'public' ? 'public' : 'lock';
+        });
+      }
     }
 
     var viewerOps = {

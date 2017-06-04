@@ -99,12 +99,6 @@ var ui = {
   },
 
   createGroupLi: function(group) {
-    /*var subTitle = document.createElement('span');
-    subTitle.className = 'mdl-list__item-sub-title';
-    subTitle.appendChild(media);
-*/
-
-    console.log(group);
     var name = document.createElement('span');
     name.textContent = group.name;
 

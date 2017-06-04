@@ -130,6 +130,9 @@ var user = {
         processData: false,
         success: function() {
           ui.createSnack('Created Group');
+          let groupContainer = document.getElementById('user-groups');
+          let li = ui.createGroupLi({name: name, access: access});
+          groupContainer.appendChild(li);
         },
         error: function(e) {
           ui.createSnack('Error Creating Group');

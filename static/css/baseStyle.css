@@ -283,10 +283,14 @@ input.map-marker:checked + label {
 	padding: 0 16px 0 24px;
 }
 
-.accordian-expand {
-	float: right;
-	color: black;
-	padding: 0 24px 0 16px;
+@media screen and (max-width: 1024px) {
+	.mdl-layout__drawer-button {
+		color: white;
+		background-color: #3f51b5;
+    margin-left: 0px;
+    margin-top: 0px;
+    border-bottom-right-radius: 25px;	
+	}
 }
 
 .drawing-manager-button {
@@ -416,7 +420,6 @@ input.map-marker:checked + label {
 }
 
 .admin-button {
-	top: 87px;
 	left: 65px;
 	position: absolute;
 	right: 0px;
