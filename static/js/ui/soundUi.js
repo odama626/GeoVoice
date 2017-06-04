@@ -70,18 +70,21 @@ var soundUi = {
         if (!ENABLE_REGIONS) {
           document.getElementById('marker-region-selection').remove();
         } else {
-
-          var regionsContainer = $('#regions');
-
-          for (var place in regions.list) {
-            if (regions.list[place].type == 'sequence') {
-              regionsContainer.append('<option value="' + place + '">' + place + '</option>');
-            } else if (regions.list[place].type == 'classic') {
-              if (getBounds(regions.list[place].geofence).contains(sound.location)) {
-                regionsContainer.append('<option value="' + place + '">' + place + '</option>');
+          geovoiceApi.getself()
+          .then(user => {
+            var regionsContainer = $('#regions');
+            for (var place in regions.list) {
+              if (typeof regions.list[place].group == 'undefined' || user.groups.includes(regions.list[place].group)) {
+                if (regions.list[place].type == 'sequence') {
+                  regionsContainer.append(`<option value='${place}'>${place}</option>`);
+                } else if (regions.list[place].type == 'classic') {
+                  if (getBounds(regions.list[place].geofence).contains(sound.location)) {
+                    regionsContainer.append(`<option value='${place}'>${place}</option>`);
+                  }
+                }
               }
             }
-          }
+          });
         }
       },
       positive: {

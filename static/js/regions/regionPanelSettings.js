@@ -41,10 +41,12 @@ var regionPanelSettings = {
     data.append('description', this.region.description);
 
     var e = document.getElementById('group-select');
-    var selectedGroup = e.options[e.selectedIndex].value;
-    if (selectedGroup != this.region.group && !(selectedGroup == 'none' && typeof this.region.group == 'undefined')) {
-      data.append('group', selectedGroup);
-      this.region.group = selectedGroup;
+    if (typeof e !== 'undefined' && typeof e.options[e.selectedIndex] !== 'undefined') {
+      var selectedGroup = e.options[e.selectedIndex].value;
+      if (selectedGroup != this.region.group && !(selectedGroup == 'none' && typeof this.region.group == 'undefined')) {
+        data.append('group', selectedGroup);
+        this.region.group = selectedGroup;
+      }
     }
 
     $.ajax({
@@ -108,6 +110,11 @@ var regionPanelSettings = {
         select.appendChild(option);
       })
       select.value = region.group || 'none';
+      if (!user.groups.includes(region.group)) {
+        select.disabled = true;
+      }
+
+      
     })
 
     var option = document.createElement('option');
