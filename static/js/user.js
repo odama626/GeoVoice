@@ -33,7 +33,7 @@ var user = {
       user.usernameAvailable = available;
       this.tryEnableSubmit();
     }
-    geovoiceApi.checkNameAvailability('user',usernameField.value)
+    geovoiceApi.checkNameAvailability('user',usernameField.value.trim())
     .then(_=> showAvailable(true)).catch(_=>showAvailable(false));
   },
 

@@ -8,6 +8,8 @@ block navMenu
 
 block mainContent
   main.mdl-layout__content.login-background
+    if (err)
+      #error-message(style='display: none', aria-hidden='true')=err.message
 
     .mdl-card.mdl-shadow--2dp.mdl-card__center
       .mdl-card__title
@@ -15,7 +17,7 @@ block mainContent
       .mdl-card__supporting-text
         form#login-form(action="/user/login", method="post")
           .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
-            input#email.mdl-textfield__input(type="text", name="email")
+            input#email.mdl-textfield__input(type="text", name="email", value=email)
             label.mdl-textfield__label(for="email") Email address
           .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
             input#password.mdl-textfield__input(type="password", name="password")
@@ -25,3 +27,10 @@ block mainContent
 
 block jsLibs
   script(src="/js/user.js")
+  script(src='/js/ui/ui.js')
+  script.
+    window.onload = _ => {
+      let err = document.getElementById('error-message');
+      if (typeof err !== 'undefined')
+        ui.createSnack(err.textContent);
+    }

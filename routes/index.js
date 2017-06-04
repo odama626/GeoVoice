@@ -202,7 +202,6 @@ function fetchVisible(req, res) {
 	.toArray((err, items) => resolve(userGroups.concat(items.map(item => item.name))))
 	})
 	.then( groups => {
-		console.log(groups);
 		req.app.locals.db.markers.find({$or: [{ group: {$in: groups}}, {group: null}]})
 		.toArray((err, items) => res.json(items));
 	});

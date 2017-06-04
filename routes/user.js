@@ -30,10 +30,29 @@ router.get('/login', function(req, res) {
 	res.render('login.pug', {user: req.user });
 });
 
-router.post('/login', passport.authenticate('local', {
+router.post('/login', function(req, res, next) {
+	passport.authenticate('local', function(err, user, info) {
+		if (err) return next(err);
+
+		if (!user ) {
+			return res.render('login.pug', { err: info, email: req.body.email})
+		}
+		req.login(user, function(err) {
+			if (err) return next(err);
+
+			return res.redirect('/');
+		})
+	})(req, res, next);
+});
+
+
+
+/*{
 	successRedirect: '/',
-	failureRedirect: '/user/login'
-}));
+	failureRedirect: '/user/login',
+	failureFlash: true,
+	successFlash: 'Welcome back!'*/
+//}));
 
 router.post('/register', function(req, res) {
 	var userLvl = 'user';
