@@ -14,6 +14,11 @@ router.post('/self_destruct', function(req, res) {
 		req.app.locals.db.markers.drop();
 		req.app.locals.db.groups.drop();
 		//req.app.locals.db.accounts.drop();
+		req.app.locals.db.accounts.update({},
+			{
+				$set: { groups: []}
+			}, { multi: true}
+		)
 		res.json({status: 'SUCCESS'});
 	} else {
 		res.status(500);

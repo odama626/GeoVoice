@@ -289,7 +289,7 @@ input.map-marker:checked + label {
 		background-color: #3f51b5;
     margin-left: 0px;
     margin-top: 0px;
-    border-bottom-right-radius: 25px;	
+    border-bottom-right-radius: 25px;
 	}
 }
 
@@ -420,7 +420,6 @@ input.map-marker:checked + label {
 }
 
 .admin-button {
-	left: 65px;
 	position: absolute;
 	right: 0px;
 	font-size: xx-large;

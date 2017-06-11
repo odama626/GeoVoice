@@ -5,14 +5,19 @@ var regionPanel = {
 
   open: function(region) {
     panToPromise(geovoiceApi.parseLocation(region));
-    history.replaceState('', region.name+' - PathGrab', getBaseUrl()+'?r='+region.name);
+    if (location.search.indexOf('g') < 0) {
+      console.log('blargh');
+      history.replaceState('', region.name+' - PathGrab', getBaseUrl()+'?r='+region.name);
+    }
     activeRegion.set(region);
     this.createHtml(region);
   }, // open
 
   close: function() {
     activeRegion.clear();
-    history.replaceState('', 'PathGrab', getBaseUrl());
+    if (location.search.indexOf('g') < 0) {
+      history.replaceState('', 'PathGrab', getBaseUrl());
+    }
     document.querySelector('.right-panel').classList.remove('slide-in');
     if (window.innerWidth <= 500) { // scroll down to show panel on mobile
       var el = document.querySelector('.map-container');
@@ -54,7 +59,7 @@ var regionPanel = {
 
     ui.clearContainer(rightPanel);
     rightPanel.appendChild(this.createTitle(region.name));
-    
+
     if (region.group) {
       if (currently_logged_in) {
         geovoiceApi.getself()
@@ -62,7 +67,7 @@ var regionPanel = {
           if (user.groups.includes(region.group)) {
             rightPanel.appendChild(this.createGear(() => {
               regionPanelSettings.constructor(region, rightPanel);
-            }));    
+            }));
           }
         });
       }
@@ -71,8 +76,8 @@ var regionPanel = {
         regionPanelSettings.constructor(region, rightPanel);
       }));
     }
-    
-    
+
+
 
     if (region.group) {
       var currentGroup = document.createElement('div');

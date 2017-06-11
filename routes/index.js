@@ -154,31 +154,73 @@ router.post('/group/add_user', function(req, res) {
 				{ username: username},
 				{
 					$addToSet: { groups: { name: groupName, access: access} }
-				}
+				},
+				(err, info, status) => {res.json({error: err, message: status }) }
 			);
-			res.json({error: false, message: 'added user to group'});
 		}).catch( err => res.json({error: true, message: 'failed to find group with name, and owner'}))
+	} else {
+		res.json({ error: true, message: 'You need to be logged in to do that'});
 	}
 });
 
-router.post('/submit_group', function(req, res) {
+router.post('/group/create', function(req, res) {
 	if (req.isAuthenticated()) {
 		var group = {
 			'owner': sanitize(req.user.username),
 			'name': sanitize(req.body.name),
 			'regions': [],
-			'access': sanitize(req.body.visibility)
+			'access': sanitize(req.body.access)
 		};
 		req.app.locals.db.groups.insert(group);
 		req.app.locals.db.accounts.update(
 			{ username: sanitize(req.user.username)},
 			{
-				$push: { groups: group}
+				$addToSet: { groups: group}
 			},
 			{ upsert: true }
 		);
-		res.end('SUCCESS');
-		console.log(`Added new Group ${req.body.name}, ${req.body.visibility}`);
+		res.json({error: false, message: `Created group ${req.body.name}`});
+		console.log(`Added new Group ${req.body.name}, ${req.body.access}`);
+	} else {
+		res.json({error: true, message: 'You need to be logged in to do that'});
+	}
+});
+
+router.post('/group/update_access', function(req, res) {
+	if (req.isAuthenticated()) {
+		//console.log(username, groupName, access);
+		req.app.locals.db.groups.update(
+			{ owner: sanitize(req.user.username), name: sanitize(req.body.name)},
+			{
+				$set: { access: sanitize(req.body.access) }
+			}, { upsert : true, mult: true}
+		);
+		res.json({error: false, message: 'done'});
+	} else {
+		res.json({error: true, message: 'You need to be logged in to do that'});
+	}
+});
+
+router.post('/group/delete', function(req, res) {
+	if (req.isAuthenticated()) {
+		var groupName = sanitize(req.body.name);
+		req.app.locals.db.groups.findOne({ name: groupName})
+		.then(group => {
+			console.log(group)
+			console.log(group.owner == req.user.username);
+			if (group.owner == req.user.username) {
+				req.app.locals.db.groups.deleteOne({ name: groupName});
+				req.app.locals.db.accounts.update({ groups: {$elemMatch: { name: group.name }}},
+				{
+					$pull: { groups: { name: group.name}}
+				}, { multi: true})
+				res.json({ error: false, message: `Deleted ${group.name}`});
+				console.log(`Deleted ${group.name}`);
+			} else { res.json({error: true, message: `Only group owner can delete`})}
+
+		}).catch ({ error: true,  message: `Couldn't find group with that name`})
+	} else {
+		req.json({error: true, message: 'you need to be logged in to do that'});
 	}
 });
 

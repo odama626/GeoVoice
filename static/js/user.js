@@ -18,7 +18,6 @@ var user = {
       var label = document.getElementById('retype-password-error');
       label.textContent = 'passwords don\'t match';
       passVer.parentElement.classList.add('is-invalid');
-      //passVer.onkeypress = this.validatePassword;
     }
   }, // validatePassword
 
@@ -89,11 +88,13 @@ var user = {
               <label class="mdl-textfield__label" for="group-name">Group Name</label>
               <span class="mdl-textfield__error" id="group-name-error">That group name is taken</span>
             </div>
-            <input id="public" type="radio" name="group-visibility" value="public" checked/>
-            <input id="private" type="radio" name="group-visibility" value="private"/>
-            <div class="radio-icon-container">
-            <label for="public"><i class="material-icons public clickable">public</i></label>
-            <label for="private"><i class="material-icons private clickable"> lock</i></label>
+            <div class='radio-icon-container'>
+              <input id="public" type="radio" name="group-visibility" value="public" checked/>
+              <input id="private" type="radio" name="group-visibility" value="private"/>
+              <div class="radio-icon-container">
+                <label for="public"><i class="material-icons public clickable">public</i></label>
+                <label for="private"><i class="material-icons private clickable"> lock</i></label>
+              </div>
             </div>`,
       onLoaded: _ => {
         var groupField = document.getElementById('group-name');
@@ -118,76 +119,124 @@ var user = {
       var name = document.getElementById('group-name').value;
       console.log(name, access);
 
-      var data = new FormData();
-      data.append('name', name);
-      data.append('visibility', access);
+      geovoiceApi.createGroup(name, access)
+      .then(group => {
+        ui.createSnack(group.message);
+        let groupContainer = document.getElementById('user-groups');
+        let li = ui.createGroupLi({name: name, access: access});
+        groupContainer.appendChild(li);
+      })
+      .catch(group => ui.createSnack(group.message));
+    });
 
-      $.ajax({
-        url : '/submit_group',
-        type: 'POST',
-        data: data,
-        contentType: false,
-        processData: false,
-        success: function() {
-          ui.createSnack('Created Group');
-          let groupContainer = document.getElementById('user-groups');
-          let li = ui.createGroupLi({name: name, access: access});
-          groupContainer.appendChild(li);
-        },
-        error: function(e) {
-          ui.createSnack('Error Creating Group');
-        }
-      });
-    }).catch(_=>_);
+    //   var data = new FormData();
+    //   data.append('name', name);
+    //   data.append('access', access);
+    //
+    //   $.ajax({
+    //     url : '/group/create',
+    //     type: 'POST',
+    //     data: data,
+    //     contentType: false,
+    //     processData: false,
+    //     success: function() {
+    //       ui.createSnack('Created Group');
+    //
+    //     },
+    //     error: function(e) {
+    //       ui.createSnack('Error Creating Group');
+    //     }
+    //   });
+    // }).catch(_=>_);
   }, // createGroup
 
   groupDialog: function(group) {
-    //geovoiceApi.get('group', group.name)
-    //.then(group => console.log(group));
-    showDialog({
-      title: 'Add user to group',
-      text: `
-        <div class='group-edit-dialog-container'>
-          <div class="mdl-textfield">
-            <label for='user-entry'>${group.name}</label>
-            <input id='user-entry' class='mdl-textfield__input' type='text' placeholder='Enter username'>
+    geovoiceApi.get('group', group.name)
+      .then(group => {
+      console.log(group);
+      showDialog({
+        title: `
+          <div class='flex-between'>
+            <div>
+              ${group.name}
+              <a style='margin-left: 15px' href='${location.origin}/?g=${encodeURIComponent(group.name)}'>
+                <i class='material-icons'>link</i>
+              </a>
+            </div>
+            <i id='delete-group' class='material-icons' style='cursor: pointer;'>delete</i>
           </div>
-        </div>
-        `,
-      positive: {
-        title: 'Add',
-        onClick: (e) => {
-          let addButton = document.getElementById('add-user-button');
-          let username = document.getElementById('user-entry').value;
-          geovoiceApi.addUserToGroup(username, group.name, 'edit')
-          .then(e => console.log(e));
+          `,
+        text: `
+          <div class='group-edit-dialog-container'>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+              <input id='user-entry' class='mdl-textfield__input' type='text'>
+              <label for='user-entry' class='mdl-textfield__label'>Invite user (enter username)</label>
+            </div>
+            <button id='add-user' class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect'>Add</button>
+            <div class='radio-icon-container'>
+              <input id="public" type="radio" name="group-visibility" value="public" ${group.access=='public'? 'checked' : ''}/>
+              <input id="private" type="radio" name="group-visibility" value="private" ${group.access=='private'? 'checked' : ''}/>
+              <div class="radio-icon-container">
+                <label for="public"><i class="material-icons public clickable">public</i></label>
+                <label for="private"><i class="material-icons private clickable"> lock</i></label>
+              </div>
+            </div>
+          </div>
+          `,
+        onLoaded: () => {
+          componentHandler.upgradeDom();
+          document.getElementById('add-user').addEventListener('click', () => {
+            let addButton = document.getElementById('add-user-button');
+            let username = document.getElementById('user-entry').value;
+            geovoiceApi.addUserToGroup(username, group.name, 'edit')
+            .then(e => ui.createSnack('successfully added '+username)).catch(e => ui.createSnack('Failed to add '+username+' are you logged in?'));
+          });
+          document.querySelectorAll('.radio-icon-container input').forEach( input => {
+            input.addEventListener('click', e => {
+              geovoiceApi.updateGroupAccess(group.name, e.target.value)
+              .then(a => ui.createSnack(`Changed ${group.name} to ${e.target.value}`))
+              .catch(e => ui.createSnack(`Failed to change visibility of ${group.name}`));
+            });
+          })
+          document.getElementById('delete-group').addEventListener('click', () => {
+            geovoiceApi.deleteGroup(group.name)
+            .then(e => ui.createSnack('Deleted Group'))
+            .catch(e => ui.createSnack('Failed to delete group'));
+          })
+        },
+        positive: {
+          title: 'done',
+          onClick: (e) => {
+
+          }
         }
-      }
-    })
+      })
+    });
   },
 
   fetchGroups: function() {
     var container = document.getElementById('user-groups');
     geovoiceApi.getself()
     .then(user => {
+      console.log(user);
       if (user.groups.length > 0) {
         ui.clearContainer(container);
       }
       user.groups.forEach(group => {
         var li = ui.createGroupLi(group);
         li.setAttribute('id', `group-${group.name}`);
-
+        console.log(group);
         li.addEventListener('click', _ => {
           this.groupDialog(group);
         });
-        if (group.access == 'owner') {
-          var i = document.createElement('i');
-          i.className = 'material-icons clickable';
-          i.style.float = 'right';
-          //i.onclick = () => user.delete(marker.region, marker.media);
-          i.textContent = 'delete';
-          li.appendChild(i);
-        }
+        // if (group.access == 'owner') {
+        //   var i = document.createElement('i');
+        //   i.className = 'material-icons clickable';
+        //   i.style.float = 'right';
+        //   //i.onclick = () => user.delete(marker.region, marker.media);
+        //   i.textContent = 'delete';
+        //   li.appendChild(i);
+        // }
         container.append(li);
       });
     })

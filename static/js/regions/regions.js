@@ -39,7 +39,12 @@ var regions = {
             map.setCenter(geovoiceApi.parseLocation(r));
           }
         } else if (params.indexOf('?g=') == 0) {
-          map.fitBounds(getBounds(data.map(region => geovoiceApi.parseLocation(region))));
+          var bounds = data.map(region => geovoiceApi.parseLocation(region))
+          if (bounds.length > 0) {
+            map.fitBounds(getBounds(bounds));
+          } else {
+            map.setZoom(4);
+          }
         }
       }
       regions.updateActiveRegion(data);

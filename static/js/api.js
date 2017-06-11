@@ -39,6 +39,14 @@ var geovoiceApi = {
     throw response;
   },
 
+  testError: (response) => {
+    if (response.error) {
+      throw response;
+    } else {
+      return response;
+    }
+  },
+
   checkNameAvailability: (type, query) => {
     var data = new FormData();
     data.append('query', query);
@@ -58,7 +66,21 @@ var geovoiceApi = {
       method: 'POST',
       body: data
     }).then(geovoiceApi.fetchOk)
-    .then( e => { if (e.error) { throw e;} return e;})
+    .then(geovoiceApi.testError)
+    return chain;
+  },
+
+  createGroup: (groupName, access = 'public') => {
+    var data = new FormData();
+    data.append('name', groupName);
+    data.append('access', access);
+
+    var chain = fetch('/group/create', {
+      credentials: 'include',
+      method: 'POST',
+      body: data
+    }).then(geovoiceApi.fetchOk)
+    .then(geovoiceApi.testError);
     return chain;
   },
 
@@ -72,7 +94,32 @@ var geovoiceApi = {
       method: 'POST',
       body: data
     }).then(geovoiceApi.fetchOk)
-    .then( e => { if (e.error) {throw e;} return e;});
+    .then(geovoiceApi.testError);
+    return chain;
+  },
+
+  updateGroupAccess(groupName, access) {
+    var data = new FormData();
+    data.append('name', groupName);
+    data.append('access', access);
+    var chain = fetch('/group/update_access', {
+      credentials: 'include',
+      method: 'POST',
+      body: data
+    }).then(geovoiceApi.fetchOk)
+    .then(geovoiceApi.testError);
+    return chain;
+  },
+
+  deleteGroup(groupName) {
+    var data = new FormData();
+    data.append('name', groupName);
+    var chain = fetch('/group/delete', {
+      credentials: 'include',
+      method: 'POST',
+      body: data
+    }).then(geovoiceApi.fetchOk)
+    .then(geovoiceApi.testError);
     return chain;
   }
 }

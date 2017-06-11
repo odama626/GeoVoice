@@ -118,7 +118,8 @@ var ui = {
 
     geovoiceApi.get('group', group.name)
     .then( group => {
-      secondaryContent.innerHTML = `Owner: ${group.owner} &emsp; Users: ${group.users.toString()}`
+      console.log(group);
+      secondaryContent.innerHTML = `Owner: ${group.owner} &emsp; Users: ${group.users.join(', ')}`
     })
 
     return li;
