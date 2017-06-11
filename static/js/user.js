@@ -117,7 +117,6 @@ var user = {
     }).then(_ => {
       var access = document.querySelector('input[name="group-visibility"]:checked').value;
       var name = document.getElementById('group-name').value;
-      console.log(name, access);
 
       geovoiceApi.createGroup(name, access)
       .then(group => {
@@ -128,32 +127,11 @@ var user = {
       })
       .catch(group => ui.createSnack(group.message));
     });
-
-    //   var data = new FormData();
-    //   data.append('name', name);
-    //   data.append('access', access);
-    //
-    //   $.ajax({
-    //     url : '/group/create',
-    //     type: 'POST',
-    //     data: data,
-    //     contentType: false,
-    //     processData: false,
-    //     success: function() {
-    //       ui.createSnack('Created Group');
-    //
-    //     },
-    //     error: function(e) {
-    //       ui.createSnack('Error Creating Group');
-    //     }
-    //   });
-    // }).catch(_=>_);
   }, // createGroup
 
   groupDialog: function(group) {
     geovoiceApi.get('group', group.name)
       .then(group => {
-      console.log(group);
       showDialog({
         title: `
           <div class='flex-between'>
@@ -218,25 +196,15 @@ var user = {
     var container = document.getElementById('user-groups');
     geovoiceApi.getself()
     .then(user => {
-      console.log(user);
       if (user.groups.length > 0) {
         ui.clearContainer(container);
       }
       user.groups.forEach(group => {
         var li = ui.createGroupLi(group);
         li.setAttribute('id', `group-${group.name}`);
-        console.log(group);
         li.addEventListener('click', _ => {
           this.groupDialog(group);
         });
-        // if (group.access == 'owner') {
-        //   var i = document.createElement('i');
-        //   i.className = 'material-icons clickable';
-        //   i.style.float = 'right';
-        //   //i.onclick = () => user.delete(marker.region, marker.media);
-        //   i.textContent = 'delete';
-        //   li.appendChild(i);
-        // }
         container.append(li);
       });
     })
