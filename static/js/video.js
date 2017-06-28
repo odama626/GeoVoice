@@ -7,6 +7,8 @@ var video = {
   stream: null,
   blob: null,
   location: null,
+  devices: null,
+  currentDevice: 0,
 
   request: function(location = null) {
     ui.loading.show();
@@ -19,15 +21,62 @@ var video = {
       mimeType: 'video/webm'
     };
 
-    navigator.mediaDevices.getUserMedia({ audio: true, video: true})
+    navigator.mediaDevices.enumerateDevices()
+    .then(devices => {
+      this.devices = devices.filter( device => device.kind === 'videoinput')
+      this.buildStream();
+    });
+
+  }, // request
+
+  buildStream: function() {
+    ui.loading.show();
+    let constraints = {
+      audio: true,
+      video: {
+        deviceId: { exact: this.devices[this.currentDevice].deviceId}
+      }
+
+    }
+    this.currentDevice = ++video.currentDevice % video.devices.length;
+
+    // release resources from last camera before switching
+    if (this.stream != null) {
+      var tracks = this.stream.getTracks();
+      for (let i=0; i < tracks.length; i++) {
+        tracks[i].stop();
+      }
+    }
+
+    navigator.mediaDevices.getUserMedia(constraints)
     .then(stream => {
-      this.videoRecorder = RecordRTC(stream, options);
+      this.videoRecorder = RecordRTC(stream, { mimeType: 'video/webm'});
       this.stream = stream;
       this.videoStream = URL.createObjectURL(stream);
       ui.loading.hide();
-      videoUi.request(this.videoStream);
-    }).catch(e => ui.createSnack('Error initializing camera: '+e.toString()));
-  }, // request
+      this.requestOrInject('.flip-video');
+    }).catch( e => ui.createSnack('Error initializing camera: '+e.toString()));
+  },
+
+  requestOrInject(className = null) {
+    let injected = false;
+    if (className) {
+      let domEl = document.querySelector(`${className} > video`)
+        || document.querySelector(`${className} + video`);
+      if (domEl) {
+        let newEl = document.createElement('video');
+        newEl.setAttribute('width', '100%');
+        newEl.setAttribute('autoplay', true);
+        newEl.setAttribute('muted', true);
+        newEl.setAttribute('src', this.videoStream);
+        domEl.replaceWith(newEl);
+        injected = true;
+      }
+    }
+    if (!injected) {
+      videoUi.request(this.videoStream, this.devices.length > 0);
+    }
+  },
 
   start: function() {
     ui.loading.show();

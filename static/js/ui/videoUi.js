@@ -3,9 +3,9 @@
 
 var videoUi = {
 
-  request: function(videoSource) {
+  request: function(videoSource, showFlipButton = false) {
     showDialog({
-      title: 'Record a video',
+      title: `<div class='OrrsTitle'><span>Record a video</span>${(showFlipButton? `<i onClick='video.buildStream()' class='flip-video material-icons'>camera_front</i>` : '')}</div>`,
       text: 'Start recording?<br>'+
               '<video width="100%" autoplay muted src="'+videoSource+'"></video>'+
               '<a class="clickable" onClick="videoUi.requestUpload()">upload</a>'
