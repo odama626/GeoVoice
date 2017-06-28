@@ -64,10 +64,14 @@ var regionPanel = {
       if (currently_logged_in) {
         geovoiceApi.getself()
         .then( user => {
-          if (user.groups.includes(region.group)) {
-            rightPanel.appendChild(this.createGear(() => {
+          console.log(user, region.group);
+          if (user.groups.find(group => group.name === region.group).name == region.group) {
+            console.log('adding gear');
+            let gear = this.createGear(() => {
               regionPanelSettings.constructor(region, rightPanel);
-            }));
+            });
+            let insertionPoint = document.querySelector('.group-display');
+            rightPanel.insertBefore(gear, insertionPoint);
           }
         });
       }
@@ -77,8 +81,7 @@ var regionPanel = {
       }));
     }
 
-
-
+    console.log('adding label')
     if (region.group) {
       var currentGroup = document.createElement('div');
       currentGroup.classList.add('group-display')

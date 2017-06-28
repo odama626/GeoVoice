@@ -51,19 +51,19 @@ $color-accent: #ff4081;
   }
 }
 
-.flip-video {
-  position: absolute;
-  right: 7px;
-  font-size: 3em;
-  padding: 5px;
-  z-index: 1;
-  cursor: pointer;
-
-  &:hover {
-    color: $color-accent;
+.OrrsTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: -30px;
+  .flip-video {
+    font-size: 2em;
+    color: $color-primary;
+    &:hover {
+      color: $color-accent;
+    }
   }
 }
-
 
 #public:checked~.radio-icon-container .public,
 #private:checked~.radio-icon-container .private {
