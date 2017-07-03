@@ -96,32 +96,48 @@ var video = {
 
   upload: function(region) {
     regions.createTempMarker(URL.createObjectURL(this.blob), this.location, region, 'video');
+    //
+    // var data = new FormData();
+    // data.append('file', new File([this.blob], new Date().toISOString()+'.webm'));
+    // data.append('lat', this.location.lat());
+    // data.append('lng', this.location.lng());
+    // data.append('date', new Date().toString());
+    // data.append('type', 'video');
+    // data.append('region', region);
 
-    var data = new FormData();
-    data.append('file', new File([this.blob], new Date().toISOString()+'.webm'));
-    data.append('lat', this.location.lat());
-    data.append('lng', this.location.lng());
-    data.append('date', new Date().toString());
-    data.append('type', 'video');
-    data.append('region', region);
+    let marker = {
+      file: new File([this.blob], new Date().toISOString()+'.webm'),
+      lat: this.location.lat(),
+      lng: this.location.lng(),
+      type: 'video',
+      region: region
+    }
 
-    $.ajax({
-      url: '/submit',
-      type: 'POST',
-      data: data,
-      contentType: false,
-      processData: false,
-      success: function() {
-        ui.createSnack('upload completed');
-      },
-      error: function(e) {
-        if (currently_logged_in) {
-          ui.createSnack('Error sending video: '+e.toString());
-        } else {
-          ui.createSnack('You need to be logged in to do that', 'Login', () => location.href='/user/login');
-        }
+    geovoiceApi.createMarker(marker)
+    .then(e => ui.createSnack('Upload Complete'))
+    .catch(e => {
+      if (currently_logged_in) {
+        ui.createSnack('Error sending video: '+e.toString());
+      } else {
+        ui.createSnack('You need to be logged in to do that', 'Login', () => location.href='/user/login');
       }
     });
+    //
+    //
+    //
+    // $.ajax({
+    //   url: '/submit',
+    //   type: 'POST',
+    //   data: data,
+    //   contentType: false,
+    //   processData: false,
+    //   success: function() {
+    //     ui.createSnack('upload completed');
+    //   },
+    //   error: function(e) {
+    //
+    //   }
+    // });
   }, // upload
 
   cleanup: function() {

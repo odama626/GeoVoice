@@ -40,29 +40,21 @@ var sound = {
   upload: function(region) {
     regions.createTempMarker(URL.createObjectURL(this.blob), this.location, region, 'audio');
 
-    var data = new FormData();
-    data.append('file',  new File([this.blob], new Date().toISOString()+'.wav'));
-    data.append('lat', this.location.lat());
-    data.append('lng', this.location.lng());
-    data.append('date', new Date().toString());
-    data.append('type','audio');
-    data.append('region', region);
+    let marker = {
+      file: new File([this.blob], new Date().toISOString()+'.wav'),
+      lat: this.location.lat(),
+      lng: this.location.lng(),
+      type: 'audio',
+      region: region
+    }
 
-    $.ajax({
-      url : '/submit',
-      type: 'POST',
-      data: data,
-      contentType: false,
-      processData: false,
-      success: function() {
-        ui.createSnack('Upload completed');
-      },
-      error: function(e) {
-        if (currently_logged_in) {
-          ui.createSnack('Error sending sound: '+e.toString());
-        }	else {
-          ui.createSnack('You need to be logged in to do that', 'Login', () => location.href='/user/login');
-        }
+    geovoiceApi.createMarker(marker)
+    .then( e => ui.createSnack('Upload completed'))
+    .catch( e => {
+      if (currently_logged_in) {
+        ui.createSnack('Error sending sound ');
+      }	else {
+        ui.createSnack('You need to be logged in to do that', 'Login', () => location.href='/user/login');
       }
     });
   }, // upload

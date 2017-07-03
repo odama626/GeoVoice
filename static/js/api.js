@@ -70,6 +70,32 @@ var geovoiceApi = {
     return chain;
   },
 
+  createMarker(marker) {
+    var data = new FormData();
+
+    if (marker.region == null) {
+      let currentGroup = url.getCurrentGroup();
+      if (currentGroup !== null) {
+        marker.region = `:${currentGroup}-root`
+      }
+    }
+
+    data.append('file', marker.file);
+    data.append('lat', marker.lat);
+    data.append('lng', marker.lng);
+    data.append('date', new Date().toString());
+    data.append('type', marker.type);
+    data.append('region', marker.region);
+
+    var chain = fetch('/submit', {
+      credentials: 'include',
+      method: 'POST',
+      body: data
+    }).then(geovoiceApi.fetchOk)
+    .then(geovoiceApi.testError);
+    return chain;
+  },
+
   createGroup: (groupName, access = 'public') => {
     var data = new FormData();
     data.append('name', groupName);
@@ -135,6 +161,16 @@ url.rootIfNeeded = (res) => {
 
 url.getQueryParams = (s = window.location.href) => {
   return s.slice(s.indexOf('?'));
+}
+
+url.getCurrentGroup = () => {
+  let search = location.search;
+  if (search.indexOf('g') > 0) {
+    search = decodeURIComponent(search.substr(search.indexOf('g')+2));
+  } else {
+    search = null;
+  }
+  return search;
 }
 
 

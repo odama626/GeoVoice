@@ -8,7 +8,6 @@ var markers = {
   infoWindow: undefined,
   fetchActive: true,
 
-
   place: function(info) {
     var marker = new google.maps.Marker({
       position: { lat: parseFloat(info.lat), lng: parseFloat(info.lng)},

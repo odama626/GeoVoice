@@ -29,13 +29,13 @@ router.get('/dialogs/:filename', function (req, res) {
 router.post('/submit', function(req, res) {
 	if (req.isAuthenticated()) {
 		var doc = {
-			'lat': req.body.lat,
-			'lng': req.body.lng,
-			'region': req.body.region,
-			'date': req.body.date,
-			'type': req.body.type,
-			'media': req.files[0].filename,
-			'creator': req.user.username,
+			'lat': sanitize(req.body.lat),
+			'lng': sanitize(req.body.lng),
+			'region': sanitize(req.body.region),
+			'date': sanitize(req.body.date),
+			'type': sanitize(req.body.type),
+			'media': sanitize(req.files[0].filename),
+			'creator': sanitize(req.user.username),
 			'tags': []
 		};
 		req.app.locals.db.markers.update(
@@ -46,7 +46,9 @@ router.post('/submit', function(req, res) {
 			{ upsert: true }
 		);
 		console.log('Added new marker');
-		res.end('SUCCESS');
+		res.json({ error: false, message: `Added new marker to ${req.body.region}`});
+	} else {
+		res.json({ error: false, message: 'You need to be logged in to do that'});
 	}
 });
 
@@ -171,7 +173,13 @@ router.post('/group/create', function(req, res) {
 			'regions': [],
 			'access': sanitize(req.body.access)
 		};
+		var nullRegion = {// create a 'null' region for this new group
+			'group': sanitize(req.body.name),
+			 'name': `:${sanitize(req.body.name)}-root`,
+			 markers: []
+		}
 		req.app.locals.db.groups.insert(group);
+		req.app.locals.db.markers.insert(nullRegion);
 		req.app.locals.db.accounts.update(
 			{ username: sanitize(req.user.username)},
 			{

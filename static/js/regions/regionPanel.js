@@ -81,7 +81,6 @@ var regionPanel = {
       }));
     }
 
-    console.log('adding label')
     if (region.group) {
       var currentGroup = document.createElement('div');
       currentGroup.classList.add('group-display')
@@ -90,8 +89,15 @@ var regionPanel = {
       groupText.textContent = region.group;
       groupIcon.classList.add('material-icons');
       groupIcon.textContent = 'autorenew';
-      currentGroup.appendChild(groupIcon);
+
+
+      var wrapperLink = document.createElement('a');
+      wrapperLink.setAttribute('href', `${location.origin}/?g=${encodeURIComponent(region.group)}`);
+      wrapperLink.appendChild(groupIcon);
+
+      currentGroup.appendChild(wrapperLink);
       currentGroup.appendChild(groupText);
+
       rightPanel.appendChild(currentGroup);
       if (!currently_logged_in) {
         groupIcon.textContent = 'public';

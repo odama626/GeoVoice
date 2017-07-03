@@ -39,7 +39,7 @@ var regions = {
             map.setCenter(geovoiceApi.parseLocation(r));
           }
         } else if (params.indexOf('?g=') == 0) {
-          var bounds = data.map(region => geovoiceApi.parseLocation(region))
+          var bounds = data.filter(region => region.name !== null && region.name[0] !== ':').map(region => geovoiceApi.parseLocation(region))
           if (bounds.length > 0) {
             map.fitBounds(getBounds(bounds));
           } else {
@@ -127,7 +127,7 @@ var regions = {
   }, // getTransporatableList
 
   place: function(region) {  // ! this changes region.geofence from string to array
-    if (region.name != null) {
+    if (region.name !== null && region.name[0] !== ':') {
       region.marker = new Marker({
         map: map,
         position: {
@@ -168,9 +168,14 @@ var regions = {
 
       });
     }
-		//markers.list.push(marker);
-    this.list[region.name] = region;
 
+    if (region.name && region.name[0] == ':') {
+      let newRegion = this.list[null] || { name: null, markers: []};
+      newRegion.markers = newRegion.markers.concat(region.markers)
+      this.list[null] = newRegion;
+    } else {
+      this.list[region.name] = region;
+    }
   }, // place
 
   parseMarkerShape: function(sShape) {
@@ -256,5 +261,6 @@ var regions = {
       }
     }
     markers.clear();
+    regions.list[null] = null;
   } // clear
 }; // regions
