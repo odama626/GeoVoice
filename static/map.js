@@ -206,7 +206,7 @@ function addPrecisePoint(event) {
   if (geovoice._util.getdevicetype() == 'pc') {
     showWindow();
   } else {
-    google.maps.event.addListenerOnce(map, 'mouseup',() => {console.log('mouseup');showWindow()});
+    google.maps.event.addListenerOnce(map, 'mouseup',() => {showWindow()});
   }
 
 } // addPrecisePoint

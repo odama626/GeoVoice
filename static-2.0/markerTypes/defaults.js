@@ -50,7 +50,7 @@
     type: 'video',
     icon: 'videocam',
     itemView: (marker) => {
-      return `<video controls type="video/webm" style="width: 100%; max-width: 468px"
+      return `<video controls type="video/mp4" style="width: 100%; max-width: 468px"
               src="${url.rootIfNeeded(marker.media)}"></video>`
     },
     panelView: (marker) => {

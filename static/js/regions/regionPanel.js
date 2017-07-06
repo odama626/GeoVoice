@@ -6,7 +6,6 @@ var regionPanel = {
   open: function(region) {
     panToPromise(geovoiceApi.parseLocation(region));
     if (location.search.indexOf('g') < 0) {
-      console.log('blargh');
       history.replaceState('', region.name+' - PathGrab', getBaseUrl()+'?r='+region.name);
     }
     activeRegion.set(region);
@@ -64,9 +63,7 @@ var regionPanel = {
       if (currently_logged_in) {
         geovoiceApi.getself()
         .then( user => {
-          console.log(user, region.group);
           if (user.groups.find(group => group.name === region.group).name == region.group) {
-            console.log('adding gear');
             let gear = this.createGear(() => {
               regionPanelSettings.constructor(region, rightPanel);
             });
@@ -104,7 +101,6 @@ var regionPanel = {
       } else {
         geovoiceApi.get('group', region.group)
         .then(group => {
-          console.log(group);
           groupIcon.textContent = group.access == 'public' ? 'public' : 'lock';
         });
       }

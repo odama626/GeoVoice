@@ -255,12 +255,14 @@ var regions = {
 
   clear: function() {
     for (var region in regions.list) {
-      if (regions.list[region].marker && typeof regions.list[region].marker != 'undefined') {
+      if (regions.list[region] && regions.list[region].marker && typeof regions.list[region].marker != 'undefined') {
         regions.list[region].marker.setMap(null);
         regions.list[region].marker = null;
       }
     }
     markers.clear();
-    regions.list[null] = null;
+    if (regions.list[null]) {
+      regions.list[null].markers = [];
+    }
   } // clear
 }; // regions

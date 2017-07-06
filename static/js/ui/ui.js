@@ -118,7 +118,6 @@ var ui = {
 
     geovoiceApi.get('group', group.name)
     .then( group => {
-      console.log(group);
       secondaryContent.innerHTML = `Owner: ${group.owner} &emsp; Users: ${group.users.join(', ')}`
     })
 
@@ -228,7 +227,6 @@ var ui = {
         var userHasScrolledDest = false;
         dest.addEventListener('scroll',  _=> {
           userHasScrolledDest = !(dest.scrollHeight - dest.clientHeight <= dest.scrollTop +1)
-          console.log(userHasScrolledDest);
         });
         var parse = () => {
           srcText = src.value;//.replace(/-\s\[\s\]/g, '- **\u2610**').replace(/-\s\[x\]/g, '- **\u2611**');
