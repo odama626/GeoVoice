@@ -40,7 +40,7 @@ var geovoiceApi = {
   },
 
   testError: (response) => {
-    if (response.error) {
+    if (response.error) {geovoicegeovoice
       throw response;
     } else {
       return response;
@@ -79,13 +79,16 @@ var geovoiceApi = {
         marker.region = `:${currentGroup}-root`
       }
     }
+    let keys = Object.keys(marker);
 
-    data.append('file', marker.file);
-    data.append('lat', marker.lat);
-    data.append('lng', marker.lng);
+    let reqs = ['lat', 'lng', 'type']
+    reqs.forEach(req => { if (!marker[req]) throw {error: true, msg: `${req} required`} });
+
+    for (let i=0; i < keys.length; i++ ) {
+      data.append(keys[i], marker[keys[i]]);
+    }
+
     data.append('date', new Date().toString());
-    data.append('type', marker.type);
-    data.append('region', marker.region);
 
     var chain = fetch('/submit', {
       credentials: 'include',

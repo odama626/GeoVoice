@@ -53,7 +53,7 @@ var regions = {
 
 
   updateActiveRegion: function(regionList) {
-    if (typeof activeRegion.region === 'undefined') {
+    if (typeof activeRegion.region === 'undefined' || activeRegion.name == null) {
       var rP = location.href.indexOf('region');
       var name = null;
       if (rP > -1) {
@@ -169,10 +169,12 @@ var regions = {
       });
     }
 
-    if (region.name && region.name[0] == ':') {
-      let newRegion = this.list[null] || { name: null, markers: []};
-      newRegion.markers = newRegion.markers.concat(region.markers)
-      this.list[null] = newRegion;
+    if (region.name == null || (region.name && region.name[0] == ':')) {
+      this.list[null] = this.list[null] || { name: null, markers: []};
+      region.markers.forEach( marker => this.list[null].markers.push(marker));
+      if (activeRegion.name == null) {
+        activeRegion.set(this.list[null]);
+      }
     } else {
       this.list[region.name] = region;
     }

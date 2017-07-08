@@ -28,16 +28,17 @@ router.get('/dialogs/:filename', function (req, res) {
 // Add a new sound marker
 router.post('/submit', function(req, res) {
 	if (req.isAuthenticated()) {
-		var doc = {
-			'lat': sanitize(req.body.lat),
-			'lng': sanitize(req.body.lng),
-			'region': sanitize(req.body.region),
-			'date': sanitize(req.body.date),
-			'type': sanitize(req.body.type),
-			'media': sanitize(req.files[0].filename),
-			'creator': sanitize(req.user.username),
-			'tags': []
-		};
+    var doc = {};
+    var keys = Object.keys(req.body);
+    keys.forEach( key => {
+      doc[key] = sanitize(req.body[key]);
+    })
+
+    doc.creator = sanitize(req.user.username);
+    doc.tags = [];
+    if (req.files && req.files.length > 0) {
+      doc.media = sanitize(req.files[0].filename);
+    }
 		req.app.locals.db.markers.update(
 			{ name: sanitize(req.body.region)},
 			{

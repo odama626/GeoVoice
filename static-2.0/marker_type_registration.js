@@ -131,10 +131,11 @@ geovoice._regions.click = (e) => {
 
 geovoice._markers.create = (type, latLng = null) => {
   if (!geovoice._markers.type[type]) {throw error(`trying to create unknown marker type '${type}'`)}
+  let next = (marker, title) => geovoice._markers.preview(type, latLng, marker, title);
   if (latLng) {
-    geovoice._markers.type[type].on.create(latLng);
+    geovoice._markers.type[type].on.create(latLng, next);
   } else {
-    geovoice._util.geolocate().then( loc => geovoice._markers.type[type].on.create(loc));
+    geovoice._util.geolocate().then( loc => {latLng = loc; geovoice._markers.type[type].on.create(loc, next)});
   }
 }
 
@@ -156,6 +157,90 @@ geovoice._markers.getItemView = (marker) => {
 geovoice._markers.getPanelView = (marker) => {
   if (!geovoice._markers.type[marker.type]) {throw error(`getPanelView of unknown type '${marker}'`)}
   return geovoice._markers.type[marker.type].panelView(marker);
+}
+
+geovoice._markers.preview = (type, latLng, marker, title) => {
+  console.log(type, latLng, marker, title);
+  if (!geovoice._markers.type[type]) {throw error(`preview of unknown type ${type}`)};
+  marker.lat = latLng.lat();
+  marker.lng = latLng.lng();
+  marker.type = type;
+  console.log(marker);
+
+  showDialog({
+    title: title || 'Seem ok?',
+    text: `
+      <div id='marker-region-selection'>
+      <div>Add it to a region</div>
+        <select id='regions' class='mdl-button'>
+          <option value='none'>none</option>
+        </select>
+      </div>
+      <span>
+        ${geovoice._markers.type[type].itemView(marker)}
+      </span>
+    `,
+    onLoaded: function() {
+      if (!ENABLE_REGIONS) {
+        document.getElementById('marker-region-selection').remove();
+      } else {
+        geovoiceApi.getself()
+        .then(user => {
+          var regionsContainer = $('#regions');
+          for (var place in regions.list) {
+            if (place !== null && (typeof regions.list[place].group == 'undefined' || user.groups.includes(regions.list[place].group))) {
+              if (regions.list[place].type == 'sequence') {
+                regionsContainer.append(`<option value='${place}'>${place}</option>`);
+              } else if (regions.list[place].type == 'classic') {
+                if (getBounds(regions.list[place].geofence).contains({lat: marker.lat,lng: marker.lng})) {
+                  regionsContainer.append(`<option value='${place}'>${place}</option>`);
+                }
+              }
+            }
+          }
+        });
+      }
+    },
+    positive: {
+      title: 'yes',
+      onClick: function() {
+        var region;
+        if (ENABLE_REGIONS) {
+          var selected = $('#regions option:selected').text();
+          region = (selected == 'none' ? null : selected);
+        } else {
+          region = null;
+        }
+        marker.region = region;
+        geovoice._markers.type[type].on.submit(marker, (marker) => {
+          geovoiceApi.createMarker(marker)
+          .then( e => ui.createSnack('Upload completed'))
+          .catch( e => {
+            if (currently_logged_in) {
+              ui.createSnack('Error sending sound ');
+            }	else {
+              ui.createSnack('You need to be logged in to do that', 'Login', () => location.href='/user/login');
+            }
+          });
+        });
+        let cleanup = geovoice._markers.type[type].on.cleanup;
+        if (cleanup && typeof cleanup !== 'undefined') {
+          cleanup(marker);
+        }
+      }
+    },
+    negative: {
+      title: 'no',
+      onClick: function() {
+        let cleanup = geovoice._markers.type[type].on.cleanup;
+        if (cleanup && typeof cleanup !== 'undefined') {
+          cleanup(marker);
+        }
+      }
+    }
+  })
+
+  // geovoice._markers.type[type].on.submit();
 }
 
 /*

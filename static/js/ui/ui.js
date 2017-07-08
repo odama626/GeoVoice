@@ -178,6 +178,8 @@ var ui = {
     })
   }, // dialog
 
+  
+
   markdownViewer: (ops) => {
     var container = document.createElement('div');
     container.classList.add('markdown-view-container');

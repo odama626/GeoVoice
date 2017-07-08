@@ -176,24 +176,27 @@ function addPrecisePoint(event) {
   }
   var showWindow = () => {
     markers.closeInfoWindow();
+    let keys = Object.keys(geovoice._markers.type);
+    let options = keys.reduce((accum, cur) => {
+        return `${accum} <button class='mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab infowindow-button' id='${cur}-request'>
+           <i class='material-icons'>${geovoice._markers.type[cur].icon}</i>
+        </button>
+        `
+    }, '');
+
     markers.placeInfoWindow(event.latLng,
       `
         <h5 style="padding-bottom:8px;">Add a point here?</h5>
         sneaky
           <div class="infowindow-button-container">
-            <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab infowindow-button" id="sound-request">
-              <i class="material-icons">mic</i>
-            </button>
-            <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab infowindow-button" id="video-request">
-              <i class="material-icons">videocam</i>
-            </button>
+            ${options}
           </div>
       `);
     google.maps.event.addListenerOnce(markers.infoWindow, 'domready', () => {
-      var soundRequest = document.getElementById('sound-request');
-      var videoRequest = document.getElementById('video-request');
-      soundRequest.onclick = () => { markers.infoWindow.close(); sound.request(event.latLng);};
-      videoRequest.onclick = () => { markers.infoWindow.close(); video.request(event.latLng);};
+      keys.forEach( key => {
+        document.getElementById(`${key}-request`).onclick = () => { markers.infoWindow.close(); geovoice._markers.create(key, event.latLng); }
+
+      });
     });
     setTimeout(()=>markers.infoWindow.open(map), 240);
   };
