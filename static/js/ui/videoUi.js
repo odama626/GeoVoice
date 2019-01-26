@@ -7,9 +7,13 @@ var videoUi = {
     showDialog({
       title: `<div class='OrrsTitle'><span>Record a video</span>${(showFlipButton? `<i onClick='video.buildStream()' class='flip-video material-icons'>camera_front</i>` : '')}</div>`,
       text: 'Start recording?<br>'+
-              '<video width="100%" autoplay muted src="'+videoSource+'"></video>'+
+              '<video width="100%" id="input" autoplay muted></video>'+
               '<a class="clickable" onClick="videoUi.requestUpload()">upload</a>'
       ,
+      onLoaded() {
+        let videoElement = document.getElementById('input');
+        videoElement.srcObject = videoSource;
+      },
       positive: {
         title: 'yes',
         onClick: function() {
@@ -58,9 +62,13 @@ var videoUi = {
     showDialog({
       title: 'Recording',
       text: '<div id="video-container" style="position:relative;">'+
-              '<video width="100%" autoplay muted src="'+videoSource+'"></video>'+
+              '<video id="input" width="100%" autoplay muted"></video>'+
               '<h4><a id="recording-timer" class="overlay-br">0.00</a></h4>'+
             '</div>',
+      onLoaded() {
+        let videoElement = document.getElementById('input');
+        videoElement.srcObject = videoSource;
+      },
       positive: {
         title: 'done',
         onClick: function() {

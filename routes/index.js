@@ -248,13 +248,14 @@ function fetchVisible(req, res) {
 	if (req.user) {
 		userGroups = req.user.groups.map( group => { return group.name});
 	}
+	// console.log(req.app.locals.db);
 	new Promise( (resolve, reject) => {
 		req.app.locals.db.groups.find({ access: 'public'})
-	.toArray((err, items) => resolve(userGroups.concat(items.map(item => item.name))))
+	.toArray((err, items = []) => resolve(userGroups.concat(items.map(item => item.name))))
 	})
 	.then( groups => {
 		req.app.locals.db.markers.find({$or: [{ group: {$in: groups}}, {group: null}]})
-		.toArray((err, items) => res.json(items));
+		.toArray((err, items = []) => res.json(items));
 	});
 }
 

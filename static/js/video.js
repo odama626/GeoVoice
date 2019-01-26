@@ -2,13 +2,23 @@
 /* exported video */
 
 var video = {
-  videoStream: null,
+  // videoStream: null,
   videoRecorder: null,
   stream: null,
   blob: null,
   location: null,
   devices: null,
   currentDevice: 0,
+
+  get videoStream() {
+    console.trace ('videoStream requested');
+    return this.stream;
+  },
+
+  set videoStream(value) {
+    console.trace('tried setting videoStream');
+
+  },
 
   request: function(location = null) {
     ui.loading.show();
@@ -31,6 +41,7 @@ var video = {
 
   buildStream: function() {
     ui.loading.show();
+    console.log(this);
     let constraints = {
       audio: true,
       video: {
@@ -52,7 +63,6 @@ var video = {
     .then(stream => {
       this.videoRecorder = RecordRTC(stream, { mimeType: 'video/webm'});
       this.stream = stream;
-      this.videoStream = URL.createObjectURL(stream);
       ui.loading.hide();
       this.requestOrInject('.flip-video');
     }).catch( e => ui.createSnack('Error initializing camera: '+e.toString()));
@@ -68,20 +78,20 @@ var video = {
         newEl.setAttribute('width', '100%');
         newEl.setAttribute('autoplay', true);
         newEl.setAttribute('muted', true);
-        newEl.setAttribute('src', this.videoStream);
+        newEl.setAttribute('srcObject', this.stream);
         domEl.replaceWith(newEl);
         injected = true;
       }
     }
     if (!injected) {
-      videoUi.request(this.videoStream, this.devices.length > 0);
+      videoUi.request(this.stream, this.devices.length > 0);
     }
   },
 
   start: function() {
     ui.loading.show();
     this.videoRecorder.startRecording();
-    videoUi.timer(video.videoStream);
+    videoUi.timer(video.stream);
     ui.loading.hide();
   }, // start
 
