@@ -10,14 +10,21 @@ var passport = require('passport');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var LocalStrategy = require('passport-local').Strategy;
-var GoogleStrategy = require('passport-google').Strategy;
+const passportJwt = require('passport-jwt');
 var pug = require('pug');
 
+
+// routes
 var routes = require('./routes/index');
 var apiRoute = require('./routes/api');
 var userRoute = require('./routes/user')
 var adminRoute = require('./routes/admin');
 var aboutRoute = require('./routes/about');
+
+const apiv2 = require('./routes/v2/api');
+
+// models
+
 
 var app = express();
 
@@ -27,10 +34,10 @@ app.use(minify()); // enable minify on production
 var port = 5000;
 
 // setup HTTPS
-var httpsOptions = {
-        key: fs.readFileSync('ssl.key'),
-        cert: fs.readFileSync('ssl.crt'),
-};
+// var httpsOptions = {
+//         key: fs.readFileSync('ssl.key'),
+//         cert: fs.readFileSync('ssl.crt'),
+// };
 
 
 // Setup Session
@@ -50,10 +57,32 @@ passport.use(new LocalStrategy({ usernameField: 'email'}, Account.authenticate()
 passport.serializeUser(Account.serializeUser());
 passport.deserializeUser(Account.deserializeUser());
 
-// mongoose
-mongoose.connect('mongodb://localhost:27017/geoVoice');
+const jwtOpts = {
+	jwtFromRequest: passportJwt.ExtractJwt.fromAuthHeaderAsBearerToken(),
+	secretOrKey: 'keyboard cat',
+	// issuer: 'pathgrab.com',
+	// audience: 'pathgrab.com'
+}
 
-mongoClient.connect('mongodb://localhost:27017/geoVoice', function(err, database) {
+passport.use(new passportJwt.Strategy(jwtOpts, (payload, done) => {
+	console.log(payload);
+	Account.findOne({ id: payload._doc.id }, (err, account) => {
+		if (err) {
+			return done(err);
+		} else if (account) {
+			return done(null, account);
+		} else {
+			return done(null, false);
+		}
+	})
+}))
+
+const mongoUrl = 'mongodb://geoUser:geoUser@10.0.0.100:27017/geoVoice'
+
+// mongoose
+mongoose.connect(mongoUrl);
+
+mongoClient.connect(mongoUrl, function(err, database) {
 	if (err) { return console.dir(err); }
 	console.log('connected to database');
 
@@ -62,7 +91,9 @@ mongoClient.connect('mongodb://localhost:27017/geoVoice', function(err, database
     markers: db.collection('markers'),
     accounts: db.collection('accounts'),
   	groups: db.collection('groups')
-  }
+	}
+	
+	app.locals.jwtOptions = jwtOpts;
 });
 
 // setup parsing of file uploads
@@ -107,7 +138,9 @@ app.use('/api', apiRoute);
 app.use('/user', userRoute);
 app.use('/admin', adminRoute);
 app.use('/about', aboutRoute);
+app.use('/api/v2', apiv2);
 
-var server = https.createServer(httpsOptions, app).listen(port, function() {
-	console.log("Express server listening on port "+ port);
-});
+// var server = https.createServer(httpsOptions, app).listen(port, function() {
+// 	console.log("Express server listening on port "+ port);
+// });
+app.listen(port, () => console.log(`Listening on port ${port}`))

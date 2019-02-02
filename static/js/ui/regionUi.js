@@ -49,7 +49,7 @@ var regionUi = {
         type: 'sequence'
       };
 
-      this.showCreateDialog(region);
+      this.showqueueDialog(region);
     }, // sequence
 
     classic: function(geofence) {
@@ -64,7 +64,7 @@ var regionUi = {
 
       geofence.setMap(null);
 
-      this.showCreateDialog(region);
+      this.showqueueDialog(region);
     }, // classic
 
     nameAvailable: function() {
@@ -84,7 +84,7 @@ var regionUi = {
       .then(_=>showAvailable(true)).catch(_=>showAvailable(false));
     }, // nameAvailable
 
-    showCreateDialog: function(region) {
+    showqueueDialog: function(region) {
       $.ajax({
         url: '/dialogs/addRegion.pug',
         type: 'GET',
@@ -178,6 +178,6 @@ var regionUi = {
           ui.createSnack('Couldn\'t fetch dialog');
         }
       });
-    }, // showCreateDialog
+    }, // showqueueDialog
   }
 };

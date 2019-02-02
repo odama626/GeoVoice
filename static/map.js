@@ -13,7 +13,7 @@ var currently_logged_in = false;
 //"use strict"
 
 function initMap() {
-  document.getElementById('google-maps').remove();
+  // document.getElementById('google-maps').remove();
   map_icons_init()
   map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: 39, lng: -101},

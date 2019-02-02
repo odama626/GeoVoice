@@ -1,7 +1,5 @@
 var express = require('express');
-var Group = require('../models/group');
 var	ObjectId = require('mongodb').ObjectID;
-//var mongoose = require('mongoose');
 var sanitize = require('mongo-sanitize');
 var router = express.Router();
 

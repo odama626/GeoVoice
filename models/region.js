@@ -1,18 +1,7 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+const Marker = require('./marker');
 
-var Marker = new Schema({
-  type: String,
-  creator: String,
-  date: { type: Date, default: Date.now},
-  lat: Number,
-  lng: Number,
-  media: String,
-  region: String,
-  tags: [String],
-}, { strict: false});
-
-var Region = new Schema({
+const Region = new mongoose.Schema({
   type: String,
   name: String,
   lat: Number,
@@ -20,3 +9,5 @@ var Region = new Schema({
   color: String,
   markers: [Marker]
 }, { strict: false});
+
+module.exports = mongoose.model('Region', Region);

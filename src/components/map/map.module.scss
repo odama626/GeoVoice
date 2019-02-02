@@ -1,0 +1,12 @@
+.container {
+  width: 100vw;
+  height: calc(100vh - 64px);
+  position: relative;
+  // border-radius: 6px;
+  overflow: hidden;
+  .map {
+    height: inherit;
+    width: inherit;
+    
+  }
+}
