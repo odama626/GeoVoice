@@ -5,6 +5,7 @@ import withValidation from '@omarzion/validation';
 import { Validate } from '../utils';
 import ValidatedTextField from 'components/ValidatedTextField';
 import * as Api from '../apiActions';
+import { userLoggedIn } from 'components/user/actions';
 
 
 
@@ -18,6 +19,7 @@ export const Login = withValidation()(({ close, dispatch, controller }) => {
         dispatch(queueSnack({ message: 'Email and password don\'t match' }));
       } else {
         close();
+        dispatch(userLoggedIn(result));
       }
     }
   }
@@ -51,11 +53,11 @@ export const Register = withValidation()(({ close, dispatch, controller }) => {
       }
       let result = await Api.register(user);
       if (result.error) {
-        // dispatch(pushDialog())
+        console.log(result.error);
+        dispatch(queueSnack({ message: 'something wen\'t wrong' }))
       } else {
-        
+        dispatch(userLoggedIn(result));
       }
-      console.log(result);
     }
   }
   return (

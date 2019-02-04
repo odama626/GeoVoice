@@ -16,7 +16,6 @@ export default () => (
       <Header />
       <DialogQueue />
       <Route path='/' exact component={Index}/>
-
       <SnackbarQueue/>
     </>
   </Router>

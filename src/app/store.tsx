@@ -3,12 +3,16 @@ import { Provider } from 'react-redux';
 import { createStore, combineReducers, compose, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 
-import builtin from 'components/builtin/reducer';
 import { loadLocally, saveLocally } from '../utils';
 import { AUTH_TOKEN_KEY, getApiUrl } from '../apiActions';
+import builtin from 'components/builtin/reducer';
+import regions from 'components/mapRouter/reducer';
+import user from 'components/user/reducer';
 
 const rootReducer = combineReducers({
-  builtin
+  builtin,
+  regions,
+  user
 });
 
 const logger = store => next => action => {

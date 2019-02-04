@@ -23,4 +23,4 @@ export const login = async payload => await builder(`/user/login`, payload);
 // LEGACY ENDPOINTS
 
 // region actions
-// export const 
+export const fetchRegions = async () => await builder('/fetch')
